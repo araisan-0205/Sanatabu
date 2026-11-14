@@ -163,7 +163,7 @@
   .img-icon-btn:active { transform: scale(0.95); }
   .img-icon-btn img { width: 100%; height: 100%; object-fit: contain; display: block; }
   /* ==========================================================================
-     2. メインエリア（左カラム：プロフィール & 土曜日白背景のカレンダー）
+     2. メインエリア（左カラム：プロフィール & カレンダー）
      ========================================================================== */
   .main-grid {
     flex: 1;
@@ -330,12 +330,10 @@
     vertical-align: middle;
   }
 
-  /* 土曜日の列も他の曜日と同じ白背景 */
   .cal-table td.sat-col {
     background-color: #ffffff;
   }
 
-  /* 今日のマス：背景全体を青くし、中の文字を白にする */
   .cal-table td.today-cell {
     background-color: #2563eb !important;
   }
@@ -368,7 +366,7 @@
     color: #c53030;
   }
   /* ==========================================================================
-     3. 右カラム（info_bg.png & 左詰めの2ボタンエリア）
+     3. 右カラム（info_bg.png & 右側が切れない2ボタンエリア）
      ========================================================================== */
   .right-col {
     display: flex;
@@ -414,13 +412,13 @@
     overflow-y: auto;
   }
 
-  /* 隙間を詰めて左側に揃えるボタンエリア */
+  /* 右側が切れないように枠内にしっかり収めるボタンエリア */
   .tiles-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     grid-template-rows: repeat(3, minmax(0, 1fr));
-    gap: 6px;
-    padding: 10px;
+    gap: 8px;
+    padding: 12px;
     border-radius: 6px;
     background-color: #001f5c;
     background-image: url('btn00.png');
@@ -441,19 +439,21 @@
     padding: 0;
     width: 100%;
     height: 100%;
+    min-width: 0;
     min-height: 0;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
   }
 
   .tile-btn:active { transform: scale(0.98); }
 
   .tile-btn img {
-    width: 100%;
-    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
     object-fit: contain;
-    object-position: left center;
     display: block;
     pointer-events: none;
   }
@@ -545,7 +545,7 @@
         <div class="info-right-content"></div>
       </section>
 
-      <!-- 左詰めで配置された2つのボタン -->
+      <!-- 右側が切れない2つのボタン -->
       <section class="tiles-grid">
         <button class="tile-btn" onclick="openGradeEntry()">
           <img src="btn22_GradeEntry.png" alt="成績登録"
@@ -565,8 +565,9 @@
   </main>
 </div>
 <script>
-  const FILEBOX_URL = "https://" + "araisan-0205.github.io/Filebox/";
-  const GRADE_ENTRY_URL = "https://sanaru.atwill-net.com/tablet/seiseki/?sId=25010283&cId=cfe59ee790126b6f37298d1eacdcbe60";
+  // 2つ目のボタン（ファイルBOX）のリンク先を変更済み
+  const FILEBOX_URL = "https://atwill-net.com";
+  const GRADE_ENTRY_URL = "https://" + "araisan-0205.github.io/Grade/";
 
   function moveWithLoading(targetUrl) {
     const loader = document.getElementById('loadingOverlay');
