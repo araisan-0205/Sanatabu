@@ -39,6 +39,19 @@
     flex-shrink: 0;
   }
 
+  .logo-wrap {
+    display: flex;
+    align-items: center;
+    height: 36px;
+  }
+
+  .logo-wrap img {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+    display: block;
+  }
+
   .logo {
     font-size: 28px;
     font-weight: 900;
@@ -92,6 +105,20 @@
     color: #333;
   }
 
+  .img-icon-btn {
+    border: none;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .img-icon-btn:active { transform: scale(0.95); }
+  .img-icon-btn img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
   .status-btn {
     padding: 5px 11px;
     border: none;
@@ -100,17 +127,8 @@
     font-weight: bold;
     font-size: 12px;
     cursor: pointer;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
   }
-  .btn-info {
-    background-color: #4caf50;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    padding: 0;
-    font-family: serif;
-    font-style: italic;
-  }
+  .btn-info { background-color: #4caf50; border-radius: 50%; width: 26px; height: 26px; padding: 0; font-family: serif; font-style: italic; }
   .btn-update { background-color: #3b82f6; }
   .btn-exit { background-color: #c25921; }
   /* 2. メインエリア（1画面ぴったり収まる構成） */
@@ -289,7 +307,7 @@
   .info-list li:last-child { border-bottom: none; }
   .info-list a { color: #2563eb; text-decoration: none; }
 
-  /* 縦幅を短く抑えた横長バランスのボタンエリア */
+  /* 元の比率のまま枠いっぱいに拡大するボタンエリア */
   .tiles-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -330,27 +348,6 @@
     pointer-events: none;
   }
 
-
-  .tile-btn:active { transform: scale(0.98); }
-
-  .tile-btn img {
-    width: auto;
-    height: auto;
-    display: block;
-    pointer-events: none;
-  }
-
-
-  .tile-btn:active { transform: scale(0.98); }
-
-  .tile-btn img {
-    width: 100%;
-    height: 100%;
-    object-fit: fill;
-    display: block;
-    pointer-events: none;
-  }
-
   /* 4. 大きめサイズの loading.gif オーバーレイ画面 */
   .loading-overlay {
     position: fixed;
@@ -377,7 +374,9 @@
 
 <div class="app-container">
   <header class="top-bar">
-    <div class="logo">SANARU</div>
+    <div class="logo-wrap">
+      <img src="logo.png" alt="SANARU" onerror="this.outerHTML='<div class=logo>SANARU</div>'">
+    </div>
     <div class="date-schedule">
       <span class="date-badge">11月14日（土）</span>
       <span>予定開始時刻 予定なし</span>
@@ -386,9 +385,15 @@
     </div>
     <div class="status-area">
       <span>☁️ オンライン（一般）</span>
-      <button class="status-btn btn-info" onclick="alert('SANARU 学習ポータル')">i</button>
-      <button class="status-btn btn-update" onclick="alert('最新のデータに更新しました')">更新</button>
-      <button class="status-btn btn-exit" onclick="alert('終了します')">終了</button>
+      <button class="img-icon-btn" onclick="alert('SANARU 学習ポータル')">
+        <img src="info.png" alt="i" onerror="this.outerHTML='<span class=\'status-btn btn-info\' style=\'display:inline-flex;align-items:center;justify-content:center;\'>i</span>'">
+      </button>
+      <button class="img-icon-btn" onclick="alert('最新のデータに更新しました')">
+        <img src="update.png" alt="更新" onerror="this.outerHTML='<span class=\'status-btn btn-update\'>更新</span>'">
+      </button>
+      <button class="img-icon-btn" onclick="alert('終了します')">
+        <img src="close.png" alt="終了" onerror="this.outerHTML='<span class=\'status-btn btn-exit\'>終了</span>'">
+      </button>
     </div>
   </header>
   <main class="main-grid">
