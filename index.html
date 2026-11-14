@@ -597,7 +597,13 @@
     }
   }
 
-  async function fetchCloudState() {
+    async function fetchCloudState() {
+    // まず手元の即座バックアップを読み込む
+    const localBackup = localStorage.getItem('sanatabu_backup');
+    if (localBackup) {
+      try { sharedState = JSON.parse(localBackup); } catch (e) {}
+    }
+    // 次にクラウドから最新データを取得して上書き
     try {
       const res = await fetch(DB_URL + "?t=" + Date.now(), { cache: "no-store" });
       if (res.ok) {
@@ -609,6 +615,7 @@
             total_mins: parseInt(data.total_mins || 0, 10),
             studied_keys: Array.isArray(data.studied_keys) ? data.studied_keys : []
           };
+          localStorage.setItem('sanatabu_backup', JSON.stringify(sharedState));
         }
       }
     } catch (e) {
@@ -617,16 +624,23 @@
   }
 
   async function saveCloudState() {
+    // 1. 押した瞬間に即座に保存（0.1秒後に再読み込みしても消えない）
+    localStorage.setItem('sanatabu_backup', JSON.stringify(sharedState));
+    // 2. クラウド（全ブラウザ共有）へ送信
     try {
-      await fetch(DB_URL, {
+      const res = await fetch(DB_URL, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(sharedState)
       });
+      if (!res.ok) {
+        alert("クラウド保存エラー: Firebaseのルールが公開されているか確認してください");
+      }
     } catch (e) {
       console.error("保存エラー:", e);
     }
   }
+
 
   function moveWithLoading(targetUrl) {
     const loader = document.getElementById('loadingOverlay');
