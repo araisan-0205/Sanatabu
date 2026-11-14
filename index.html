@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>さなタブ</title>
- <link rel="icon" type="image/png" href="./sanatabu_icon.png">
-<link rel="apple-touch-icon" href="./sanatabu_icon.png">
-<link rel="apple-touch-icon-precomposed" href="./sanatabu_icon.png">
+<link rel="icon" type="image/png" href="https://github.io">
+<link rel="apple-touch-icon" href="https://github.io">
+<link rel="apple-touch-icon-precomposed" href="https://github.io">
 <style>
   * {
     box-sizing: border-box;
@@ -367,7 +367,7 @@
     color: #c53030;
   }
   /* ==========================================================================
-     3. 右カラム（info_bg.png & 右側が切れない2ボタンエリア）
+     3. 右カラム（info_bg.png & 2ボタンエリア）
      ========================================================================== */
   .right-col {
     display: flex;
@@ -413,7 +413,6 @@
     overflow-y: auto;
   }
 
-  /* 右側が切れないように枠内にしっかり収めるボタンエリア */
   .tiles-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -539,14 +538,13 @@
       </section>
     </div>
 
-    <!-- 右カラム（本日の予定・インフォメーションともに空欄） -->
+    <!-- 右カラム -->
     <div class="right-col">
       <section class="info-panel-wrap">
         <div class="info-left-content"></div>
         <div class="info-right-content"></div>
       </section>
 
-      <!-- 右側が切れない2つのボタン -->
       <section class="tiles-grid">
         <button class="tile-btn" onclick="openGradeEntry()">
           <img src="btn22_GradeEntry.png" alt="成績登録"
@@ -566,9 +564,53 @@
   </main>
 </div>
 <script>
-  // 2つ目のボタン（ファイルBOX）のリンク先を変更済み
-  const FILEBOX_URL = "https://araisan-0205.github.io/Filebox/";
-  const GRADE_ENTRY_URL = "https://sanaru.atwill-net.com/tablet/seiseki/?sId=25010283&cId=cfe59ee790126b6f37298d1eacdcbe60";
+  // ============================================================================
+  // ★ URL＆クラウドデータベース設定エリア
+  // ============================================================================
+  const FILEBOX_URL = "https://atwill-net.com";
+  const GRADE_ENTRY_URL = "https://" + "araisan-0205.github.io/Grade/";
+
+  // どのブラウザ・端末からも共有されるFirebase Realtime Database
+  const DB_URL = "https://firebaseio.com";
+
+  // 共有データの保持用メモリ
+  let sharedState = {
+    study_start: null,
+    start_key: null,
+    total_mins: 0,
+    studied_keys: []
+  };
+
+  async function fetchCloudState() {
+    try {
+      const res = await fetch(DB_URL + "?t=" + Date.now());
+      if (res.ok) {
+        const data = await res.json();
+        if (data) {
+          sharedState = {
+            study_start: data.study_start || null,
+            start_key: data.start_key || null,
+            total_mins: parseInt(data.total_mins || 0, 10),
+            studied_keys: Array.isArray(data.studied_keys) ? data.studied_keys : []
+          };
+        }
+      }
+    } catch (e) {
+      console.error("同期エラー:", e);
+    }
+  }
+
+  async function saveCloudState() {
+    try {
+      await fetch(DB_URL, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(sharedState)
+      });
+    } catch (e) {
+      console.error("保存エラー:", e);
+    }
+  }
 
   function moveWithLoading(targetUrl) {
     const loader = document.getElementById('loadingOverlay');
@@ -582,9 +624,11 @@
   function openFilebox() { moveWithLoading(FILEBOX_URL); }
   function openGradeEntry() { moveWithLoading(GRADE_ENTRY_URL); }
 
-  function runUpdate() {
+  // 更新ボタン：loading.gifを1秒表示しつつクラウドの最新データを同期
+  async function runUpdate() {
     const loader = document.getElementById('loadingOverlay');
     loader.style.display = 'flex';
+    await syncAllFromCloud();
     setTimeout(() => { loader.style.display = 'none'; }, 1000);
   }
 
@@ -596,7 +640,9 @@
     }, 200);
   }
 
-  // カレンダー月切り替え（« 先月 / » 来月 / 今日）
+  // ============================================================================
+  // ★ カレンダー月切り替え（« 先月 / » 来月 / 今日）
+  // ============================================================================
   const TODAY_YEAR = 2026;
   const TODAY_MONTH = 11;
   const TODAY_DAY = 14;
@@ -615,8 +661,7 @@
     const daysInMonth = new Date(viewYear, viewMonth, 0).getDate();
     const prevMonthDays = new Date(viewYear, viewMonth - 1, 0).getDate();
 
-    const studiedKeys = JSON.parse(localStorage.getItem('sanaru_studied_keys') || '[]');
-    const legacyDays = JSON.parse(localStorage.getItem('sanaru_studied_days') || '[]');
+    const studiedKeys = sharedState.studied_keys || [];
 
     let dayCounter = 1;
     let nextMonthDay = 1;
@@ -635,7 +680,7 @@
           const d = dayCounter;
           const isToday = (viewYear === TODAY_YEAR && viewMonth === TODAY_MONTH && d === TODAY_DAY);
           const dateKey = `${viewYear}-${viewMonth}-${d}`;
-          const isStudied = studiedKeys.includes(dateKey) || (viewYear === TODAY_YEAR && viewMonth === TODAY_MONTH && legacyDays.includes(d));
+          const isStudied = studiedKeys.includes(dateKey);
 
           if (isToday) td.classList.add('today-cell');
 
@@ -667,7 +712,9 @@
     renderCalendar();
   }
 
-  // 学習タイマー＆記録保存
+  // ============================================================================
+  // ★ 学習タイマー＆クラウド同期処理
+  // ============================================================================
   let timerInterval = null;
 
   function formatMinutesText(totalMins) {
@@ -684,8 +731,8 @@
   }
 
   function renderProfileStats() {
-    const savedTotalMins = parseInt(localStorage.getItem('sanaru_total_mins') || '0', 10);
-    const studiedKeys = JSON.parse(localStorage.getItem('sanaru_studied_keys') || '[]');
+    const savedTotalMins = sharedState.total_mins || 0;
+    const studiedKeys = sharedState.studied_keys || [];
     const slot = document.getElementById('profileSlot');
 
     if (savedTotalMins > 0 || studiedKeys.length > 0) {
@@ -695,71 +742,96 @@
         <div class="stat-row"><div>今週の累計学習時間</div><div class="stat-val">${timeText}</div></div>
         <div class="stat-row"><div>連続学習日数</div><div class="stat-val">${studiedKeys.length}</div></div>
       `;
+    } else {
+      slot.innerHTML = `
+        <div>長久手本部校</div>
+        <div style="font-size: 12px; opacity: 0.9; margin-top: 2px;">中学1年生</div>
+      `;
     }
   }
 
-  function startTimerLoop(startTimeMs) {
+  function applyTimerUI() {
     const btn = document.getElementById('studyStartBtn');
     const display = document.getElementById('timerDisplay');
     const label = document.getElementById('timerLabel');
 
-    btn.textContent = '学習終了';
-    btn.classList.add('active');
-    label.textContent = '開始から';
+    if (sharedState.study_start) {
+      const startTimeMs = parseInt(sharedState.study_start, 10);
+      btn.textContent = '学習終了';
+      btn.classList.add('active');
+      label.textContent = '開始から';
 
-    const updateDisplay = () => {
-      const elapsedSec = Math.max(0, Math.floor((Date.now() - startTimeMs) / 1000));
-      display.textContent = formatHourMin(elapsedSec);
-    };
+      const updateDisplay = () => {
+        const elapsedSec = Math.max(0, Math.floor((Date.now() - startTimeMs) / 1000));
+        display.textContent = formatHourMin(elapsedSec);
+      };
 
-    updateDisplay();
-    if (timerInterval) clearInterval(timerInterval);
-    timerInterval = setInterval(updateDisplay, 5000);
-  }
-
-  function toggleStudy() {
-    const savedStart = localStorage.getItem('sanaru_study_start');
-
-    if (!savedStart) {
-      const now = Date.now();
-      localStorage.setItem('sanaru_study_start', String(now));
-      localStorage.setItem('sanaru_start_key', `${TODAY_YEAR}-${TODAY_MONTH}-${TODAY_DAY}`);
-      startTimerLoop(now);
+      updateDisplay();
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(updateDisplay, 5000);
     } else {
-      const startMs = parseInt(savedStart, 10);
-      const elapsedSec = Math.max(0, Math.floor((Date.now() - startMs) / 1000));
-      const addedMins = Math.max(1, Math.floor(elapsedSec / 60));
-
-      const prevTotal = parseInt(localStorage.getItem('sanaru_total_mins') || '0', 10);
-      localStorage.setItem('sanaru_total_mins', String(prevTotal + addedMins));
-
-      const startKey = localStorage.getItem('sanaru_start_key') || `${TODAY_YEAR}-${TODAY_MONTH}-${TODAY_DAY}`;
-      const endKey = `${TODAY_YEAR}-${TODAY_MONTH}-${TODAY_DAY}`;
-      const studiedKeys = JSON.parse(localStorage.getItem('sanaru_studied_keys') || '[]');
-      if (!studiedKeys.includes(startKey)) studiedKeys.push(startKey);
-      if (!studiedKeys.includes(endKey)) studiedKeys.push(endKey);
-      localStorage.setItem('sanaru_studied_keys', JSON.stringify(studiedKeys));
-
-      localStorage.removeItem('sanaru_study_start');
-      localStorage.removeItem('sanaru_start_key');
-      if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
-
-      const btn = document.getElementById('studyStartBtn');
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
       btn.textContent = '学習開始';
       btn.classList.remove('active');
-      document.getElementById('timerLabel').textContent = 'あと';
-      document.getElementById('timerDisplay').textContent = '-:-';
-
-      renderProfileStats();
-      renderCalendar();
+      label.textContent = 'あと';
+      display.textContent = '-:-';
     }
   }
 
-  window.addEventListener('DOMContentLoaded', () => {
+  async function toggleStudy() {
+    // ボタンを押した瞬間に最新のクラウド状態を取得してから切り替え
+    await fetchCloudState();
+
+    if (!sharedState.study_start) {
+      // 【学習開始】
+      sharedState.study_start = Date.now();
+      sharedState.start_key = `${TODAY_YEAR}-${TODAY_MONTH}-${TODAY_DAY}`;
+      applyTimerUI();
+      await saveCloudState();
+    } else {
+      // 【学習終了】
+      const startMs = parseInt(sharedState.study_start, 10);
+      const elapsedSec = Math.max(0, Math.floor((Date.now() - startMs) / 1000));
+      const addedMins = Math.max(1, Math.floor(elapsedSec / 60));
+
+      sharedState.total_mins = (sharedState.total_mins || 0) + addedMins;
+
+      const startKey = sharedState.start_key || `${TODAY_YEAR}-${TODAY_MONTH}-${TODAY_DAY}`;
+      const endKey = `${TODAY_YEAR}-${TODAY_MONTH}-${TODAY_DAY}`;
+      if (!Array.isArray(sharedState.studied_keys)) sharedState.studied_keys = [];
+      if (!sharedState.studied_keys.includes(startKey)) sharedState.studied_keys.push(startKey);
+      if (!sharedState.studied_keys.includes(endKey)) sharedState.studied_keys.push(endKey);
+
+      sharedState.study_start = null;
+      sharedState.start_key = null;
+
+      applyTimerUI();
+      renderProfileStats();
+      renderCalendar();
+      await saveCloudState();
+    }
+  }
+
+  async function syncAllFromCloud() {
+    await fetchCloudState();
     renderProfileStats();
     renderCalendar();
-    const savedStart = localStorage.getItem('sanaru_study_start');
-    if (savedStart) startTimerLoop(parseInt(savedStart, 10));
+    applyTimerUI();
+  }
+
+  // ページ表示時＆別タブから戻ってきた時に自動でクラウドと同期
+  window.addEventListener('DOMContentLoaded', () => {
+    renderCalendar();
+    syncAllFromCloud();
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+      syncAllFromCloud();
+    }
   });
 </script>
 </body>
