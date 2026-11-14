@@ -483,10 +483,10 @@
 </div>
 
 <div class="app-container">
-  <!-- 上部ヘッダー -->
+  <!-- 上部ヘッダー（日付・曜日も自動取得） -->
   <header class="top-bar">
     <div class="header-white-slot">
-      <span class="date-badge">11月14日（土）</span>
+      <span class="date-badge" id="headerDateBadge">11月15日（日）</span>
       <span class="schedule-group">
         <span class="schedule-label">予定開始時刻</span>
         <span class="schedule-val">予定なし</span>
@@ -564,16 +564,12 @@
   </main>
 </div>
 <script>
-  // ============================================================================
-  // ★ URL＆クラウドデータベース設定エリア
-  // ============================================================================
   const FILEBOX_URL = "https://atwill-net.com";
   const GRADE_ENTRY_URL = "https://" + "araisan-0205.github.io/Grade/";
 
-  // どのブラウザ・端末からも共有されるFirebase Realtime Database
+  // どのブラウザ・端末からも自動共有されるFirebase Realtime Database
   const DB_URL = "https://firebaseio.com";
 
-  // 共有データの保持用メモリ
   let sharedState = {
     study_start: null,
     start_key: null,
@@ -581,9 +577,29 @@
     studied_keys: []
   };
 
+  function getTodayInfo() {
+    const now = new Date();
+    const weekNames = ["日", "月", "火", "水", "木", "金", "土"];
+    return {
+      year: now.getFullYear(),
+      month: now.getMonth() + 1,
+      day: now.getDate(),
+      week: weekNames[now.getDay()],
+      key: `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`
+    };
+  }
+
+  function updateHeaderDate() {
+    const t = getTodayInfo();
+    const badge = document.getElementById('headerDateBadge');
+    if (badge) {
+      badge.textContent = `${t.month}月${t.day}日（${t.week}）`;
+    }
+  }
+
   async function fetchCloudState() {
     try {
-      const res = await fetch(DB_URL + "?t=" + Date.now());
+      const res = await fetch(DB_URL + "?t=" + Date.now(), { cache: "no-store" });
       if (res.ok) {
         const data = await res.json();
         if (data) {
@@ -624,7 +640,6 @@
   function openFilebox() { moveWithLoading(FILEBOX_URL); }
   function openGradeEntry() { moveWithLoading(GRADE_ENTRY_URL); }
 
-  // 更新ボタン：loading.gifを1秒表示しつつクラウドの最新データを同期
   async function runUpdate() {
     const loader = document.getElementById('loadingOverlay');
     loader.style.display = 'flex';
@@ -640,19 +655,15 @@
     }, 200);
   }
 
-  // ============================================================================
-  // ★ カレンダー月切り替え（« 先月 / » 来月 / 今日）
-  // ============================================================================
-  const TODAY_YEAR = 2026;
-  const TODAY_MONTH = 11;
-  const TODAY_DAY = 14;
-
-  let viewYear = TODAY_YEAR;
-  let viewMonth = TODAY_MONTH;
+  // カレンダー月切り替え（« 先月 / » 来月 / 今日）
+  const initToday = getTodayInfo();
+  let viewYear = initToday.year;
+  let viewMonth = initToday.month;
 
   function renderCalendar() {
+    const today = getTodayInfo();
     const label = document.getElementById('calMonthLabel');
-    label.textContent = (viewYear === TODAY_YEAR) ? `${viewMonth}月` : `${viewYear}年${viewMonth}月`;
+    label.textContent = (viewYear === today.year) ? `${viewMonth}月` : `${viewYear}年${viewMonth}月`;
 
     const tbody = document.getElementById('calBody');
     tbody.innerHTML = '';
@@ -678,7 +689,7 @@
           td.innerHTML = `<span class="day-circle other-month">${prevDay}</span>`;
         } else if (dayCounter <= daysInMonth) {
           const d = dayCounter;
-          const isToday = (viewYear === TODAY_YEAR && viewMonth === TODAY_MONTH && d === TODAY_DAY);
+          const isToday = (viewYear === today.year && viewMonth === today.month && d === today.day);
           const dateKey = `${viewYear}-${viewMonth}-${d}`;
           const isStudied = studiedKeys.includes(dateKey);
 
@@ -707,14 +718,13 @@
   }
 
   function resetToToday() {
-    viewYear = TODAY_YEAR;
-    viewMonth = TODAY_MONTH;
+    const today = getTodayInfo();
+    viewYear = today.year;
+    viewMonth = today.month;
     renderCalendar();
   }
 
-  // ============================================================================
-  // ★ 学習タイマー＆クラウド同期処理
-  // ============================================================================
+  // 学習タイマー＆クラウド同期処理
   let timerInterval = null;
 
   function formatMinutesText(totalMins) {
@@ -782,25 +792,23 @@
   }
 
   async function toggleStudy() {
-    // ボタンを押した瞬間に最新のクラウド状態を取得してから切り替え
+    const today = getTodayInfo();
     await fetchCloudState();
 
     if (!sharedState.study_start) {
-      // 【学習開始】
       sharedState.study_start = Date.now();
-      sharedState.start_key = `${TODAY_YEAR}-${TODAY_MONTH}-${TODAY_DAY}`;
+      sharedState.start_key = today.key;
       applyTimerUI();
       await saveCloudState();
     } else {
-      // 【学習終了】
       const startMs = parseInt(sharedState.study_start, 10);
       const elapsedSec = Math.max(0, Math.floor((Date.now() - startMs) / 1000));
       const addedMins = Math.max(1, Math.floor(elapsedSec / 60));
 
       sharedState.total_mins = (sharedState.total_mins || 0) + addedMins;
 
-      const startKey = sharedState.start_key || `${TODAY_YEAR}-${TODAY_MONTH}-${TODAY_DAY}`;
-      const endKey = `${TODAY_YEAR}-${TODAY_MONTH}-${TODAY_DAY}`;
+      const startKey = sharedState.start_key || today.key;
+      const endKey = today.key;
       if (!Array.isArray(sharedState.studied_keys)) sharedState.studied_keys = [];
       if (!sharedState.studied_keys.includes(startKey)) sharedState.studied_keys.push(startKey);
       if (!sharedState.studied_keys.includes(endKey)) sharedState.studied_keys.push(endKey);
@@ -816,14 +824,15 @@
   }
 
   async function syncAllFromCloud() {
+    updateHeaderDate();
     await fetchCloudState();
     renderProfileStats();
     renderCalendar();
     applyTimerUI();
   }
 
-  // ページ表示時＆別タブから戻ってきた時に自動でクラウドと同期
   window.addEventListener('DOMContentLoaded', () => {
+    updateHeaderDate();
     renderCalendar();
     syncAllFromCloud();
   });
