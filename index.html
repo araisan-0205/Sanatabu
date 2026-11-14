@@ -34,7 +34,7 @@
   .top-bar {
     position: relative;
     width: 100%;
-    aspect-ratio: 1920 / 175;
+    aspect-ratio: 1920 / 165;
     background-color: #0b3184;
     background-image: url('header_bg.png');
     background-size: 100% 100%;
@@ -74,7 +74,7 @@
     color: #444444;
   }
 
-  /* 黒色の経過時間表示枠 */
+  /* 黒色の時間：分表示枠 */
   .timer-box {
     background-color: #111111;
     color: #ffffff;
@@ -88,7 +88,7 @@
     letter-spacing: 0.5px;
   }
 
-  /* 本家仕様：横長の長方形で角ばった学習開始／学習終了ボタン */
+  /* 角ばった横長の長方形「学習開始／学習終了」ボタン */
   .btn-start {
     background: linear-gradient(to bottom, #f04e45, #d62d20);
     color: #ffffff;
@@ -106,7 +106,6 @@
   .btn-start:active {
     transform: translateY(1px);
   }
-  /* 学習中に押した後の青色「学習終了」ボタン */
   .btn-start.active {
     background: linear-gradient(to bottom, #2563eb, #1d4ed8);
     border-color: #1e3a8a;
@@ -127,8 +126,8 @@
     background: transparent;
     padding: 0;
     cursor: pointer;
-    width: 46px;
-    height: 46px;
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -136,13 +135,13 @@
   .img-icon-btn:active { transform: scale(0.95); }
   .img-icon-btn img { width: 100%; height: 100%; object-fit: contain; display: block; }
   /* ==========================================================================
-     2. メインエリア（左カラム：profile_bg.png & cal_bg.png）
+     2. メインエリア（カレンダーを下端まで揃えつつ縦横比率をキープ）
      ========================================================================== */
   .main-grid {
     flex: 1;
     min-height: 0;
     display: grid;
-    grid-template-columns: 310px 1fr;
+    grid-template-columns: 345px 1fr;
     gap: 10px;
     padding: 8px 12px;
     overflow: hidden;
@@ -151,6 +150,7 @@
   .left-col {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     gap: 8px;
     height: 100%;
     min-height: 0;
@@ -169,7 +169,6 @@
     flex-shrink: 0;
   }
 
-  /* アバター横の濃紺枠（学習終了後に学習時間と連続日数を表示） */
   .profile-dark-slot {
     position: absolute;
     left: 6.5%;
@@ -181,31 +180,32 @@
     align-items: center;
     justify-content: center;
     color: #ffffff;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: bold;
     text-align: center;
-    line-height: 1.25;
+    line-height: 1.3;
     padding: 2px;
   }
 
   .stat-row {
     width: 100%;
-    padding: 2px 0;
+    padding: 3px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.25);
   }
   .stat-row:last-child {
     border-bottom: none;
   }
   .stat-val {
-    font-size: 13px;
+    font-size: 14px;
     color: #ffffff;
   }
 
+  /* カレンダー枠（縦横比を維持したまま画面の下端までぴったり届く設定） */
   .calendar-card {
     position: relative;
     width: 100%;
-    aspect-ratio: 1000 / 980;
-    flex-shrink: 0;
+    flex: 1;
+    min-height: 0;
     background-image: url('cal_bg.png');
     background-size: 100% 100%;
     background-repeat: no-repeat;
@@ -217,20 +217,20 @@
   }
 
   .cal-month-title {
-    height: 15.5%;
+    height: 14.5%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #ffffff;
     font-weight: bold;
-    font-size: 15px;
+    font-size: 16px;
     flex-shrink: 0;
   }
 
   .cal-table-wrap {
     flex: 1;
     min-height: 0;
-    padding: 8px 18px 16px 18px;
+    padding: 8px 20px 16px 20px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -238,9 +238,10 @@
 
   .cal-table {
     width: 100%;
+    height: 100%;
     border-collapse: collapse;
     text-align: center;
-    font-size: 13px;
+    font-size: 14px;
     table-layout: fixed;
   }
 
@@ -253,22 +254,20 @@
   .cal-table th:last-child { color: #3182ce; }
   .cal-table td {
     border: 1px solid #f1f5f9;
-    height: 31px;
     vertical-align: middle;
   }
 
   .day-circle {
     display: inline-block;
-    width: 25px;
-    height: 25px;
-    line-height: 25px;
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
     border-radius: 50%;
   }
 
   .today { background-color: #3182ce; color: #fff; font-weight: bold; }
   .other-month { color: #cbd5e1; }
 
-  /* 学習終了を押した日に付く赤丸スタンプ */
   .studied-mark {
     background-image: url('maru.png');
     background-size: contain;
@@ -293,7 +292,7 @@
   .info-panel-wrap {
     position: relative;
     width: 100%;
-    aspect-ratio: 1000 / 195;
+    aspect-ratio: 1000 / 205;
     background-image: url('info_bg.png');
     background-size: 100% 100%;
     background-repeat: no-repeat;
@@ -471,7 +470,6 @@
         </div>
       </section>
 
-      <!-- 成績登録とファイルBOXの2つだけ配置 -->
       <section class="tiles-grid">
         <button class="tile-btn" onclick="openGradeEntry()">
           <img src="btn22_GradeEntry.png" alt="成績登録"
@@ -525,34 +523,31 @@
   }
 
   // ============================================================================
-  // ★ 学習タイマー＆記録保存（タブを閉じても継続・終了時にアバター横へ反映＆丸印）
+  // ★ 学習タイマー（時間：分表示・タブを閉じても継続・終了時に記録＆丸印）
   // ============================================================================
   let timerInterval = null;
 
-  function formatMinutes(totalSec) {
-    const totalMins = Math.floor(totalSec / 60);
+  function formatMinutesText(totalMins) {
     const h = Math.floor(totalMins / 60);
     const m = totalMins % 60;
     return `${h}時間${m}分`;
   }
 
-  function formatTimer(sec) {
-    const h = Math.floor(sec / 3600);
-    const m = Math.floor((sec % 3600) / 60);
-    const s = sec % 60;
-    if (h > 0) {
-      return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-    }
-    return `${m}:${String(s).padStart(2, '0')}`;
+  // 黒枠用の「時間：分」表示（例：0:00, 0:13, 1:05）
+  function formatHourMin(elapsedSec) {
+    const totalMins = Math.floor(elapsedSec / 60);
+    const h = Math.floor(totalMins / 60);
+    const m = totalMins % 60;
+    return `${h}:${String(m).padStart(2, '0')}`;
   }
 
   function renderProfileStats() {
-    const savedTotalSec = parseInt(localStorage.getItem('sanaru_total_sec') || '0', 10);
+    const savedTotalMins = parseInt(localStorage.getItem('sanaru_total_mins') || '0', 10);
     const studiedDays = JSON.parse(localStorage.getItem('sanaru_studied_days') || '[]');
     const slot = document.getElementById('profileSlot');
 
-    if (savedTotalSec > 0 || studiedDays.length > 0) {
-      const timeText = formatMinutes(savedTotalSec);
+    if (savedTotalMins > 0 || studiedDays.length > 0) {
+      const timeText = formatMinutesText(savedTotalMins);
       slot.innerHTML = `
         <div class="stat-row">
           <div>今月の合計学習時間</div>
@@ -589,30 +584,31 @@
 
     const updateDisplay = () => {
       const elapsedSec = Math.max(0, Math.floor((Date.now() - startTimeMs) / 1000));
-      display.textContent = formatTimer(elapsedSec);
+      display.textContent = formatHourMin(elapsedSec);
     };
 
     updateDisplay();
     if (timerInterval) clearInterval(timerInterval);
-    timerInterval = setInterval(updateDisplay, 1000);
+    timerInterval = setInterval(updateDisplay, 5000);
   }
 
   function toggleStudy() {
     const savedStart = localStorage.getItem('sanaru_study_start');
 
     if (!savedStart) {
-      // 【学習開始】押下時：現在時刻を保存してタイマー開始
+      // 【学習開始】押下時：現在時刻を保存して「0:00」から開始
       const now = Date.now();
       localStorage.setItem('sanaru_study_start', String(now));
       localStorage.setItem('sanaru_start_day', String(new Date().getDate()));
       startTimerLoop(now);
     } else {
-      // 【学習終了】押下時：経過時間を計算して保存＆リセット
+      // 【学習終了】押下時：経過分数を加算（1分未満でも動作確認用に1分加算）
       const startMs = parseInt(savedStart, 10);
-      const elapsedSec = Math.max(1, Math.floor((Date.now() - startMs) / 1000));
+      const elapsedSec = Math.max(0, Math.floor((Date.now() - startMs) / 1000));
+      const addedMins = Math.max(1, Math.floor(elapsedSec / 60));
 
-      const prevTotal = parseInt(localStorage.getItem('sanaru_total_sec') || '0', 10);
-      localStorage.setItem('sanaru_total_sec', String(prevTotal + elapsedSec));
+      const prevTotal = parseInt(localStorage.getItem('sanaru_total_mins') || '0', 10);
+      localStorage.setItem('sanaru_total_mins', String(prevTotal + addedMins));
 
       // 開始日と終了日に丸をつける
       const startDay = parseInt(localStorage.getItem('sanaru_start_day') || '14', 10);
@@ -620,11 +616,10 @@
       const studiedDays = JSON.parse(localStorage.getItem('sanaru_studied_days') || '[]');
       if (!studiedDays.includes(startDay)) studiedDays.push(startDay);
       if (!studiedDays.includes(endDay)) studiedDays.push(endDay);
-      // 画面上の「今日（14日）」にも確実に丸をつける
       if (!studiedDays.includes(14)) studiedDays.push(14);
       localStorage.setItem('sanaru_studied_days', JSON.stringify(studiedDays));
 
-      // 計測状態をリセット
+      // リセット処理
       localStorage.removeItem('sanaru_study_start');
       localStorage.removeItem('sanaru_start_day');
       if (timerInterval) {
@@ -638,13 +633,11 @@
       document.getElementById('timerLabel').textContent = 'あと';
       document.getElementById('timerDisplay').textContent = '-:-';
 
-      // アバター横の学習時間とカレンダーの赤丸を更新
       renderProfileStats();
       renderCalendarMarks();
     }
   }
 
-  // ページ読み込み時に保存データを復元（タブを閉じても継続）
   window.addEventListener('DOMContentLoaded', () => {
     renderProfileStats();
     renderCalendarMarks();
