@@ -43,7 +43,6 @@
     flex-shrink: 0;
   }
 
-  /* 白い枠の中にぴったり収まる日付・タイマー・学習開始ボタン */
   .header-white-slot {
     position: absolute;
     left: 21.8%;
@@ -133,7 +132,6 @@
     min-height: 0;
   }
 
-  /* 生徒プロフィールカード（背景画像: profile_bg.png） */
   .profile-card {
     position: relative;
     width: 100%;
@@ -164,7 +162,6 @@
     line-height: 1.6;
   }
 
-  /* カレンダーカード（黒い外枠に被らない内余白 padding: 10px 18px 16px 18px） */
   .calendar-card {
     position: relative;
     width: 100%;
@@ -232,7 +229,7 @@
   .today { background-color: #3182ce; color: #fff; font-weight: bold; }
   .other-month { color: #cbd5e1; }
   /* ==========================================================================
-     3. 右カラム（info_bg.png & 2つの機能ボタンエリア）
+     3. 右カラム（info_bg.png 縦横比率合わせ & 2つの機能ボタンエリア）
      ========================================================================== */
   .right-col {
     display: flex;
@@ -242,11 +239,11 @@
     min-height: 0;
   }
 
-  /* 本日の予定＆インフォメーション枠（黒い帯に被らない位置調整） */
+  /* 横幅に合わせて縦にも伸びる info_bg.png（aspect-ratio: 1000 / 195） */
   .info-panel-wrap {
     position: relative;
     width: 100%;
-    height: 118px;
+    aspect-ratio: 1000 / 195;
     background-image: url('info_bg.png');
     background-size: 100% 100%;
     background-repeat: no-repeat;
@@ -263,7 +260,7 @@
     width: 45%;
     height: 62%;
     padding: 4px 8px;
-    font-size: 12px;
+    font-size: 13px;
     color: #666666;
     overflow-y: auto;
   }
@@ -275,12 +272,12 @@
     width: 47.5%;
     height: 62%;
     padding: 4px 8px;
-    font-size: 12px;
+    font-size: 13px;
     overflow-y: auto;
   }
 
   .info-list { list-style: none; }
-  .info-list li { padding: 3px 0; border-bottom: 1px dashed #cbd5e1; }
+  .info-list li { padding: 4px 0; border-bottom: 1px dashed #cbd5e1; }
   .info-list li:last-child { border-bottom: none; }
   .info-list a { color: #2563eb; text-decoration: none; }
 
