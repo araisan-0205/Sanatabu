@@ -540,7 +540,11 @@
   }
 
   function openApp(appName) {
-    alert(`「${appName}」を開きます。`);
+    if (appName === 'ファイルBOX') {
+      window.open('https://github.io', '_blank');
+    } else {
+      alert(`「${appName}」を開きます。`);
+    }
   }
 </script>
 </body>
