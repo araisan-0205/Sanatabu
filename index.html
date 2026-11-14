@@ -29,12 +29,12 @@
   }
 
   /* ==========================================================================
-     1. 上部ヘッダーバー（上下の縁まで切れずに表示）
+     1. 上部ヘッダーバー（縦に伸ばして本家と同じ厚みに調整）
      ========================================================================== */
   .top-bar {
     position: relative;
     width: 100%;
-    aspect-ratio: 1920 / 118;
+    aspect-ratio: 1920 / 145;
     background-color: #0b3184;
     background-image: url('header_bg.png');
     background-size: 100% 100%;
@@ -47,39 +47,39 @@
     position: absolute;
     left: 21.8%;
     width: 49.6%;
-    top: 15%;
-    height: 70%;
+    top: 16%;
+    height: 68%;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 12px;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: bold;
     color: #222222;
   }
 
   .date-badge {
-    font-size: 17px;
+    font-size: 19px;
     color: #111111;
   }
 
   .timer-box {
     background-color: #2d3748;
     color: #ffffff;
-    padding: 2px 8px;
+    padding: 3px 10px;
     border-radius: 3px;
     font-family: monospace;
-    font-size: 13px;
+    font-size: 15px;
   }
 
   .btn-start {
     background: linear-gradient(to bottom, #ef4444, #dc2626);
     color: #fff;
     border: 1px solid #991b1b;
-    padding: 4px 14px;
+    padding: 5px 16px;
     border-radius: 4px;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 13px;
     cursor: pointer;
     box-shadow: 0 1px 2px rgba(0,0,0,0.25);
   }
@@ -103,8 +103,8 @@
     background: transparent;
     padding: 0;
     cursor: pointer;
-    width: 44px;
-    height: 44px;
+    width: 46px;
+    height: 46px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -214,7 +214,7 @@
   .cal-table th:last-child { color: #3182ce; }
   .cal-table td {
     border: 1px solid #f1f5f9;
-    height: 33px;
+    height: 31px;
     vertical-align: middle;
   }
 
@@ -229,7 +229,7 @@
   .today { background-color: #3182ce; color: #fff; font-weight: bold; }
   .other-month { color: #cbd5e1; }
   /* ==========================================================================
-     3. 右カラム（info_bg.png & 2つの機能ボタンエリア）
+     3. 右カラム（info_bg.png & インフォメーション表示改善）
      ========================================================================== */
   .right-col {
     display: flex;
@@ -258,27 +258,46 @@
     top: 31%;
     width: 45%;
     height: 62%;
-    padding: 4px 8px;
+    padding: 6px 10px;
     font-size: 13px;
-    color: #666666;
+    color: #333333;
     overflow-y: auto;
   }
 
   .info-right-content {
     position: absolute;
-    left: 50.5%;
-    top: 31%;
-    width: 47.5%;
-    height: 62%;
-    padding: 4px 8px;
+    left: 50.2%;
+    top: 29%;
+    width: 48.2%;
+    height: 66%;
+    padding: 4px 10px;
     font-size: 13px;
     overflow-y: auto;
   }
 
-  .info-list { list-style: none; }
-  .info-list li { padding: 4px 0; border-bottom: 1px dashed #cbd5e1; }
-  .info-list li:last-child { border-bottom: none; }
-  .info-list a { color: #2563eb; text-decoration: none; }
+  /* インフォメーションの見やすいリスト表示 */
+  .info-list {
+    list-style: none;
+    width: 100%;
+  }
+
+  .info-list li {
+    padding: 6px 4px;
+    border-bottom: 1px solid #d1d5db;
+    line-height: 1.4;
+  }
+
+  .info-list a {
+    color: #1d4ed8;
+    text-decoration: underline;
+    font-weight: 500;
+    display: block;
+  }
+
+  .info-list a:active {
+    color: #1e40af;
+    background-color: #eff6ff;
+  }
 
   .tiles-grid {
     display: grid;
@@ -395,9 +414,10 @@
     <!-- 右カラム -->
     <div class="right-col">
       <section class="info-panel-wrap">
-        <div class="info-left-content">
-          本日の予定はありません。
-        </div>
+        <!-- 本日の予定は空欄 -->
+        <div class="info-left-content"></div>
+
+        <!-- インフォメーション -->
         <div class="info-right-content">
           <ul class="info-list">
             <li><a href="https://github.io" target="_blank" rel="noopener noreferrer">定期テスト模試 範囲閲覧サイト</a></li>
