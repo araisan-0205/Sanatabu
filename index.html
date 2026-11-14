@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学習ポータルダッシュボード</title>
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Meiryo", "Hiragino Kaku Gothic ProN", sans-serif;
+  }
+
+  body {
+    background-color: #2b2b2b;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 16px;
+  }
+
+  .tablet-frame {
+    width: 100%;
+    max-width: 1100px;
+    background-color: #d62828;
+    border-radius: 28px;
+    padding: 22px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+  }
+
+  .screen {
+    background-color: #cfd8e3;
+    border: 14px solid #1a1a1a;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .top-bar {
+    background: linear-gradient(to bottom, #ffffff, #e6ebf2);
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #9aa8b8;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .logo {
+    font-size: 24px;
+    font-weight: 900;
+    font-style: italic;
+    color: #3b6ea5;
+    letter-spacing: 1px;
+  }
+
+  .date-schedule {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .date-badge { font-size: 18px; }
+
+  .timer-box {
+    background-color: #333;
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 15px;
+  }
+
+  .btn-start {
+    background-color: #e63946;
+    color: #fff;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  .btn-start:hover { background-color: #c92a37; }
+
+  .status-area {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+  }
+
+  .status-btn {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .btn-info { background-color: #4caf50; border-radius: 50%; width: 26px; height: 26px; padding: 0; }
+  .btn-update { background-color: #3b82f6; }
+  .btn-exit { background-color: #c05621; }
+
+  .main-grid {
+    display: grid;
+    grid-template-columns: 310px 1fr;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .left-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .profile-card {
+    background-color: #6b7280;
+    color: #fff;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  }
+
+  .profile-header {
+    background-color: #8d7b68;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .student-name { font-size: 18px; font-weight: bold; }
+  .student-id { font-size: 11px; opacity: 0.9; }
+
+  .profile-body {
+    display: flex;
+    padding: 10px;
+    background-color: #a49689;
+    gap: 10px;
+  }
+
+  .study-stats {
+    flex: 1;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    text-align: center;
+  }
+
+  .stat-item {
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+    padding-bottom: 4px;
+  }
+  .stat-item:last-child { border-bottom: none; }
+  .stat-value { font-size: 15px; font-weight: bold; margin-top: 2px; }
+
+  .avatar-box {
+    width: 90px;
+    height: 125px;
+    background-color: #e5e7eb;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+    font-size: 12px;
+    border: 2px solid #fff;
+  }
+
+  .calendar-card {
+    background-color: #fff;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .cal-header {
+    background-color: #4a5568;
+    color: #fff;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+  }
+
+  .cal-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    font-size: 13px;
+    flex: 1;
+  }
+
+  .cal-table th {
+    padding: 6px 0;
+    background-color: #f7fafc;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .cal-table th:first-child { color: #e53e3e; }
+  .cal-table th:last-child { color: #3182ce; }
+  .cal-table td { padding: 6px 0; border: 1px solid #edf2f7; cursor: pointer; }
+
+  .day-circle {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    line-height: 22px;
+    border-radius: 50%;
+  }
+
+  .studied { border: 2px solid #e53e3e; color: #e53e3e; font-weight: bold; }
+  .today { background-color: #3182ce; color: #fff; font-weight: bold; }
+  .other-month { color: #cbd5e0; }
+  .right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .info-row {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 10px;
+    height: 115px;
+  }
+
+  .panel-box {
+    background-color: #fff;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .panel-title {
+    background-color: #2d3748;
+    color: #fff;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 5px 10px;
+  }
+
+  .panel-content {
+    padding: 8px 10px;
+    font-size: 12px;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .info-list { list-style: none; }
+  .info-list li { padding: 3px 0; border-bottom: 1px dashed #cbd5e0; }
+  .info-list a { color: #2b6cb0; text-decoration: none; }
+  .info-list a:hover { text-decoration: underline; }
+
+  .tiles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 10px;
+    flex: 1;
+  }
+
+  .tile {
+    border-radius: 6px;
+    color: #fff;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.18);
+    transition: transform 0.1s, filter 0.1s;
+    min-height: 105px;
+  }
+
+  .tile:hover { transform: translateY(-2px); filter: brightness(1.06); }
+  .tile-icon { font-size: 38px; text-align: center; margin: auto 0; }
+  .tile-label { font-size: 13px; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+
+  .tile-orange { background-color: #f6ad55; }
+  .tile-blue   { background-color: #0096c7; }
+  .tile-purple { background-color: #9b5de5; }
+  .tile-green  { background-color: #52b788; }
+  .tile-red    { background-color: #d62828; }
+  .tile-sky    { background-color: #4895ef; }
+  .tile-pink   { background-color: #f15bb5; }
+  .tile-crimson{ background-color: #e63946; }
+  .tile-yellow { background-color: #f9c74f; }
+
+  @media (max-width: 820px) {
+    .main-grid { grid-template-columns: 1fr; }
+    .info-row { grid-template-columns: 1fr; height: auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="tablet-frame">
+  <div class="screen">
+    <header class="top-bar">
+      <div class="logo">STUDY PORTAL</div>
+      <div class="date-schedule">
+        <span class="date-badge" id="currentDate">11月14日（土）</span>
+        <span>予定開始時刻 予定なし</span>
+        <span>あと <span class="timer-box" id="timerDisplay">00:00</span></span>
+        <button class="btn-start" onclick="toggleStudy()">学習開始</button>
+      </div>
+      <div class="status-area">
+        <span>☁️ オンライン</span>
+        <button class="status-btn btn-info" onclick="alert('システムは正常に稼働しています')">i</button>
+        <button class="status-btn btn-update" onclick="alert('最新の教材データに更新しました')">更新</button>
+        <button class="status-btn btn-exit" onclick="alert('学習ポータルを終了します')">終了</button>
+      </div>
+    </header>
+
+    <main class="main-grid">
+      <div class="left-col">
+        <section class="profile-card">
+          <div class="profile-header">
+            <div>
+              <div class="student-name">山田 太郎</div>
+              <div class="student-id">ID: 25010283</div>
+            </div>
+            <div style="text-align: right; font-size: 11px;">
+              <div>第1志望校合格コース</div>
+              <div>SP-107165</div>
+            </div>
+          </div>
+          <div class="profile-body">
+            <div class="study-stats">
+              <div class="stat-item">
+                <div>今月の合計学習時間</div>
+                <div class="stat-value">32時間0分</div>
+              </div>
+              <div class="stat-item">
+                <div>今週の累計学習時間</div>
+                <div class="stat-value">5時間50分</div>
+              </div>
+              <div class="stat-item">
+                <div>連続学習日数</div>
+                <div class="stat-value">7日</div>
+              </div>
+            </div>
+            <div class="avatar-box">
+              <span style="font-size: 46px;">🧑‍🎓</span>
+              <span>アバター</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="calendar-card">
+          <div class="cal-header">
+            <span>«</span><span>11月</span><span>» 今月</span>
+          </div>
+          <table class="cal-table" id="calTable">
+            <thead>
+              <tr><th>日</th><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th><th>土</th></tr>
+            </thead>
+            <tbody id="calBody"></tbody>
+          </table>
+        </section>
+      </div>
+
+      <div class="right-col">
+        <div class="info-row">
+          <section class="panel-box">
+            <div class="panel-title">本日の予定</div>
+            <div class="panel-content" style="color: #718096;">
+              ・17:00 数学 要点解説動画（二次関数）<br>
+              ・19:30 英単語トレーニング 20問
+            </div>
+          </section>
+
+          <section class="panel-box">
+            <div class="panel-title">インフォメーション</div>
+            <div class="panel-content">
+              <ul class="info-list">
+                <li><a href="#" onclick="openApp('実力考査 結果閲覧サイト')">第3回全国実力考査 結果閲覧サイト</a></li>
+                <li><a href="#" onclick="openApp('定期テスト模試 範囲閲覧サイト')">定期テスト模試 範囲閲覧サイト</a></li>
+                <li><a href="#" onclick="openApp('生徒規則について')">学習の心得・タブレット利用規則について</a></li>
+                <li><a href="#" onclick="openApp('第1回・第2回実力考査結果')">第1回・第2回全国実力考査 結果閲覧サイト</a></li>
+              </ul>
+            </div>
+          </section>
+        </div>
+
+        <section class="tiles-grid">
+          <div class="tile tile-orange" onclick="openApp('スケジュール')">
+            <div class="tile-icon">📅</div><div class="tile-label">スケジュール</div>
+          </div>
+          <div class="tile tile-blue" onclick="openApp('解説カメラ')">
+            <div class="tile-icon">📷</div><div class="tile-label">解説カメラ</div>
+          </div>
+          <div class="tile tile-purple" onclick="openApp('成績登録')">
+            <div class="tile-icon">📊</div><div class="tile-label">成績登録</div>
+          </div>
+          <div class="tile tile-green" onclick="openApp('学習支援ツール')">
+            <div class="tile-icon">✏️</div><div class="tile-label">学習支援ツール</div>
+          </div>
+          <div class="tile tile-red" onclick="openApp('英検対策映像授業')">
+            <div class="tile-icon">🅰️</div><div class="tile-label">英検対策映像授業</div>
+          </div>
+          <div class="tile tile-sky" onclick="openApp('ファイルBOX')">
+            <div class="tile-icon">📁</div><div class="tile-label">ファイルBOX</div>
+          </div>
+          <div class="tile tile-pink" onclick="openApp('要点解説動画')">
+            <div class="tile-icon">🎬</div><div class="tile-label">要点解説動画</div>
+          </div>
+          <div class="tile tile-crimson" onclick="openApp('暗記トレーニング')">
+            <div class="tile-icon">🎧</div><div class="tile-label">暗記トレーニング</div>
+          </div>
+          <div class="tile tile-yellow" onclick="openApp('学習ゲーム')">
+            <div class="tile-icon">🎮</div><div class="tile-label">学習ゲーム</div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+  const studiedDays =;
+  const calBody = document.getElementById('calBody');
+  let day = 1;
+  for (let row = 0; row < 5; row++) {
+    const tr = document.createElement('tr');
+    for (let col = 0; col < 7; col++) {
+      const td = document.createElement('td');
+      if (day <= 30) {
+        const span = document.createElement('span');
+        span.className = 'day-circle';
+        span.textContent = day;
+        if (studiedDays.includes(day)) span.classList.add('studied');
+        if (day === 14) span.classList.add('today');
+        td.appendChild(span);
+        day++;
+      } else {
+        td.className = 'other-month';
+        td.textContent = day - 30;
+        day++;
+      }
+      tr.appendChild(td);
+    }
+    calBody.appendChild(tr);
+  }
+
+  let timerInterval = null;
+  let seconds = 0;
+  function toggleStudy() {
+    const btn = document.querySelector('.btn-start');
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      btn.textContent = '学習開始';
+      btn.style.backgroundColor = '#e63946';
+    } else {
+      btn.textContent = '学習中（停止）';
+      btn.style.backgroundColor = '#2b9348';
+      timerInterval = setInterval(() => {
+        seconds++;
+        const mins = String(Math.floor(seconds / 60)).padStart(2, '0');
+        const secs = String(seconds % 60).padStart(2, '0');
+        document.getElementById('timerDisplay').textContent = `${mins}:${secs}`;
+      }, 1000);
+    }
+  }
+
+  function openApp(appName) {
+    alert(`「${appName}」の画面を開きます。`);
+  }
+</script>
+</body>
+</html>
