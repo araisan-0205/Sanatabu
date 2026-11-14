@@ -28,90 +28,74 @@
     overflow: hidden;
   }
 
-  /* 1. 青色背景のヘッダーバー */
+  /* ==========================================================================
+     1. 上部ヘッダーバー（背景画像: header_bg.png）
+     ========================================================================== */
   .top-bar {
-    height: 50px;
-    background: linear-gradient(to bottom, #2b6cb0 0%, #1e4e8c 55%, #163b6b 100%);
-    padding: 0 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid #102a4c;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    position: relative;
+    width: 100%;
+    height: 54px;
+    background-image: url('header_bg.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
     flex-shrink: 0;
   }
 
-  .logo-wrap {
+  /* header_bg.png の中央の白い枠エリアに日付と学習開始ボタンを配置 */
+  .header-white-slot {
+    position: absolute;
+    left: 21.8%;
+    width: 49.6%;
+    top: 16%;
+    height: 68%;
     display: flex;
     align-items: center;
-    height: 34px;
-  }
-
-  .logo-wrap img {
-    height: 100%;
-    width: auto;
-    object-fit: contain;
-    display: block;
-  }
-
-  .logo {
-    font-size: 26px;
-    font-weight: 900;
-    font-style: italic;
-    color: #ffffff;
-    letter-spacing: 2px;
-  }
-
-  .date-schedule {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    justify-content: space-between;
+    padding: 0 12px;
     font-size: 13px;
     font-weight: bold;
-    color: #ffffff;
+    color: #222222;
   }
 
-  .date-badge { font-size: 18px; color: #ffffff; }
+  .date-badge {
+    font-size: 18px;
+    color: #111111;
+  }
 
   .timer-box {
-    background-color: #0f172a;
+    background-color: #2d3748;
     color: #ffffff;
     padding: 2px 8px;
     border-radius: 3px;
     font-family: monospace;
     font-size: 14px;
-    border: 1px solid rgba(255,255,255,0.25);
   }
 
   .btn-start {
     background: linear-gradient(to bottom, #ef4444, #dc2626);
     color: #fff;
     border: 1px solid #991b1b;
-    padding: 5px 14px;
+    padding: 4px 14px;
     border-radius: 4px;
     font-weight: bold;
-    font-size: 13px;
+    font-size: 12px;
     cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.25);
   }
   .btn-start.active {
     background: linear-gradient(to bottom, #22c55e, #16a34a);
     border-color: #166534;
   }
 
-  .status-area {
+  /* header_bg.png の右側の青い余白に「更新」と「×」ボタンを配置 */
+  .header-right-btns {
+    position: absolute;
+    right: 1.5%;
+    top: 50%;
+    transform: translateY(-50%);
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 12px;
-    font-weight: bold;
-    color: #ffffff;
-  }
-
-  .online-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
   }
 
   .img-icon-btn {
@@ -119,33 +103,22 @@
     background: transparent;
     padding: 0;
     cursor: pointer;
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
   }
   .img-icon-btn:active { transform: scale(0.95); }
   .img-icon-btn img { width: 100%; height: 100%; object-fit: contain; display: block; }
-
-  .status-btn {
-    padding: 5px 10px;
-    border: none;
-    border-radius: 4px;
-    color: #fff;
-    font-weight: bold;
-    font-size: 12px;
-    cursor: pointer;
-  }
-  .btn-info { background-color: #4caf50; border-radius: 50%; width: 30px; height: 30px; padding: 0; font-family: serif; font-style: italic; font-size: 15px; }
-  .btn-update { background-color: #3b82f6; }
-  .btn-exit { background-color: #c25921; }
-  /* 2. メインエリア */
+  /* ==========================================================================
+     2. メインエリア（左カラム：profile_bg.png & cal_bg.png）
+     ========================================================================== */
   .main-grid {
     flex: 1;
     min-height: 0;
     display: grid;
-    grid-template-columns: 300px 1fr;
+    grid-template-columns: 310px 1fr;
     gap: 10px;
     padding: 8px 12px;
     overflow: hidden;
@@ -159,80 +132,74 @@
     min-height: 0;
   }
 
-  /* 学習時間を省いたシンプルプロフィールカード */
+  /* 生徒プロフィールカード（背景画像: profile_bg.png） */
   .profile-card {
-    background-color: #8c7d70;
-    color: #fff;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1000 / 610;
+    background-image: url('profile_bg.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
     border-radius: 4px;
     overflow: hidden;
     box-shadow: 0 2px 4px rgba(0,0,0,0.15);
     flex-shrink: 0;
   }
 
-  .profile-header {
-    background-color: #7a6b5e;
-    padding: 8px 12px;
+  /* profile_bg.png の左下の濃紺枠内に校舎情報を配置 */
+  .profile-dark-slot {
+    position: absolute;
+    left: 6.5%;
+    top: 32%;
+    width: 48.5%;
+    height: 61%;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .student-name { font-size: 19px; font-weight: bold; }
-  .student-id { font-size: 12px; opacity: 0.95; }
-  .school-info { text-align: right; font-size: 11px; line-height: 1.3; }
-
-  .profile-body {
-    display: flex;
-    padding: 10px 12px;
-    background-color: #9e8f82;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-  }
-
-  .profile-note {
-    flex: 1;
-    font-size: 13px;
-    font-weight: bold;
-    line-height: 1.5;
-    color: #fff;
-  }
-
-  .avatar-box {
-    width: 80px;
-    height: 104px;
-    background-color: #f1f5f9;
-    border-radius: 3px;
-    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    border: 2px solid #fff;
-    color: #475569;
-    font-size: 11px;
-    flex-shrink: 0;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 1.6;
   }
 
-  /* マス目が正方形になるシンプルカレンダーカード */
+  /* カレンダーカード（背景画像: cal_bg.png） */
   .calendar-card {
-    background-color: #fff;
+    position: relative;
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    background-image: url('cal_bg.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
     border-radius: 4px;
     overflow: hidden;
     box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-    flex-shrink: 0;
     display: flex;
     flex-direction: column;
   }
 
-  .cal-header {
-    background-color: #4a5568;
-    color: #fff;
-    padding: 7px 12px;
+  /* cal_bg.png の上部グレー帯に「11月」を表示 */
+  .cal-month-title {
+    height: 13.5%;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: center;
+    color: #ffffff;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 15px;
     flex-shrink: 0;
+  }
+
+  /* cal_bg.png の下の白い枠内に正方形マスのカレンダーを配置 */
+  .cal-table-wrap {
+    flex: 1;
+    min-height: 0;
+    padding: 4px 10px 10px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .cal-table {
@@ -244,7 +211,7 @@
   }
 
   .cal-table th {
-    padding: 6px 0;
+    padding: 4px 0;
     background-color: #f8fafc;
     border-bottom: 1px solid #e2e8f0;
   }
@@ -252,7 +219,7 @@
   .cal-table th:last-child { color: #3182ce; }
   .cal-table td {
     border: 1px solid #f1f5f9;
-    height: 41px;
+    height: 36px;
     vertical-align: middle;
   }
 
@@ -266,7 +233,9 @@
 
   .today { background-color: #3182ce; color: #fff; font-weight: bold; }
   .other-month { color: #cbd5e1; }
-  /* 3. 右カラム（予定・インフォメーション・ボタンエリア） */
+  /* ==========================================================================
+     3. 右カラム（info_bg.png & 2つの機能ボタンエリア）
+     ========================================================================== */
   .right-col {
     display: flex;
     flex-direction: column;
@@ -275,40 +244,47 @@
     min-height: 0;
   }
 
-  .info-row {
-    display: grid;
-    grid-template-columns: 1fr 1.35fr;
-    gap: 8px;
-    height: 98px;
-    flex-shrink: 0;
-  }
-
-  .panel-box {
-    background-color: #fff;
+  /* 本日の予定＆インフォメーション枠（背景画像: info_bg.png） */
+  .info-panel-wrap {
+    position: relative;
+    width: 100%;
+    height: 112px;
+    background-image: url('info_bg.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
     border-radius: 4px;
     overflow: hidden;
     box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-    display: flex;
-    flex-direction: column;
+    flex-shrink: 0;
   }
 
-  .panel-title {
-    background-color: #374151;
-    color: #fff;
+  /* info_bg.png の左側白い枠（本日の予定） */
+  .info-left-content {
+    position: absolute;
+    left: 1.5%;
+    top: 29%;
+    width: 46%;
+    height: 65%;
+    padding: 4px 8px;
     font-size: 12px;
-    font-weight: bold;
-    padding: 4px 10px;
+    color: #666666;
+    overflow-y: auto;
   }
 
-  .panel-content {
-    padding: 5px 10px;
+  /* info_bg.png の右側白い枠（インフォメーション） */
+  .info-right-content {
+    position: absolute;
+    left: 50%;
+    top: 29%;
+    width: 48.5%;
+    height: 65%;
+    padding: 4px 8px;
     font-size: 12px;
     overflow-y: auto;
-    flex: 1;
   }
 
   .info-list { list-style: none; }
-  .info-list li { padding: 2px 0; border-bottom: 1px dashed #cbd5e1; }
+  .info-list li { padding: 3px 0; border-bottom: 1px dashed #cbd5e1; }
   .info-list li:last-child { border-bottom: none; }
   .info-list a { color: #2563eb; text-decoration: none; }
 
@@ -380,85 +356,64 @@
 </div>
 
 <div class="app-container">
+  <!-- 上部ヘッダー（header_bg.png の上に要素を配置） -->
   <header class="top-bar">
-    <div class="logo-wrap">
-      <img src="logo.png" alt="SANARU" onerror="this.outerHTML='<div class=logo>SANARU</div>'">
-    </div>
-    <div class="date-schedule">
+    <div class="header-white-slot">
       <span class="date-badge">11月14日（土）</span>
       <span>予定開始時刻 予定なし</span>
       <span>あと <span class="timer-box" id="timerDisplay">-:-</span></span>
       <button class="btn-start" id="studyStartBtn" onclick="toggleStudy()">学習開始</button>
     </div>
-    <div class="status-area">
-      <span class="online-badge">
-        <img src="cloud_dl.png" alt="☁️" style="width: 24px; height: 24px; object-fit: contain;">
-        <img src="online_text.png" alt="オンライン（一般）" style="width: auto; height: 20px; object-fit: contain;">
-      </span>
-      <button class="img-icon-btn" style="width: 32px; height: 32px;" onclick="alert('SANARU 学習ポータル')">
-        <img src="info.png" alt="i" onerror="this.outerHTML='<span class=\'status-btn btn-info\' style=\'display:inline-flex;align-items:center;justify-content:center;\'>i</span>'">
-      </button>
+
+    <div class="header-right-btns">
       <button class="img-icon-btn" onclick="runUpdate()">
-        <img src="update.png" alt="更新" onerror="this.outerHTML='<span class=\'status-btn btn-update\'>更新</span>'">
+        <img src="update.png" alt="更新">
       </button>
       <button class="img-icon-btn" onclick="closeTab()">
-        <img src="btnClose.png" alt="終了" onerror="this.outerHTML='<span class=\'status-btn btn-exit\'>終了</span>'">
+        <img src="btnClose.png" alt="終了">
       </button>
     </div>
   </header>
   <main class="main-grid">
+    <!-- 左カラム：profile_bg.png & cal_bg.png -->
     <div class="left-col">
       <section class="profile-card">
-        <div class="profile-header">
-          <div>
-            <div class="student-name">安井 新</div>
-            <div class="student-id">25010283</div>
-          </div>
-          <div class="school-info">
-            <div>佐鳴予備校</div>
-            <div>SP-107165</div>
-          </div>
-        </div>
-        <div class="profile-body">
-          <div class="profile-note">
-            <div>長久手本部校</div>
-            <div style="font-size: 12px; opacity: 0.9; margin-top: 4px;">中学1年生</div>
-          </div>
-          <div class="avatar-box"><span>アバター</span></div>
+        <div class="profile-dark-slot">
+          <div>長久手本部校</div>
+          <div style="font-size: 12px; opacity: 0.9; margin-top: 2px;">中学1年生</div>
         </div>
       </section>
 
       <section class="calendar-card">
-        <div class="cal-header"><span>«</span><span>11月</span><span>» 今日</span></div>
-        <table class="cal-table">
-          <thead><tr><th>日</th><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th><th>土</th></tr></thead>
-          <tbody>
-            <tr><td><span class="day-circle">1</span></td><td><span class="day-circle">2</span></td><td><span class="day-circle">3</span></td><td><span class="day-circle">4</span></td><td><span class="day-circle">5</span></td><td><span class="day-circle">6</span></td><td><span class="day-circle">7</span></td></tr>
-            <tr><td><span class="day-circle">8</span></td><td><span class="day-circle">9</span></td><td><span class="day-circle">10</span></td><td><span class="day-circle">11</span></td><td><span class="day-circle">12</span></td><td><span class="day-circle">13</span></td><td><span class="day-circle today">14</span></td></tr>
-            <tr><td><span class="day-circle">15</span></td><td><span class="day-circle">16</span></td><td><span class="day-circle">17</span></td><td><span class="day-circle">18</span></td><td><span class="day-circle">19</span></td><td><span class="day-circle">20</span></td><td><span class="day-circle">21</span></td></tr>
-            <tr><td><span class="day-circle">22</span></td><td><span class="day-circle">23</span></td><td><span class="day-circle">24</span></td><td><span class="day-circle">25</span></td><td><span class="day-circle">26</span></td><td><span class="day-circle">27</span></td><td><span class="day-circle">28</span></td></tr>
-            <tr><td><span class="day-circle">29</span></td><td><span class="day-circle">30</span></td><td class="other-month">1</td><td class="other-month">2</td><td class="other-month">3</td><td class="other-month">4</td><td class="other-month">5</td></tr>
-          </tbody>
-        </table>
+        <div class="cal-month-title">11月</div>
+        <div class="cal-table-wrap">
+          <table class="cal-table">
+            <thead><tr><th>日</th><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th><th>土</th></tr></thead>
+            <tbody>
+              <tr><td><span class="day-circle">1</span></td><td><span class="day-circle">2</span></td><td><span class="day-circle">3</span></td><td><span class="day-circle">4</span></td><td><span class="day-circle">5</span></td><td><span class="day-circle">6</span></td><td><span class="day-circle">7</span></td></tr>
+              <tr><td><span class="day-circle">8</span></td><td><span class="day-circle">9</span></td><td><span class="day-circle">10</span></td><td><span class="day-circle">11</span></td><td><span class="day-circle">12</span></td><td><span class="day-circle">13</span></td><td><span class="day-circle today">14</span></td></tr>
+              <tr><td><span class="day-circle">15</span></td><td><span class="day-circle">16</span></td><td><span class="day-circle">17</span></td><td><span class="day-circle">18</span></td><td><span class="day-circle">19</span></td><td><span class="day-circle">20</span></td><td><span class="day-circle">21</span></td></tr>
+              <tr><td><span class="day-circle">22</span></td><td><span class="day-circle">23</span></td><td><span class="day-circle">24</span></td><td><span class="day-circle">25</span></td><td><span class="day-circle">26</span></td><td><span class="day-circle">27</span></td><td><span class="day-circle">28</span></td></tr>
+              <tr><td><span class="day-circle">29</span></td><td><span class="day-circle">30</span></td><td class="other-month">1</td><td class="other-month">2</td><td class="other-month">3</td><td class="other-month">4</td><td class="other-month">5</td></tr>
+            </tbody>
+          </table>
+        </div>
       </section>
     </div>
 
+    <!-- 右カラム：info_bg.png & 2ボタン -->
     <div class="right-col">
-      <div class="info-row">
-        <section class="panel-box">
-          <div class="panel-title">本日の予定</div>
-          <div class="panel-content" style="color: #666;">本日の予定はありません。</div>
-        </section>
-        <section class="panel-box">
-          <div class="panel-title">インフォメーション</div>
-          <div class="panel-content">
-            <ul class="info-list">
-              <li><a href="https://github.io" target="_blank" rel="noopener noreferrer">定期テスト模試 範囲閲覧サイト</a></li>
-              <li><a href="https://sanaru-net.com" target="_blank" rel="noopener noreferrer">さなる生の心得・生徒規則について</a></li>
-            </ul>
-          </div>
-        </section>
-      </div>
+      <section class="info-panel-wrap">
+        <div class="info-left-content">
+          本日の予定はありません。
+        </div>
+        <div class="info-right-content">
+          <ul class="info-list">
+            <li><a href="https://github.io" target="_blank" rel="noopener noreferrer">定期テスト模試 範囲閲覧サイト</a></li>
+            <li><a href="https://sanaru-net.com" target="_blank" rel="noopener noreferrer">さなる生の心得・生徒規則について</a></li>
+          </ul>
+        </div>
+      </section>
 
       <!-- 成績登録とファイルBOXの2つだけ配置 -->
       <section class="tiles-grid">
@@ -487,7 +442,6 @@
   const FILEBOX_URL = "https://" + "araisan-0205.github.io/Filebox/";
   const GRADE_ENTRY_URL = "https://" + "araisan-0205.github.io/Grade/";
 
-  // 共通のローディング付きページ移動（150pxの loading.gif を1秒表示）
   function moveWithLoading(targetUrl) {
     const loader = document.getElementById('loadingOverlay');
     loader.style.display = 'flex';
@@ -497,17 +451,14 @@
     }, 1000);
   }
 
-  // ファイルBOXを押したとき
   function openFilebox() {
     moveWithLoading(FILEBOX_URL);
   }
 
-  // 成績登録を押したとき
   function openGradeEntry() {
     moveWithLoading(GRADE_ENTRY_URL);
   }
 
-  // 更新ボタンを押したとき：loading.gif を1秒表示
   function runUpdate() {
     const loader = document.getElementById('loadingOverlay');
     loader.style.display = 'flex';
@@ -516,7 +467,6 @@
     }, 1000);
   }
 
-  // ばつ（閉じる）ボタンを押したとき：タブを閉じる
   function closeTab() {
     window.open('', '_self', '');
     window.close();
