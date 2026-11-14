@@ -1,564 +1,398 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SANARU 学習ポータルシステム</title>
-  <style>
-    /* ==========================================================================
-       基本リセット・全体レイアウト設定
-       ========================================================================== */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SANARU</title>
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Meiryo", "Hiragino Kaku Gothic ProN", sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
 
-    html, body {
-      width: 100%;
-      height: 100%;
-      background-color: #cfd8e3;
-      color: #333333;
-      overflow-x: hidden;
-    }
+  html, body {
+    width: 100%;
+    height: 100%;
+    background-color: #d5dde6;
+    overflow: hidden;
+  }
 
-    .app-container {
-      width: 100%;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      background: linear-gradient(180deg, #d8e1ec 0%, #c5d1e0 100%);
-    }
+  .app-container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
 
-    /* ==========================================================================
-       上部ステータス・ヘッダーバー
-       ========================================================================== */
-    .top-bar {
-      background: linear-gradient(to bottom, #ffffff 0%, #eef2f7 50%, #dce4ee 100%);
-      padding: 10px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 2px solid #94a3b8;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-      flex-wrap: wrap;
-      gap: 12px;
-      z-index: 10;
-    }
+  /* 1. 本家仕様の1行スリムヘッダー */
+  .top-bar {
+    height: 52px;
+    background: linear-gradient(to bottom, #ffffff 0%, #eef2f6 60%, #dce3ec 100%);
+    padding: 0 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #9aa8b8;
+    flex-shrink: 0;
+  }
 
-    .logo-area {
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
-    }
+  .logo {
+    font-size: 28px;
+    font-weight: 900;
+    font-style: italic;
+    color: #4678b2;
+    letter-spacing: 2px;
+  }
 
-    .logo {
-      font-size: 30px;
-      font-weight: 900;
-      font-style: italic;
-      color: #2b5b94;
-      letter-spacing: 2px;
-      text-shadow: 1px 1px 0px #ffffff;
-    }
+  .date-schedule {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+  }
 
-    .logo-sub {
-      font-size: 11px;
-      font-weight: bold;
-      color: #64748b;
-    }
+  .date-badge { font-size: 19px; color: #222; }
 
-    .date-schedule {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      font-size: 15px;
-      font-weight: bold;
-      color: #1e293b;
-      background-color: rgba(255, 255, 255, 0.7);
-      padding: 6px 16px;
-      border-radius: 8px;
-      border: 1px solid #cbd5e1;
-    }
+  .timer-box {
+    background-color: #2d3748;
+    color: #fff;
+    padding: 2px 10px;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 15px;
+  }
 
-    .date-badge {
-      font-size: 20px;
-      color: #0f172a;
-    }
+  .btn-start {
+    background: linear-gradient(to bottom, #ef4444, #dc2626);
+    color: #fff;
+    border: 1px solid #b91c1c;
+    padding: 5px 16px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .btn-start.active {
+    background: linear-gradient(to bottom, #22c55e, #16a34a);
+    border-color: #15803d;
+  }
 
-    .schedule-time-label {
-      color: #475569;
-      font-size: 14px;
-    }
+  .status-area {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #333;
+  }
 
-    .timer-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
+  .status-btn {
+    padding: 5px 11px;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    font-weight: bold;
+    font-size: 12px;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  }
+  .btn-info {
+    background-color: #4caf50;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    font-family: serif;
+    font-style: italic;
+  }
+  .btn-update { background-color: #3b82f6; }
+  .btn-exit { background-color: #c25921; }
+  /* 2. メインエリア（1画面ぴったり収まる構成） */
+  .main-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 310px 1fr;
+    gap: 12px;
+    padding: 10px 14px;
+    overflow: hidden;
+  }
 
-    .timer-box {
-      background-color: #1e293b;
-      color: #f8fafc;
-      padding: 4px 14px;
-      border-radius: 5px;
-      font-family: "Courier New", Consolas, monospace;
-      font-size: 17px;
-      letter-spacing: 1px;
-      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
-    }
+  .left-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 100%;
+  }
 
-    .btn-start {
-      background: linear-gradient(to bottom, #ef4444, #dc2626);
-      color: #ffffff;
-      border: 1px solid #b91c1c;
-      padding: 8px 20px;
-      border-radius: 6px;
-      font-weight: bold;
-      font-size: 14px;
-      cursor: pointer;
-      box-shadow: 0 2px 4px rgba(220, 38, 38, 0.3);
-      transition: all 0.15s ease;
-    }
+  .profile-card {
+    background-color: #8c7d70;
+    color: #fff;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    flex-shrink: 0;
+  }
 
-    .btn-start:hover {
-      background: linear-gradient(to bottom, #dc2626, #b91c1c);
-      transform: translateY(-1px);
-    }
+  .profile-header {
+    background-color: #7a6b5e;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
-    .btn-start.active {
-      background: linear-gradient(to bottom, #16a34a, #15803d);
-      border-color: #166534;
-      box-shadow: 0 2px 4px rgba(22, 163, 74, 0.3);
-    }
+  .student-name { font-size: 19px; font-weight: bold; }
+  .student-id { font-size: 11px; opacity: 0.9; }
+  .school-info { text-align: right; font-size: 11px; line-height: 1.3; }
 
-    .status-area {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 13px;
-      font-weight: bold;
-    }
+  .profile-body {
+    display: flex;
+    padding: 10px;
+    background-color: #9e8f82;
+    gap: 10px;
+  }
 
-    .network-badge {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      background-color: #f1f5f9;
-      padding: 5px 12px;
-      border-radius: 20px;
-      border: 1px solid #cbd5e1;
-      color: #334155;
-    }
+  .study-stats {
+    flex: 1;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    text-align: center;
+  }
 
-    .status-btn {
-      padding: 7px 14px;
-      border: none;
-      border-radius: 5px;
-      color: #ffffff;
-      font-weight: bold;
-      font-size: 13px;
-      cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-      transition: opacity 0.15s ease;
-    }
+  .stat-item {
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+    padding-bottom: 4px;
+  }
+  .stat-item:last-child { border-bottom: none; }
+  .stat-value { font-size: 15px; font-weight: bold; margin-top: 1px; }
 
-    .status-btn:hover {
-      opacity: 0.9;
-    }
+  .avatar-box {
+    width: 88px;
+    height: 118px;
+    background-color: #f1f5f9;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #fff;
+    color: #475569;
+    font-size: 11px;
+  }
 
-    .btn-info {
-      background: linear-gradient(to bottom, #22c55e, #16a34a);
-      border-radius: 50%;
-      width: 30px;
-      height: 30px;
-      padding: 0;
-      font-family: Georgia, serif;
-      font-style: italic;
-      font-size: 15px;
-    }
+  .calendar-card {
+    background-color: #fff;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
 
-    .btn-update {
-      background: linear-gradient(to bottom, #3b82f6, #2563eb);
-    }
+  .cal-header {
+    background-color: #4a5568;
+    color: #fff;
+    padding: 7px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    font-size: 14px;
+  }
 
-    .btn-exit {
-      background: linear-gradient(to bottom, #ea580c, #c2410c);
-    }
+  .cal-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    font-size: 13px;
+    flex: 1;
+  }
 
-    /* ==========================================================================
-       メイン2カラムグリッド構成
-       ========================================================================== */
-    .main-grid {
-      flex: 1;
-      display: grid;
-      grid-template-columns: 340px 1fr;
-      gap: 16px;
-      padding: 16px;
-      max-width: 1600px;
-      width: 100%;
-      margin: 0 auto;
-    }
+  .cal-table th {
+    padding: 5px 0;
+    background-color: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .cal-table th:first-child { color: #e53e3e; }
+  .cal-table th:last-child { color: #3182ce; }
+  .cal-table td { border: 1px solid #f1f5f9; }
 
-    .left-col {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
+  .day-circle {
+    display: inline-block;
+    width: 26px;
+    height: 26px;
+    line-height: 26px;
+    border-radius: 50%;
+  }
 
-    /* ==========================================================================
-       生徒プロフィール＆学習記録カード
-       ========================================================================== */
-    .profile-card {
-      background-color: #6b7280;
-      color: #ffffff;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
-      border: 1px solid #78716c;
-    }
+  .studied {
+    background-image: url('maru.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    color: #c53030;
+    font-weight: bold;
+  }
 
-    .profile-header {
-      background: linear-gradient(to right, #7c6a58, #968370);
-      padding: 12px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    }
+  .today { background-color: #3182ce; color: #fff; font-weight: bold; }
+  .other-month { color: #cbd5e1; }
+  /* 3. 右カラム（予定・インフォメーション・9つボタン） */
+  .right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 100%;
+  }
 
-    .student-name {
-      font-size: 21px;
-      font-weight: bold;
-      letter-spacing: 1px;
-    }
+  .info-row {
+    display: grid;
+    grid-template-columns: 1fr 1.35fr;
+    gap: 10px;
+    height: 112px;
+    flex-shrink: 0;
+  }
 
-    .student-id {
-      font-size: 12px;
-      opacity: 0.9;
-      margin-top: 2px;
-    }
+  .panel-box {
+    background-color: #fff;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+  }
 
-    .school-info {
-      text-align: right;
-      font-size: 12px;
-      line-height: 1.4;
-    }
+  .panel-title {
+    background-color: #374151;
+    color: #fff;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 5px 12px;
+  }
 
-    .profile-body {
-      display: flex;
-      padding: 14px;
-      background-color: #a49689;
-      gap: 14px;
-    }
+  .panel-content {
+    padding: 6px 12px;
+    font-size: 12px;
+    overflow-y: auto;
+    flex: 1;
+  }
 
-    .study-stats {
-      flex: 1;
-      font-size: 13px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      text-align: center;
-    }
+  .info-list { list-style: none; }
+  .info-list li { padding: 3px 0; border-bottom: 1px dashed #cbd5e1; }
+  .info-list li:last-child { border-bottom: none; }
+  .info-list a { color: #2563eb; text-decoration: none; }
 
-    .stat-item {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.35);
-      padding-bottom: 6px;
-      margin-bottom: 6px;
-    }
+  .tiles-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 10px;
+    padding: 10px;
+    border-radius: 6px;
+    background-color: #001f5c;
+    background-image: url('btn00.png');
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
 
-    .stat-item:last-child {
-      border-bottom: none;
-      padding-bottom: 0;
-      margin-bottom: 0;
-    }
+  .tile-btn {
+    border: none;
+    background-color: transparent;
+    background-image: url('btn00.png');
+    background-size: cover;
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    padding: 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
 
-    .stat-label {
-      font-size: 12px;
-      color: #f5f5f4;
-    }
+  .tile-btn:active { transform: scale(0.98); }
 
-    .stat-value {
-      font-size: 17px;
-      font-weight: bold;
-      margin-top: 2px;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.25);
-    }
+  .tile-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    display: block;
+    pointer-events: none;
+  }
 
-    .avatar-box {
-      width: 100px;
-      height: 136px;
-      background-color: #f1f5f9;
-      border-radius: 6px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      border: 2px solid #ffffff;
-      color: #475569;
-      font-size: 12px;
-      font-weight: bold;
-      box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.1);
-    }
-    /* ==========================================================================
-       月間学習カレンダーカード
-       ========================================================================== */
-    .calendar-card {
-      background-color: #ffffff;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      border: 1px solid #cbd5e1;
-    }
+  /* 4. loading.gif オーバーレイ画面 */
+  .loading-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
 
-    .cal-header {
-      background: linear-gradient(to bottom, #475569, #334155);
-      color: #ffffff;
-      padding: 10px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: bold;
-      font-size: 16px;
-    }
+  .loading-box {
+    background-color: #ffffff;
+    padding: 24px 36px;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    font-weight: bold;
+    color: #333;
+    font-size: 14px;
+  }
 
-    .cal-nav-btn {
-      cursor: pointer;
-      padding: 2px 8px;
-      border-radius: 4px;
-      transition: background 0.15s;
-    }
-
-    .cal-nav-btn:hover {
-      background-color: rgba(255, 255, 255, 0.15);
-    }
-
-    .cal-table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: center;
-      font-size: 14px;
-      flex: 1;
-    }
-
-    .cal-table th {
-      padding: 9px 0;
-      background-color: #f8fafc;
-      border-bottom: 1px solid #e2e8f0;
-      font-weight: bold;
-    }
-
-    .cal-table th:first-child { color: #dc2626; }
-    .cal-table th:last-child { color: #2563eb; }
-
-    .cal-table td {
-      padding: 4px 0;
-      border: 1px solid #f1f5f9;
-      vertical-align: middle;
-    }
-
-    .day-circle {
-      display: inline-block;
-      width: 30px;
-      height: 30px;
-      line-height: 30px;
-      border-radius: 50%;
-      font-size: 14px;
-    }
-
-    .studied {
-      background-image: url('maru.png');
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      color: #b91c1c;
-      font-weight: bold;
-    }
-
-    .today {
-      background-color: #2563eb;
-      color: #ffffff;
-      font-weight: bold;
-      box-shadow: 0 2px 4px rgba(37, 99, 235, 0.4);
-    }
-
-    .other-month {
-      color: #cbd5e1;
-    }
-
-    /* ==========================================================================
-       右カラム（予定・インフォメーション・9色アプリタイル）
-       ========================================================================== */
-    .right-col {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .info-row {
-      display: grid;
-      grid-template-columns: 1fr 1.35fr;
-      gap: 14px;
-      height: 135px;
-    }
-
-    .panel-box {
-      background-color: #ffffff;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-      display: flex;
-      flex-direction: column;
-      border: 1px solid #cbd5e1;
-    }
-
-    .panel-title {
-      background: linear-gradient(to bottom, #334155, #1e293b);
-      color: #ffffff;
-      font-size: 14px;
-      font-weight: bold;
-      padding: 7px 14px;
-      letter-spacing: 0.5px;
-    }
-
-    .panel-content {
-      padding: 10px 14px;
-      font-size: 13px;
-      overflow-y: auto;
-      flex: 1;
-      line-height: 1.5;
-    }
-
-    .info-list {
-      list-style: none;
-    }
-
-    .info-list li {
-      padding: 5px 0;
-      border-bottom: 1px dashed #cbd5e1;
-    }
-
-    .info-list li:last-child {
-      border-bottom: none;
-    }
-
-    .info-list a {
-      color: #1d4ed8;
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    .info-list a:hover {
-      text-decoration: underline;
-    }
-
-    /* ==========================================================================
-       9色機能タイルのグリッド（背景: btn00.png）
-       ========================================================================== */
-    .tiles-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      padding: 14px;
-      border-radius: 10px;
-      background-color: #001f5c;
-      background-image: url('btn00.png');
-      background-size: cover;
-      background-position: center;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-      align-content: center;
-      flex: 1;
-    }
-
-    .tile-btn {
-      border: none;
-      background-color: transparent;
-      background-image: url('btn00.png');
-      background-size: cover;
-      border-radius: 8px;
-      overflow: hidden;
-      cursor: pointer;
-      padding: 0;
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
-      transition: transform 0.12s ease, box-shadow 0.12s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      text-decoration: none;
-      position: relative;
-    }
-
-    .tile-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.35);
-    }
-
-    .tile-btn:active {
-      transform: scale(0.98);
-      opacity: 0.85;
-    }
-
-    .tile-btn img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      pointer-events: none;
-    }
-
-    @media (max-width: 860px) {
-      .main-grid {
-        grid-template-columns: 1fr;
-      }
-      .info-row {
-        grid-template-columns: 1fr;
-        height: auto;
-      }
-    }
-  </style>
+  .loading-box img {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+  }
+</style>
 </head>
 <body>
-<div class="app-container">
-  <!-- 上部ヘッダー -->
-  <header class="top-bar">
-    <div class="logo-area">
-      <div class="logo">SANARU</div>
-      <span class="logo-sub">LEARNING PORTAL</span>
-    </div>
 
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-box">
+    <img src="loading.gif" alt="読み込み中">
+    <span>読み込み中...</span>
+  </div>
+</div>
+
+<div class="app-container">
+  <header class="top-bar">
+    <div class="logo">SANARU</div>
     <div class="date-schedule">
-      <span class="date-badge" id="currentDate">11月14日（土）</span>
-      <span class="schedule-time-label">予定開始時刻 予定なし</span>
-      <div class="timer-wrapper">
-        <span>あと</span>
-        <span class="timer-box" id="timerDisplay">-:-</span>
-      </div>
+      <span class="date-badge">11月14日（土）</span>
+      <span>予定開始時刻 予定なし</span>
+      <span>あと <span class="timer-box" id="timerDisplay">-:-</span></span>
       <button class="btn-start" id="studyStartBtn" onclick="toggleStudy()">学習開始</button>
     </div>
-
     <div class="status-area">
-      <span class="network-badge">☁️ オンライン（一般）</span>
-      <button class="status-btn btn-info" onclick="showSystemInfo()">i</button>
-      <button class="status-btn btn-update" onclick="updateData()">更新</button>
-      <button class="status-btn btn-exit" onclick="exitPortal()">終了</button>
+      <span>☁️ オンライン（一般）</span>
+      <button class="status-btn btn-info" onclick="alert('SANARU 学習ポータル')">i</button>
+      <button class="status-btn btn-update" onclick="alert('最新のデータに更新しました')">更新</button>
+      <button class="status-btn btn-exit" onclick="alert('終了します')">終了</button>
     </div>
   </header>
-
-  <!-- メインコンテンツ -->
   <main class="main-grid">
-    <!-- 左カラム：プロフィール＆カレンダー -->
     <div class="left-col">
       <section class="profile-card">
         <div class="profile-header">
           <div>
             <div class="student-name">安井 新</div>
-            <div class="student-id">ID: 25010283</div>
+            <div class="student-id">25010283</div>
           </div>
           <div class="school-info">
             <div>佐鳴予備校</div>
@@ -567,98 +401,35 @@
         </div>
         <div class="profile-body">
           <div class="study-stats">
-            <div class="stat-item">
-              <div class="stat-label">今月の合計学習時間</div>
-              <div class="stat-value">32時間0分</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">今週の累計学習時間</div>
-              <div class="stat-value">5時間50分</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">連続学習日数</div>
-              <div class="stat-value">7</div>
-            </div>
+            <div class="stat-item"><div>今月の合計学習時間</div><div class="stat-value">32時間0分</div></div>
+            <div class="stat-item"><div>今週の累計学習時間</div><div class="stat-value">5時間50分</div></div>
+            <div class="stat-item"><div>連続学習日数</div><div class="stat-value">7</div></div>
           </div>
-          <div class="avatar-box">
-            <span>アバター</span>
-          </div>
+          <div class="avatar-box"><span>アバター</span></div>
         </div>
       </section>
 
       <section class="calendar-card">
-        <div class="cal-header">
-          <span class="cal-nav-btn">«</span>
-          <span>11月</span>
-          <span class="cal-nav-btn">» 今日</span>
-        </div>
+        <div class="cal-header"><span>«</span><span>11月</span><span>» 今日</span></div>
         <table class="cal-table">
-          <thead>
-            <tr>
-              <th>日</th><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th><th>土</th>
-            </tr>
-          </thead>
+          <thead><tr><th>日</th><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th><th>土</th></tr></thead>
           <tbody>
-            <tr>
-              <td><span class="day-circle studied">1</span></td>
-              <td><span class="day-circle">2</span></td>
-              <td><span class="day-circle studied">3</span></td>
-              <td><span class="day-circle studied">4</span></td>
-              <td><span class="day-circle">5</span></td>
-              <td><span class="day-circle">6</span></td>
-              <td><span class="day-circle studied">7</span></td>
-            </tr>
-            <tr>
-              <td><span class="day-circle studied">8</span></td>
-              <td><span class="day-circle studied">9</span></td>
-              <td><span class="day-circle studied">10</span></td>
-              <td><span class="day-circle studied">11</span></td>
-              <td><span class="day-circle studied">12</span></td>
-              <td><span class="day-circle studied">13</span></td>
-              <td><span class="day-circle today">14</span></td>
-            </tr>
-            <tr>
-              <td><span class="day-circle">15</span></td>
-              <td><span class="day-circle">16</span></td>
-              <td><span class="day-circle">17</span></td>
-              <td><span class="day-circle">18</span></td>
-              <td><span class="day-circle">19</span></td>
-              <td><span class="day-circle">20</span></td>
-              <td><span class="day-circle">21</span></td>
-            </tr>
-            <tr>
-              <td><span class="day-circle">22</span></td>
-              <td><span class="day-circle">23</span></td>
-              <td><span class="day-circle">24</span></td>
-              <td><span class="day-circle">25</span></td>
-              <td><span class="day-circle">26</span></td>
-              <td><span class="day-circle">27</span></td>
-              <td><span class="day-circle">28</span></td>
-            </tr>
-            <tr>
-              <td><span class="day-circle">29</span></td>
-              <td><span class="day-circle">30</span></td>
-              <td class="other-month">1</td>
-              <td class="other-month">2</td>
-              <td class="other-month">3</td>
-              <td class="other-month">4</td>
-              <td class="other-month">5</td>
-            </tr>
+            <tr><td><span class="day-circle studied">1</span></td><td><span class="day-circle">2</span></td><td><span class="day-circle studied">3</span></td><td><span class="day-circle studied">4</span></td><td><span class="day-circle">5</span></td><td><span class="day-circle">6</span></td><td><span class="day-circle studied">7</span></td></tr>
+            <tr><td><span class="day-circle studied">8</span></td><td><span class="day-circle studied">9</span></td><td><span class="day-circle studied">10</span></td><td><span class="day-circle studied">11</span></td><td><span class="day-circle studied">12</span></td><td><span class="day-circle studied">13</span></td><td><span class="day-circle today">14</span></td></tr>
+            <tr><td><span class="day-circle">15</span></td><td><span class="day-circle">16</span></td><td><span class="day-circle">17</span></td><td><span class="day-circle">18</span></td><td><span class="day-circle">19</span></td><td><span class="day-circle">20</span></td><td><span class="day-circle">21</span></td></tr>
+            <tr><td><span class="day-circle">22</span></td><td><span class="day-circle">23</span></td><td><span class="day-circle">24</span></td><td><span class="day-circle">25</span></td><td><span class="day-circle">26</span></td><td><span class="day-circle">27</span></td><td><span class="day-circle">28</span></td></tr>
+            <tr><td><span class="day-circle">29</span></td><td><span class="day-circle">30</span></td><td class="other-month">1</td><td class="other-month">2</td><td class="other-month">3</td><td class="other-month">4</td><td class="other-month">5</td></tr>
           </tbody>
         </table>
       </section>
     </div>
 
-    <!-- 右カラム：予定・お知らせ・アプリボタン -->
     <div class="right-col">
       <div class="info-row">
         <section class="panel-box">
           <div class="panel-title">本日の予定</div>
-          <div class="panel-content" style="color: #64748b;">
-            本日の予定はありません。
-          </div>
+          <div class="panel-content" style="color: #666;">本日の予定はありません。</div>
         </section>
-
         <section class="panel-box">
           <div class="panel-title">インフォメーション</div>
           <div class="panel-content">
@@ -671,133 +442,56 @@
           </div>
         </section>
       </div>
-      <!-- 9つのアプリボタン（画像素材＋押し込みアニメーション付き） -->
+
       <section class="tiles-grid">
-        <button class="tile-btn" onclick="openApp('スケジュール')">
-          <img src="btn01_Schedule.png" alt="スケジュール"
-               onpointerdown="this.src='btn01_ScheduleA.png'"
-               onpointerup="this.src='btn01_Schedule.png'"
-               onpointerleave="this.src='btn01_Schedule.png'">
-        </button>
-
-        <button class="tile-btn" onclick="openApp('解説カメラ')">
-          <img src="btn04_QRCReader.png" alt="解説カメラ"
-               onpointerdown="this.src='btn04_QRCReaderA.png'"
-               onpointerup="this.src='btn04_QRCReader.png'"
-               onpointerleave="this.src='btn04_QRCReader.png'">
-        </button>
-
-        <button class="tile-btn" onclick="openApp('成績登録')">
-          <img src="btn22_GradeEntry.png" alt="成績登録"
-               onpointerdown="this.src='btn22_GradeEntryA.png'"
-               onpointerup="this.src='btn22_GradeEntry.png'"
-               onpointerleave="this.src='btn22_GradeEntry.png'">
-        </button>
-
-        <button class="tile-btn" onclick="openApp('ラーニング ツール')">
-          <img src="btn15_LearningTool.png" alt="ラーニング ツール"
-               onpointerdown="this.src='btn15_LearningToolA.png'"
-               onpointerup="this.src='btn15_LearningTool.png'"
-               onpointerleave="this.src='btn15_LearningTool.png'">
-        </button>
-
-        <button class="tile-btn" onclick="openApp('英検対策映像授業')">
-          <img src="btn49_Eiken.png" alt="英検対策映像授業"
-               onpointerdown="this.src='btn49_EikenA.png'"
-               onpointerup="this.src='btn49_Eiken.png'"
-               onpointerleave="this.src='btn49_Eiken.png'">
-        </button>
-
-        <!-- ★ファイルBOXボタン（後から下の CONFIG 内で URL を自由に書き換え可能） -->
-        <a id="fileboxLink" class="tile-btn" href="#" target="_blank" rel="noopener noreferrer">
-          <img src="btn05_FileBox.png" alt="ファイルBOX"
-               onpointerdown="this.src='btn05_FileBoxA.png'"
-               onpointerup="this.src='btn05_FileBox.png'"
-               onpointerleave="this.src='btn05_FileBox.png'">
-        </a>
-
-        <button class="tile-btn" onclick="openApp('KM Vision')">
-          <img src="btn51_Kmvision.png" alt="KM Vision"
-               onpointerdown="this.src='btn51_KmvisionA.png'"
-               onpointerup="this.src='btn51_Kmvision.png'"
-               onpointerleave="this.src='btn51_Kmvision.png'">
-        </button>
-
-        <button class="tile-btn" onclick="openApp('さなトレ')">
-          <img src="btn10_SanaTore.png" alt="さなトレ"
-               onpointerdown="this.src='btn10_SanaToreA.png'"
-               onpointerup="this.src='btn10_SanaTore.png'"
-               onpointerleave="this.src='btn10_SanaTore.png'">
-        </button>
-
-        <button class="tile-btn" onclick="openApp('学習ゲーム')">
-          <img src="btn06_LearningGame.png" alt="学習ゲーム"
-               onpointerdown="this.src='btn06_LearningGameA.png'"
-               onpointerup="this.src='btn06_LearningGame.png'"
-               onpointerleave="this.src='btn06_LearningGame.png'">
-        </button>
+        <button class="tile-btn" onclick="openApp('スケジュール')"><img src="btn01_Schedule.png" alt="スケジュール" onpointerdown="this.src='btn01_ScheduleA.png'" onpointerup="this.src='btn01_Schedule.png'" onpointerleave="this.src='btn01_Schedule.png'"></button>
+        <button class="tile-btn" onclick="openApp('解説カメラ')"><img src="btn04_QRCReader.png" alt="解説カメラ" onpointerdown="this.src='btn04_QRCReaderA.png'" onpointerup="this.src='btn04_QRCReader.png'" onpointerleave="this.src='btn04_QRCReader.png'"></button>
+        <button class="tile-btn" onclick="openApp('成績登録')"><img src="btn22_GradeEntry.png" alt="成績登録" onpointerdown="this.src='btn22_GradeEntryA.png'" onpointerup="this.src='btn22_GradeEntry.png'" onpointerleave="this.src='btn22_GradeEntry.png'"></button>
+        <button class="tile-btn" onclick="openApp('ラーニング ツール')"><img src="btn15_LearningTool.png" alt="ラーニング ツール" onpointerdown="this.src='btn15_LearningToolA.png'" onpointerup="this.src='btn15_LearningTool.png'" onpointerleave="this.src='btn15_LearningTool.png'"></button>
+        <button class="tile-btn" onclick="openApp('英検対策映像授業')"><img src="btn49_Eiken.png" alt="英検対策映像授業" onpointerdown="this.src='btn49_EikenA.png'" onpointerup="this.src='btn49_Eiken.png'" onpointerleave="this.src='btn49_Eiken.png'"></button>
+        <button class="tile-btn" onclick="openFilebox()"><img src="btn05_FileBox.png" alt="ファイルBOX" onpointerdown="this.src='btn05_FileBoxA.png'" onpointerup="this.src='btn05_FileBox.png'" onpointerleave="this.src='btn05_FileBox.png'"></button>
+        <button class="tile-btn" onclick="openApp('KM Vision')"><img src="btn51_Kmvision.png" alt="KM Vision" onpointerdown="this.src='btn51_KmvisionA.png'" onpointerup="this.src='btn51_Kmvision.png'" onpointerleave="this.src='btn51_Kmvision.png'"></button>
+        <button class="tile-btn" onclick="openApp('さなトレ')"><img src="btn10_SanaTore.png" alt="さなトレ" onpointerdown="this.src='btn10_SanaToreA.png'" onpointerup="this.src='btn10_SanaTore.png'" onpointerleave="this.src='btn10_SanaTore.png'"></button>
+        <button class="tile-btn" onclick="openApp('学習ゲーム')"><img src="btn06_LearningGame.png" alt="学習ゲーム" onpointerdown="this.src='btn06_LearningGameA.png'" onpointerup="this.src='btn06_LearningGame.png'" onpointerleave="this.src='btn06_LearningGame.png'"></button>
       </section>
     </div>
   </main>
 </div>
 
 <script>
-  // ============================================================================
-  // ★ 後から書き換える設定エリア
-  // ============================================================================
-  const CONFIG = {
-    // 
-    fileboxUrl: "https://araisan-0205.github.io/Filebox/};
+  // ★ 後から書き換えるファイルBOXのURL
+  const FILEBOX_URL = "https://" + "araisan-0205.github.io/Filebox/";
 
-  // ページ読み込み時にリンク先を反映
-  document.getElementById('fileboxLink').href = CONFIG.fileboxUrl;
+  // ファイルBOXを押したとき：loading.gif を1秒表示してから移動
+  function openFilebox() {
+    const loader = document.getElementById('loadingOverlay');
+    loader.style.display = 'flex';
+    setTimeout(() => {
+      loader.style.display = 'none';
+      window.location.href = FILEBOX_URL;
+    }, 1000);
+  }
 
-  // ============================================================================
-  // 学習タイマー制御
-  // ============================================================================
-  let timerInterval = null;
-  let elapsedSeconds = 0;
-
+  let timerInterval = null, seconds = 0;
   function toggleStudy() {
     const btn = document.getElementById('studyStartBtn');
-    const display = document.getElementById('timerDisplay');
-
     if (timerInterval) {
       clearInterval(timerInterval);
       timerInterval = null;
       btn.textContent = '学習開始';
       btn.classList.remove('active');
     } else {
-      btn.textContent = '学習終了';
+      btn.textContent = '学習中（停止）';
       btn.classList.add('active');
       timerInterval = setInterval(() => {
-        elapsedSeconds++;
-        const mins = String(Math.floor(elapsedSeconds / 60)).padStart(2, '0');
-        const secs = String(elapsedSeconds % 60).padStart(2, '0');
-        display.textContent = `${mins}:${secs}`;
+        seconds++;
+        document.getElementById('timerDisplay').textContent = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
       }, 1000);
     }
   }
 
-  // ============================================================================
-  // 各アプリボタン・ヘッダーボタンの動作
-  // ============================================================================
   function openApp(appName) {
-    alert(`「${appName}」の画面を開きます。`);
-  }
-
-  function showSystemInfo() {
-    alert('【システム情報】\nSANARU 学習ポータルシステム\n通信状態：オンライン（正常）');
-  }
-
-  function updateData() {
-    alert('最新の教材データおよびスケジュールに更新しました。');
-  }
-
-  function exitPortal() {
-    if (confirm('学習ポータルを終了しますか？')) {
-      alert('終了処理を完了しました。');
-    }
+    alert(`「${appName}」を開きます。`);
   }
 </script>
 </body>
