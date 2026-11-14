@@ -29,7 +29,7 @@
   }
 
   /* ==========================================================================
-     1. 上部ヘッダーバー（縦に伸ばして本家と同じ厚みに調整）
+     1. 上部ヘッダーバー
      ========================================================================== */
   .top-bar {
     position: relative;
@@ -42,6 +42,7 @@
     background-repeat: no-repeat;
     flex-shrink: 0;
   }
+
   .header-white-slot {
     position: absolute;
     left: 21.8%;
@@ -51,40 +52,64 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 12px;
-    font-size: 14px;
+    padding: 0 10px;
+    font-size: 13px;
     font-weight: bold;
     color: #222222;
   }
 
   .date-badge {
-    font-size: 19px;
+    font-size: 18px;
     color: #111111;
   }
 
-  .timer-box {
-    background-color: #2d3748;
-    color: #ffffff;
-    padding: 3px 10px;
-    border-radius: 3px;
-    font-family: monospace;
-    font-size: 15px;
+  .timer-area {
+    display: flex;
+    align-items: center;
+    gap: 4px;
   }
 
+  .timer-label {
+    font-size: 11px;
+    color: #444444;
+  }
+
+  /* 黒色の経過時間表示枠 */
+  .timer-box {
+    background-color: #111111;
+    color: #ffffff;
+    padding: 3px 10px;
+    border-radius: 2px;
+    font-family: "Courier New", Consolas, monospace;
+    font-size: 16px;
+    font-weight: bold;
+    min-width: 58px;
+    text-align: center;
+    letter-spacing: 0.5px;
+  }
+
+  /* 本家仕様：横長の長方形で角ばった学習開始／学習終了ボタン */
   .btn-start {
-    background: linear-gradient(to bottom, #ef4444, #dc2626);
-    color: #fff;
+    background: linear-gradient(to bottom, #f04e45, #d62d20);
+    color: #ffffff;
     border: 1px solid #991b1b;
-    padding: 5px 16px;
-    border-radius: 4px;
+    padding: 5px 22px;
+    border-radius: 2px;
     font-weight: bold;
     font-size: 13px;
+    letter-spacing: 1px;
     cursor: pointer;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.25);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    min-width: 108px;
+    text-align: center;
   }
+  .btn-start:active {
+    transform: translateY(1px);
+  }
+  /* 学習中に押した後の青色「学習終了」ボタン */
   .btn-start.active {
-    background: linear-gradient(to bottom, #22c55e, #16a34a);
-    border-color: #166534;
+    background: linear-gradient(to bottom, #2563eb, #1d4ed8);
+    border-color: #1e3a8a;
   }
 
   .header-right-btns {
@@ -144,21 +169,36 @@
     flex-shrink: 0;
   }
 
+  /* アバター横の濃紺枠（学習終了後に学習時間と連続日数を表示） */
   .profile-dark-slot {
     position: absolute;
     left: 6.5%;
-    top: 32%;
+    top: 31%;
     width: 48.5%;
-    height: 61%;
+    height: 62%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     color: #ffffff;
-    font-size: 13px;
+    font-size: 11px;
     font-weight: bold;
     text-align: center;
-    line-height: 1.6;
+    line-height: 1.25;
+    padding: 2px;
+  }
+
+  .stat-row {
+    width: 100%;
+    padding: 2px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+  }
+  .stat-row:last-child {
+    border-bottom: none;
+  }
+  .stat-val {
+    font-size: 13px;
+    color: #ffffff;
   }
 
   .calendar-card {
@@ -219,16 +259,28 @@
 
   .day-circle {
     display: inline-block;
-    width: 24px;
-    height: 24px;
-    line-height: 24px;
+    width: 25px;
+    height: 25px;
+    line-height: 25px;
     border-radius: 50%;
   }
 
   .today { background-color: #3182ce; color: #fff; font-weight: bold; }
   .other-month { color: #cbd5e1; }
+
+  /* 学習終了を押した日に付く赤丸スタンプ */
+  .studied-mark {
+    background-image: url('maru.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    font-weight: bold;
+  }
+  .studied-mark:not(.today) {
+    color: #c53030;
+  }
   /* ==========================================================================
-     3. 右カラム（info_bg.png & インフォメーション表示改善）
+     3. 右カラム（info_bg.png & 2つの機能ボタンエリア）
      ========================================================================== */
   .right-col {
     display: flex;
@@ -274,7 +326,6 @@
     overflow-y: auto;
   }
 
-  /* インフォメーションの見やすいリスト表示 */
   .info-list {
     list-style: none;
     width: 100%;
@@ -291,11 +342,6 @@
     text-decoration: underline;
     font-weight: 500;
     display: block;
-  }
-
-  .info-list a:active {
-    color: #1e40af;
-    background-color: #eff6ff;
   }
 
   .tiles-grid {
@@ -370,7 +416,10 @@
     <div class="header-white-slot">
       <span class="date-badge">11月14日（土）</span>
       <span>予定開始時刻 予定なし</span>
-      <span>あと <span class="timer-box" id="timerDisplay">-:-</span></span>
+      <div class="timer-area">
+        <span class="timer-label" id="timerLabel">あと</span>
+        <span class="timer-box" id="timerDisplay">-:-</span>
+      </div>
       <button class="btn-start" id="studyStartBtn" onclick="toggleStudy()">学習開始</button>
     </div>
 
@@ -387,7 +436,7 @@
     <!-- 左カラム -->
     <div class="left-col">
       <section class="profile-card">
-        <div class="profile-dark-slot">
+        <div class="profile-dark-slot" id="profileSlot">
           <div>長久手本部校</div>
           <div style="font-size: 12px; opacity: 0.9; margin-top: 2px;">中学1年生</div>
         </div>
@@ -399,11 +448,11 @@
           <table class="cal-table">
             <thead><tr><th>日</th><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th><th>土</th></tr></thead>
             <tbody>
-              <tr><td><span class="day-circle">1</span></td><td><span class="day-circle">2</span></td><td><span class="day-circle">3</span></td><td><span class="day-circle">4</span></td><td><span class="day-circle">5</span></td><td><span class="day-circle">6</span></td><td><span class="day-circle">7</span></td></tr>
-              <tr><td><span class="day-circle">8</span></td><td><span class="day-circle">9</span></td><td><span class="day-circle">10</span></td><td><span class="day-circle">11</span></td><td><span class="day-circle">12</span></td><td><span class="day-circle">13</span></td><td><span class="day-circle today">14</span></td></tr>
-              <tr><td><span class="day-circle">15</span></td><td><span class="day-circle">16</span></td><td><span class="day-circle">17</span></td><td><span class="day-circle">18</span></td><td><span class="day-circle">19</span></td><td><span class="day-circle">20</span></td><td><span class="day-circle">21</span></td></tr>
-              <tr><td><span class="day-circle">22</span></td><td><span class="day-circle">23</span></td><td><span class="day-circle">24</span></td><td><span class="day-circle">25</span></td><td><span class="day-circle">26</span></td><td><span class="day-circle">27</span></td><td><span class="day-circle">28</span></td></tr>
-              <tr><td><span class="day-circle">29</span></td><td><span class="day-circle">30</span></td><td class="other-month">1</td><td class="other-month">2</td><td class="other-month">3</td><td class="other-month">4</td><td class="other-month">5</td></tr>
+              <tr><td><span class="day-circle" data-day="1">1</span></td><td><span class="day-circle" data-day="2">2</span></td><td><span class="day-circle" data-day="3">3</span></td><td><span class="day-circle" data-day="4">4</span></td><td><span class="day-circle" data-day="5">5</span></td><td><span class="day-circle" data-day="6">6</span></td><td><span class="day-circle" data-day="7">7</span></td></tr>
+              <tr><td><span class="day-circle" data-day="8">8</span></td><td><span class="day-circle" data-day="9">9</span></td><td><span class="day-circle" data-day="10">10</span></td><td><span class="day-circle" data-day="11">11</span></td><td><span class="day-circle" data-day="12">12</span></td><td><span class="day-circle" data-day="13">13</span></td><td><span class="day-circle today" data-day="14">14</span></td></tr>
+              <tr><td><span class="day-circle" data-day="15">15</span></td><td><span class="day-circle" data-day="16">16</span></td><td><span class="day-circle" data-day="17">17</span></td><td><span class="day-circle" data-day="18">18</span></td><td><span class="day-circle" data-day="19">19</span></td><td><span class="day-circle" data-day="20">20</span></td><td><span class="day-circle" data-day="21">21</span></td></tr>
+              <tr><td><span class="day-circle" data-day="22">22</span></td><td><span class="day-circle" data-day="23">23</span></td><td><span class="day-circle" data-day="24">24</span></td><td><span class="day-circle" data-day="25">25</span></td><td><span class="day-circle" data-day="26">26</span></td><td><span class="day-circle" data-day="27">27</span></td><td><span class="day-circle" data-day="28">28</span></td></tr>
+              <tr><td><span class="day-circle" data-day="29">29</span></td><td><span class="day-circle" data-day="30">30</span></td><td class="other-month">1</td><td class="other-month">2</td><td class="other-month">3</td><td class="other-month">4</td><td class="other-month">5</td></tr>
             </tbody>
           </table>
         </div>
@@ -413,10 +462,7 @@
     <!-- 右カラム -->
     <div class="right-col">
       <section class="info-panel-wrap">
-        <!-- 本日の予定は空欄 -->
         <div class="info-left-content"></div>
-
-        <!-- インフォメーション -->
         <div class="info-right-content">
           <ul class="info-list">
             <li><a href="https://github.io" target="_blank" rel="noopener noreferrer">定期テスト模試 範囲閲覧サイト</a></li>
@@ -447,7 +493,7 @@
 
 <script>
   // ============================================================================
-  // ★ 後から書き換えるURL設定エリア
+  // ★ URL設定エリア
   // ============================================================================
   const FILEBOX_URL = "https://" + "araisan-0205.github.io/Filebox/";
   const GRADE_ENTRY_URL = "https://" + "araisan-0205.github.io/Grade/";
@@ -461,20 +507,13 @@
     }, 1000);
   }
 
-  function openFilebox() {
-    moveWithLoading(FILEBOX_URL);
-  }
-
-  function openGradeEntry() {
-    moveWithLoading(GRADE_ENTRY_URL);
-  }
+  function openFilebox() { moveWithLoading(FILEBOX_URL); }
+  function openGradeEntry() { moveWithLoading(GRADE_ENTRY_URL); }
 
   function runUpdate() {
     const loader = document.getElementById('loadingOverlay');
     loader.style.display = 'flex';
-    setTimeout(() => {
-      loader.style.display = 'none';
-    }, 1000);
+    setTimeout(() => { loader.style.display = 'none'; }, 1000);
   }
 
   function closeTab() {
@@ -485,23 +524,135 @@
     }, 200);
   }
 
-  let timerInterval = null, seconds = 0;
-  function toggleStudy() {
-    const btn = document.getElementById('studyStartBtn');
-    if (timerInterval) {
-      clearInterval(timerInterval);
-      timerInterval = null;
-      btn.textContent = '学習開始';
-      btn.classList.remove('active');
-    } else {
-      btn.textContent = '学習中（停止）';
-      btn.classList.add('active');
-      timerInterval = setInterval(() => {
-        seconds++;
-        document.getElementById('timerDisplay').textContent = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
-      }, 1000);
+  // ============================================================================
+  // ★ 学習タイマー＆記録保存（タブを閉じても継続・終了時にアバター横へ反映＆丸印）
+  // ============================================================================
+  let timerInterval = null;
+
+  function formatMinutes(totalSec) {
+    const totalMins = Math.floor(totalSec / 60);
+    const h = Math.floor(totalMins / 60);
+    const m = totalMins % 60;
+    return `${h}時間${m}分`;
+  }
+
+  function formatTimer(sec) {
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = sec % 60;
+    if (h > 0) {
+      return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+    return `${m}:${String(s).padStart(2, '0')}`;
+  }
+
+  function renderProfileStats() {
+    const savedTotalSec = parseInt(localStorage.getItem('sanaru_total_sec') || '0', 10);
+    const studiedDays = JSON.parse(localStorage.getItem('sanaru_studied_days') || '[]');
+    const slot = document.getElementById('profileSlot');
+
+    if (savedTotalSec > 0 || studiedDays.length > 0) {
+      const timeText = formatMinutes(savedTotalSec);
+      slot.innerHTML = `
+        <div class="stat-row">
+          <div>今月の合計学習時間</div>
+          <div class="stat-val">${timeText}</div>
+        </div>
+        <div class="stat-row">
+          <div>今週の累計学習時間</div>
+          <div class="stat-val">${timeText}</div>
+        </div>
+        <div class="stat-row">
+          <div>連続学習日数</div>
+          <div class="stat-val">${studiedDays.length}</div>
+        </div>
+      `;
     }
   }
+
+  function renderCalendarMarks() {
+    const studiedDays = JSON.parse(localStorage.getItem('sanaru_studied_days') || '[]');
+    studiedDays.forEach(day => {
+      const el = document.querySelector(`.day-circle[data-day="${day}"]`);
+      if (el) el.classList.add('studied-mark');
+    });
+  }
+
+  function startTimerLoop(startTimeMs) {
+    const btn = document.getElementById('studyStartBtn');
+    const display = document.getElementById('timerDisplay');
+    const label = document.getElementById('timerLabel');
+
+    btn.textContent = '学習終了';
+    btn.classList.add('active');
+    label.textContent = '開始から';
+
+    const updateDisplay = () => {
+      const elapsedSec = Math.max(0, Math.floor((Date.now() - startTimeMs) / 1000));
+      display.textContent = formatTimer(elapsedSec);
+    };
+
+    updateDisplay();
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(updateDisplay, 1000);
+  }
+
+  function toggleStudy() {
+    const savedStart = localStorage.getItem('sanaru_study_start');
+
+    if (!savedStart) {
+      // 【学習開始】押下時：現在時刻を保存してタイマー開始
+      const now = Date.now();
+      localStorage.setItem('sanaru_study_start', String(now));
+      localStorage.setItem('sanaru_start_day', String(new Date().getDate()));
+      startTimerLoop(now);
+    } else {
+      // 【学習終了】押下時：経過時間を計算して保存＆リセット
+      const startMs = parseInt(savedStart, 10);
+      const elapsedSec = Math.max(1, Math.floor((Date.now() - startMs) / 1000));
+
+      const prevTotal = parseInt(localStorage.getItem('sanaru_total_sec') || '0', 10);
+      localStorage.setItem('sanaru_total_sec', String(prevTotal + elapsedSec));
+
+      // 開始日と終了日に丸をつける
+      const startDay = parseInt(localStorage.getItem('sanaru_start_day') || '14', 10);
+      const endDay = new Date().getDate();
+      const studiedDays = JSON.parse(localStorage.getItem('sanaru_studied_days') || '[]');
+      if (!studiedDays.includes(startDay)) studiedDays.push(startDay);
+      if (!studiedDays.includes(endDay)) studiedDays.push(endDay);
+      // 画面上の「今日（14日）」にも確実に丸をつける
+      if (!studiedDays.includes(14)) studiedDays.push(14);
+      localStorage.setItem('sanaru_studied_days', JSON.stringify(studiedDays));
+
+      // 計測状態をリセット
+      localStorage.removeItem('sanaru_study_start');
+      localStorage.removeItem('sanaru_start_day');
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+
+      const btn = document.getElementById('studyStartBtn');
+      btn.textContent = '学習開始';
+      btn.classList.remove('active');
+      document.getElementById('timerLabel').textContent = 'あと';
+      document.getElementById('timerDisplay').textContent = '-:-';
+
+      // アバター横の学習時間とカレンダーの赤丸を更新
+      renderProfileStats();
+      renderCalendarMarks();
+    }
+  }
+
+  // ページ読み込み時に保存データを復元（タブを閉じても継続）
+  window.addEventListener('DOMContentLoaded', () => {
+    renderProfileStats();
+    renderCalendarMarks();
+    const savedStart = localStorage.getItem('sanaru_study_start');
+    if (savedStart) {
+      startTimerLoop(parseInt(savedStart, 10));
+    }
+  });
 </script>
 </body>
 </html>
