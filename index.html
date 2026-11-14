@@ -105,6 +105,19 @@
     color: #333;
   }
 
+  .online-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .online-badge img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    display: block;
+  }
+
   .img-icon-btn {
     border: none;
     background: transparent;
@@ -384,7 +397,10 @@
       <button class="btn-start" id="studyStartBtn" onclick="toggleStudy()">学習開始</button>
     </div>
     <div class="status-area">
-      <span>☁️ オンライン（一般）</span>
+      <span class="online-badge">
+        <img src="online.png" alt="☁️" onerror="this.outerHTML='☁️'">
+        オンライン（一般）
+      </span>
       <button class="img-icon-btn" onclick="alert('SANARU 学習ポータル')">
         <img src="info.png" alt="i" onerror="this.outerHTML='<span class=\'status-btn btn-info\' style=\'display:inline-flex;align-items:center;justify-content:center;\'>i</span>'">
       </button>
@@ -392,7 +408,7 @@
         <img src="update.png" alt="更新" onerror="this.outerHTML='<span class=\'status-btn btn-update\'>更新</span>'">
       </button>
       <button class="img-icon-btn" onclick="alert('終了します')">
-        <img src="close.png" alt="終了" onerror="this.outerHTML='<span class=\'status-btn btn-exit\'>終了</span>'">
+        <img src="exit.png" alt="終了" onerror="this.outerHTML='<span class=\'status-btn btn-exit\'>終了</span>'">
       </button>
     </div>
   </header>
