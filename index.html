@@ -273,26 +273,40 @@
   .info-list a { color: #2b6cb0; text-decoration: none; }
   .info-list a:hover { text-decoration: underline; }
 
-  /* 9つのボタン画像グリッド */
+  /* ボタン背景 btn00.png を敷いた3×3グリッド */
   .tiles-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 12px;
-    align-content: start;
+    padding: 12px;
+    border-radius: 8px;
+    background-color: #001f5c;
+    background-image: url('./image/btn00.png');
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    align-content: center;
+    flex: 1;
   }
 
   .tile-btn {
     border: none;
-    background: transparent;
+    background-color: transparent;
+    background-image: url('./image/btn00.png');
+    background-size: cover;
     border-radius: 8px;
     overflow: hidden;
     cursor: pointer;
     padding: 0;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.18);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.25);
     transition: transform 0.1s;
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
     aspect-ratio: 16 / 9;
+    color: #fff;
+    font-weight: bold;
   }
 
   .tile-btn:hover {
@@ -400,6 +414,7 @@
         </section>
       </div>
 
+      <!-- ご指定の9つの画像ファイルを配置 -->
       <section class="tiles-grid">
         <button class="tile-btn" onclick="openApp('スケジュール')">
           <img src="./image/btn01_Schedule.png" alt="スケジュール">
@@ -411,7 +426,7 @@
           <img src="./image/btn22_GradeEntry.png" alt="成績登録">
         </button>
         <button class="tile-btn" onclick="openApp('学習支援ツール')">
-          <img src="./image/btn03_StudySupport.png" alt="学習支援ツール">
+          <img src="./image/btn15_LearningTool.png" alt="学習支援ツール">
         </button>
         <button class="tile-btn" onclick="openApp('英検対策映像授業')">
           <img src="./image/btn49_Eiken.png" alt="英検対策映像授業">
@@ -420,7 +435,7 @@
           <img src="./image/btn05_FileBox.png" alt="ファイルBOX">
         </button>
         <button class="tile-btn" onclick="openApp('要点解説動画')">
-          <img src="./image/btn42_VideoLesson.png" alt="要点解説動画">
+          <img src="./image/btn51_Kmvision.png" alt="要点解説動画">
         </button>
         <button class="tile-btn" onclick="openApp('さなトレ')">
           <img src="./image/btn10_SanaTore.png" alt="さなトレ">
@@ -434,7 +449,7 @@
 </div>
 
 <script>
-  const studiedDays =;
+  const studiedDays = new Array(1, 3, 4, 7, 8, 9, 10, 11, 12, 13);
   const calBody = document.getElementById('calBody');
   let day = 1;
   for (let row = 0; row < 5; row++) {
