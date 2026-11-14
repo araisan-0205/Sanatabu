@@ -219,7 +219,6 @@
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    border: 2px solid #e53e3e;
     color: #c53030;
     font-weight: bold;
   }
@@ -273,7 +272,6 @@
   .info-list a { color: #2b6cb0; text-decoration: none; }
   .info-list a:hover { text-decoration: underline; }
 
-  /* 同じフォルダ内の btn00.png を背景に設定 */
   .tiles-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -437,7 +435,6 @@
         </table>
       </section>
     </div>
-
     <div class="right-col">
       <div class="info-row">
         <section class="panel-box">
@@ -460,34 +457,60 @@
         </section>
       </div>
 
-      <!-- 同じ場所にある画像ファイルを直接読み込み -->
       <section class="tiles-grid">
         <button class="tile-btn" onclick="openApp('スケジュール')">
-          <img src="btn01_Schedule.png" alt="スケジュール">
+          <img src="btn01_Schedule.png" alt="スケジュール"
+               onpointerdown="this.src='btn01_ScheduleA.png'"
+               onpointerup="this.src='btn01_Schedule.png'"
+               onpointerleave="this.src='btn01_Schedule.png'">
         </button>
         <button class="tile-btn" onclick="openApp('解説カメラ')">
-          <img src="btn04_QRCReader.png" alt="解説カメラ">
+          <img src="btn04_QRCReader.png" alt="解説カメラ"
+               onpointerdown="this.src='btn04_QRCReaderA.png'"
+               onpointerup="this.src='btn04_QRCReader.png'"
+               onpointerleave="this.src='btn04_QRCReader.png'">
         </button>
         <button class="tile-btn" onclick="openApp('成績登録')">
-          <img src="btn22_GradeEntry.png" alt="成績登録">
+          <img src="btn22_GradeEntry.png" alt="成績登録"
+               onpointerdown="this.src='btn22_GradeEntryA.png'"
+               onpointerup="this.src='btn22_GradeEntry.png'"
+               onpointerleave="this.src='btn22_GradeEntry.png'">
         </button>
-        <button class="tile-btn" onclick="openApp('学習支援ツール')">
-          <img src="btn15_LearningTool.png" alt="学習支援ツール">
+        <button class="tile-btn" onclick="openApp('ラーニング ツール')">
+          <img src="btn15_LearningTool.png" alt="ラーニング ツール"
+               onpointerdown="this.src='btn15_LearningToolA.png'"
+               onpointerup="this.src='btn15_LearningTool.png'"
+               onpointerleave="this.src='btn15_LearningTool.png'">
         </button>
         <button class="tile-btn" onclick="openApp('英検対策映像授業')">
-          <img src="btn49_Eiken.png" alt="英検対策映像授業">
+          <img src="btn49_Eiken.png" alt="英検対策映像授業"
+               onpointerdown="this.src='btn49_EikenA.png'"
+               onpointerup="this.src='btn49_Eiken.png'"
+               onpointerleave="this.src='btn49_Eiken.png'">
         </button>
         <button class="tile-btn" onclick="openApp('ファイルBOX')">
-          <img src="btn05_FileBox.png" alt="ファイルBOX">
+          <img src="btn05_FileBox.png" alt="ファイルBOX"
+               onpointerdown="this.src='btn05_FileBoxA.png'"
+               onpointerup="this.src='btn05_FileBox.png'"
+               onpointerleave="this.src='btn05_FileBox.png'">
         </button>
-        <button class="tile-btn" onclick="openApp('要点解説動画')">
-          <img src="btn51_Kmvision.png" alt="要点解説動画">
+        <button class="tile-btn" onclick="openApp('KM Vision')">
+          <img src="btn51_Kmvision.png" alt="KM Vision"
+               onpointerdown="this.src='btn51_KmvisionA.png'"
+               onpointerup="this.src='btn51_Kmvision.png'"
+               onpointerleave="this.src='btn51_Kmvision.png'">
         </button>
         <button class="tile-btn" onclick="openApp('さなトレ')">
-          <img src="btn10_SanaTore.png" alt="さなトレ">
+          <img src="btn10_SanaTore.png" alt="さなトレ"
+               onpointerdown="this.src='btn10_SanaToreA.png'"
+               onpointerup="this.src='btn10_SanaTore.png'"
+               onpointerleave="this.src='btn10_SanaTore.png'">
         </button>
         <button class="tile-btn" onclick="openApp('学習ゲーム')">
-          <img src="btn06_LearningGame.png" alt="学習ゲーム">
+          <img src="btn06_LearningGame.png" alt="学習ゲーム"
+               onpointerdown="this.src='btn06_LearningGameA.png'"
+               onpointerup="this.src='btn06_LearningGame.png'"
+               onpointerleave="this.src='btn06_LearningGame.png'">
         </button>
       </section>
     </div>
