@@ -463,7 +463,7 @@
       <section class="tiles-grid">
         <button class="tile-btn" onclick="openApp('スケジュール')"><img src="btn01_Schedule.png" alt="スケジュール" onpointerdown="this.src='btn01_ScheduleA.png'" onpointerup="this.src='btn01_Schedule.png'" onpointerleave="this.src='btn01_Schedule.png'"></button>
         <button class="tile-btn" onclick="openApp('解説カメラ')"><img src="btn04_QRCReader.png" alt="解説カメラ" onpointerdown="this.src='btn04_QRCReaderA.png'" onpointerup="this.src='btn04_QRCReader.png'" onpointerleave="this.src='btn04_QRCReader.png'"></button>
-        <button class="tile-btn" onclick="openApp('成績登録')"><img src="btn22_GradeEntry.png" alt="成績登録" onpointerdown="this.src='btn22_GradeEntryA.png'" onpointerup="this.src='btn22_GradeEntry.png'" onpointerleave="this.src='btn22_GradeEntry.png'"></button>
+        <button class="tile-btn" onclick="openGradeEntry()"><img src="btn22_GradeEntry.png" alt="成績登録" onpointerdown="this.src='btn22_GradeEntryA.png'" onpointerup="this.src='btn22_GradeEntry.png'" onpointerleave="this.src='btn22_GradeEntry.png'"></button>
         <button class="tile-btn" onclick="openApp('ラーニング ツール')"><img src="btn15_LearningTool.png" alt="ラーニング ツール" onpointerdown="this.src='btn15_LearningToolA.png'" onpointerup="this.src='btn15_LearningTool.png'" onpointerleave="this.src='btn15_LearningTool.png'"></button>
         <button class="tile-btn" onclick="openApp('英検対策映像授業')"><img src="btn49_Eiken.png" alt="英検対策映像授業" onpointerdown="this.src='btn49_EikenA.png'" onpointerup="this.src='btn49_Eiken.png'" onpointerleave="this.src='btn49_Eiken.png'"></button>
         <button class="tile-btn" onclick="openFilebox()"><img src="btn05_FileBox.png" alt="ファイルBOX" onpointerdown="this.src='btn05_FileBoxA.png'" onpointerup="this.src='btn05_FileBox.png'" onpointerleave="this.src='btn05_FileBox.png'"></button>
@@ -476,17 +476,30 @@
 </div>
 
 <script>
-  // ★ 後から書き換えるファイルBOXのURL
+  // ============================================================================
+  // ★ 後から書き換えるURL設定エリア
+  // ============================================================================
   const FILEBOX_URL = "https://" + "araisan-0205.github.io/Filebox/";
+  const GRADE_ENTRY_URL = "https://sanaru.atwill-net.com/tablet/seiseki/?sId=25010283&cId=cfe59ee790126b6f37298d1eacdcbe60";
 
-  // ファイルBOXを押したとき：150pxの loading.gif を1秒表示してから移動
-  function openFilebox() {
+  // 共通のローディング付きページ移動（150pxの loading.gif を1秒表示）
+  function moveWithLoading(targetUrl) {
     const loader = document.getElementById('loadingOverlay');
     loader.style.display = 'flex';
     setTimeout(() => {
       loader.style.display = 'none';
-      window.location.href = FILEBOX_URL;
+      window.location.href = targetUrl;
     }, 1000);
+  }
+
+  // ファイルBOXを押したとき
+  function openFilebox() {
+    moveWithLoading(FILEBOX_URL);
+  }
+
+  // 成績登録を押したとき
+  function openGradeEntry() {
+    moveWithLoading(GRADE_ENTRY_URL);
   }
 
   // 更新ボタンを押したとき：loading.gif を1秒表示
