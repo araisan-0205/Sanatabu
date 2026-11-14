@@ -140,7 +140,7 @@
   .btn-info { background-color: #4caf50; border-radius: 50%; width: 30px; height: 30px; padding: 0; font-family: serif; font-style: italic; font-size: 15px; }
   .btn-update { background-color: #3b82f6; }
   .btn-exit { background-color: #c25921; }
-  /* 2. メインエリア（100dvhで下まで完全に収まる構成） */
+  /* 2. メインエリア */
   .main-grid {
     flex: 1;
     min-height: 0;
@@ -159,6 +159,7 @@
     min-height: 0;
   }
 
+  /* 学習時間を省いたシンプルプロフィールカード */
   .profile-card {
     background-color: #8c7d70;
     color: #fff;
@@ -211,13 +212,13 @@
     flex-shrink: 0;
   }
 
+  /* マス目が正方形になるシンプルカレンダーカード */
   .calendar-card {
     background-color: #fff;
     border-radius: 4px;
     overflow: hidden;
     box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-    flex: 1;
-    min-height: 0;
+    flex-shrink: 0;
     display: flex;
     flex-direction: column;
   }
@@ -225,7 +226,7 @@
   .cal-header {
     background-color: #4a5568;
     color: #fff;
-    padding: 6px 12px;
+    padding: 7px 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -236,21 +237,24 @@
 
   .cal-table {
     width: 100%;
-    height: 100%;
     border-collapse: collapse;
     text-align: center;
     font-size: 13px;
-    flex: 1;
+    table-layout: fixed;
   }
 
   .cal-table th {
-    padding: 4px 0;
+    padding: 6px 0;
     background-color: #f8fafc;
     border-bottom: 1px solid #e2e8f0;
   }
   .cal-table th:first-child { color: #e53e3e; }
   .cal-table th:last-child { color: #3182ce; }
-  .cal-table td { border: 1px solid #f1f5f9; }
+  .cal-table td {
+    border: 1px solid #f1f5f9;
+    height: 41px;
+    vertical-align: middle;
+  }
 
   .day-circle {
     display: inline-block;
@@ -449,8 +453,8 @@
           <div class="panel-title">インフォメーション</div>
           <div class="panel-content">
             <ul class="info-list">
-              <li><a href="https://20230104curl.github.io/test-range-app/student.html?campus=campus-95282035d85a" target="_blank" rel="noopener noreferrer">定期テスト模試 範囲閲覧サイト</a></li>
-              <li><a href="https://www.sanaru-net.com/contents/pdf/sanarukokoroe_eljr.pdf" target="_blank" rel="noopener noreferrer">さなる生の心得・生徒規則について</a></li>
+              <li><a href="https://github.io" target="_blank" rel="noopener noreferrer">定期テスト模試 範囲閲覧サイト</a></li>
+              <li><a href="https://sanaru-net.com" target="_blank" rel="noopener noreferrer">さなる生の心得・生徒規則について</a></li>
             </ul>
           </div>
         </section>
@@ -481,7 +485,7 @@
   // ★ 後から書き換えるURL設定エリア
   // ============================================================================
   const FILEBOX_URL = "https://" + "araisan-0205.github.io/Filebox/";
-  const GRADE_ENTRY_URL = "https://sanaru.atwill-net.com/tablet/seiseki/?sId=25010283&cId=cfe59ee790126b6f37298d1eacdcbe60";
+  const GRADE_ENTRY_URL = "https://" + "araisan-0205.github.io/Grade/";
 
   // 共通のローディング付きページ移動（150pxの loading.gif を1秒表示）
   function moveWithLoading(targetUrl) {
@@ -537,10 +541,6 @@
         document.getElementById('timerDisplay').textContent = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
       }, 1000);
     }
-  }
-
-  function openApp(appName) {
-    alert(`「${appName}」を開きます。`);
   }
 </script>
 </body>
