@@ -71,7 +71,7 @@
     border: none; background-color: transparent; background-image: url('btn00.png'); background-size: cover;
     border-radius: 8px; overflow: hidden; cursor: pointer; padding: 0; box-shadow: 0 3px 6px rgba(0,0,0,0.25);
     transition: transform 0.1s; display: flex; align-items: center; justify-content: center;
-    width: 100%; aspect-ratio: 16 / 9;
+    width: 100%; aspect-ratio: 16 / 9; text-decoration: none;
   }
   .tile-btn:hover { transform: translateY(-2px); }
   .tile-btn img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -160,7 +160,7 @@
         <button class="tile-btn" onclick="openApp('成績登録')"><img src="btn22_GradeEntry.png" alt="成績登録" onpointerdown="this.src='btn22_GradeEntryA.png'" onpointerup="this.src='btn22_GradeEntry.png'" onpointerleave="this.src='btn22_GradeEntry.png'"></button>
         <button class="tile-btn" onclick="openApp('ラーニング ツール')"><img src="btn15_LearningTool.png" alt="ラーニング ツール" onpointerdown="this.src='btn15_LearningToolA.png'" onpointerup="this.src='btn15_LearningTool.png'" onpointerleave="this.src='btn15_LearningTool.png'"></button>
         <button class="tile-btn" onclick="openApp('英検対策映像授業')"><img src="btn49_Eiken.png" alt="英検対策映像授業" onpointerdown="this.src='btn49_EikenA.png'" onpointerup="this.src='btn49_Eiken.png'" onpointerleave="this.src='btn49_Eiken.png'"></button>
-        <button class="tile-btn" onclick="openApp('ファイルBOX')"><img src="btn05_FileBox.png" alt="ファイルBOX" onpointerdown="this.src='btn05_FileBoxA.png'" onpointerup="this.src='btn05_FileBox.png'" onpointerleave="this.src='btn05_FileBox.png'"></button>
+        <a class="tile-btn" href="https://github.io" target="_blank" rel="noopener noreferrer"><img src="btn05_FileBox.png" alt="ファイルBOX" onpointerdown="this.src='btn05_FileBoxA.png'" onpointerup="this.src='btn05_FileBox.png'" onpointerleave="this.src='btn05_FileBox.png'"></a>
         <button class="tile-btn" onclick="openApp('KM Vision')"><img src="btn51_Kmvision.png" alt="KM Vision" onpointerdown="this.src='btn51_KmvisionA.png'" onpointerup="this.src='btn51_Kmvision.png'" onpointerleave="this.src='btn51_Kmvision.png'"></button>
         <button class="tile-btn" onclick="openApp('さなトレ')"><img src="btn10_SanaTore.png" alt="さなトレ" onpointerdown="this.src='btn10_SanaToreA.png'" onpointerup="this.src='btn10_SanaTore.png'" onpointerleave="this.src='btn10_SanaTore.png'"></button>
         <button class="tile-btn" onclick="openApp('学習ゲーム')"><img src="btn06_LearningGame.png" alt="学習ゲーム" onpointerdown="this.src='btn06_LearningGameA.png'" onpointerup="this.src='btn06_LearningGame.png'" onpointerleave="this.src='btn06_LearningGame.png'"></button>
@@ -188,11 +188,7 @@
     }
   }
   function openApp(appName) {
-    if (appName === 'ファイルBOX') {
-      window.open('https://github.io', '_blank');
-    } else {
-      alert(`「${appName}」を開きます。`);
-    }
+    alert(`「${appName}」を開きます。`);
   }
 </script>
 </body>
