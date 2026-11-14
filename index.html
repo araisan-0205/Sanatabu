@@ -101,7 +101,7 @@
   .main-grid {
     flex: 1;
     display: grid;
-    grid-template-columns: 340px 1fr;
+    grid-template-columns: 330px 1fr;
     gap: 14px;
     padding: 14px;
   }
@@ -155,8 +155,8 @@
   .stat-value { font-size: 16px; font-weight: bold; margin-top: 2px; }
 
   .avatar-box {
-    width: 100px;
-    height: 135px;
+    width: 95px;
+    height: 130px;
     background-color: #e5e7eb;
     border-radius: 4px;
     overflow: hidden;
@@ -208,19 +208,18 @@
 
   .day-circle {
     display: inline-block;
-    width: 30px;
-    height: 30px;
-    line-height: 30px;
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
     border-radius: 50%;
-    position: relative;
   }
 
-  /* image/maru.png を赤丸スタンプとして背景表示 */
   .studied {
-    background-image: url('image/maru.png');
+    background-image: url('./image/maru.png');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
+    border: 2px solid #e53e3e;
     color: #c53030;
     font-weight: bold;
   }
@@ -242,7 +241,7 @@
     display: grid;
     grid-template-columns: 1fr 1.3fr;
     gap: 12px;
-    height: 130px;
+    height: 125px;
   }
 
   .panel-box {
@@ -278,9 +277,8 @@
   .tiles-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr);
     gap: 12px;
-    flex: 1;
+    align-content: start;
   }
 
   .tile-btn {
@@ -292,9 +290,9 @@
     padding: 0;
     box-shadow: 0 3px 6px rgba(0,0,0,0.18);
     transition: transform 0.1s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
   }
 
   .tile-btn:hover {
@@ -304,7 +302,7 @@
   .tile-btn img {
     width: 100%;
     height: 100%;
-    object-fit: fill;
+    object-fit: cover;
     display: block;
   }
 
@@ -402,69 +400,33 @@
         </section>
       </div>
 
-      <!-- お手持ちのボタン画像素材を直接配置 -->
       <section class="tiles-grid">
         <button class="tile-btn" onclick="openApp('スケジュール')">
-          <img src="image/btn01_Schedule.png" alt="スケジュール"
-               onmousedown="this.src='image/btn01_ScheduleA.png'"
-               onmouseup="this.src='image/btn01_Schedule.png'"
-               onmouseleave="this.src='image/btn01_Schedule.png'">
+          <img src="./image/btn01_Schedule.png" alt="スケジュール">
         </button>
-
         <button class="tile-btn" onclick="openApp('解説カメラ')">
-          <img src="image/btn04_QRCReader.png" alt="解説カメラ"
-               onmousedown="this.src='image/btn04_QRCReaderA.png'"
-               onmouseup="this.src='image/btn04_QRCReader.png'"
-               onmouseleave="this.src='image/btn04_QRCReader.png'">
+          <img src="./image/btn04_QRCReader.png" alt="解説カメラ">
         </button>
-
         <button class="tile-btn" onclick="openApp('成績登録')">
-          <img src="image/btn22_GradeEntry.png" alt="成績登録"
-               onmousedown="this.src='image/btn22_GradeEntryA.png'"
-               onmouseup="this.src='image/btn22_GradeEntry.png'"
-               onmouseleave="this.src='image/btn22_GradeEntry.png'">
+          <img src="./image/btn22_GradeEntry.png" alt="成績登録">
         </button>
-
         <button class="tile-btn" onclick="openApp('学習支援ツール')">
-          <img src="image/btn03_StudySupport.png" alt="学習支援ツール"
-               onmousedown="this.src='image/btn03_StudySupportA.png'"
-               onmouseup="this.src='image/btn03_StudySupport.png'"
-               onmouseleave="this.src='image/btn03_StudySupport.png'">
+          <img src="./image/btn03_StudySupport.png" alt="学習支援ツール">
         </button>
-
         <button class="tile-btn" onclick="openApp('英検対策映像授業')">
-          <img src="image/btn49_Eiken.png" alt="英検対策映像授業"
-               onmousedown="this.src='image/btn49_EikenA.png'"
-               onmouseup="this.src='image/btn49_Eiken.png'"
-               onmouseleave="this.src='image/btn49_Eiken.png'">
+          <img src="./image/btn49_Eiken.png" alt="英検対策映像授業">
         </button>
-
         <button class="tile-btn" onclick="openApp('ファイルBOX')">
-          <img src="image/btn05_FileBox.png" alt="ファイルBOX"
-               onmousedown="this.src='image/btn05_FileBoxA.png'"
-               onmouseup="this.src='image/btn05_FileBox.png'"
-               onmouseleave="this.src='image/btn05_FileBox.png'">
+          <img src="./image/btn05_FileBox.png" alt="ファイルBOX">
         </button>
-
         <button class="tile-btn" onclick="openApp('要点解説動画')">
-          <img src="image/btn42_VideoLesson.png" alt="要点解説動画"
-               onmousedown="this.src='image/btn42_VideoLessonA.png'"
-               onmouseup="this.src='image/btn42_VideoLesson.png'"
-               onmouseleave="this.src='image/btn42_VideoLesson.png'">
+          <img src="./image/btn42_VideoLesson.png" alt="要点解説動画">
         </button>
-
         <button class="tile-btn" onclick="openApp('さなトレ')">
-          <img src="image/btn10_SanaTore.png" alt="さなトレ"
-               onmousedown="this.src='image/btn10_SanaToreA.png'"
-               onmouseup="this.src='image/btn10_SanaTore.png'"
-               onmouseleave="this.src='image/btn10_SanaTore.png'">
+          <img src="./image/btn10_SanaTore.png" alt="さなトレ">
         </button>
-
         <button class="tile-btn" onclick="openApp('学習ゲーム')">
-          <img src="image/btn06_LearningGame.png" alt="学習ゲーム"
-               onmousedown="this.src='image/btn06_LearningGameA.png'"
-               onmouseup="this.src='image/btn06_LearningGame.png'"
-               onmouseleave="this.src='image/btn06_LearningGame.png'">
+          <img src="./image/btn06_LearningGame.png" alt="学習ゲーム">
         </button>
       </section>
     </div>
