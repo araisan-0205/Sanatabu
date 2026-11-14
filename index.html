@@ -22,16 +22,17 @@
 
   .app-container {
     width: 100%;
-    height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
   }
 
   /* 1. 青色背景のヘッダーバー */
   .top-bar {
-    height: 56px;
+    height: 50px;
     background: linear-gradient(to bottom, #2b6cb0 0%, #1e4e8c 55%, #163b6b 100%);
-    padding: 0 18px;
+    padding: 0 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -43,7 +44,7 @@
   .logo-wrap {
     display: flex;
     align-items: center;
-    height: 38px;
+    height: 34px;
   }
 
   .logo-wrap img {
@@ -54,7 +55,7 @@
   }
 
   .logo {
-    font-size: 28px;
+    font-size: 26px;
     font-weight: 900;
     font-style: italic;
     color: #ffffff;
@@ -64,21 +65,21 @@
   .date-schedule {
     display: flex;
     align-items: center;
-    gap: 14px;
-    font-size: 14px;
+    gap: 12px;
+    font-size: 13px;
     font-weight: bold;
     color: #ffffff;
   }
 
-  .date-badge { font-size: 19px; color: #ffffff; }
+  .date-badge { font-size: 18px; color: #ffffff; }
 
   .timer-box {
     background-color: #0f172a;
     color: #ffffff;
-    padding: 3px 10px;
+    padding: 2px 8px;
     border-radius: 3px;
     font-family: monospace;
-    font-size: 15px;
+    font-size: 14px;
     border: 1px solid rgba(255,255,255,0.25);
   }
 
@@ -86,7 +87,7 @@
     background: linear-gradient(to bottom, #ef4444, #dc2626);
     color: #fff;
     border: 1px solid #991b1b;
-    padding: 6px 16px;
+    padding: 5px 14px;
     border-radius: 4px;
     font-weight: bold;
     font-size: 13px;
@@ -101,7 +102,7 @@
   .status-area {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     font-size: 12px;
     font-weight: bold;
     color: #ffffff;
@@ -110,17 +111,16 @@
   .online-badge {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
   }
 
-  /* 少し大きくした更新・閉じるボタン（42px） */
   .img-icon-btn {
     border: none;
     background: transparent;
     padding: 0;
     cursor: pointer;
-    width: 42px;
-    height: 42px;
+    width: 38px;
+    height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -129,34 +129,37 @@
   .img-icon-btn img { width: 100%; height: 100%; object-fit: contain; display: block; }
 
   .status-btn {
-    padding: 6px 12px;
+    padding: 5px 10px;
     border: none;
     border-radius: 4px;
     color: #fff;
     font-weight: bold;
-    font-size: 13px;
+    font-size: 12px;
     cursor: pointer;
   }
-  .btn-info { background-color: #4caf50; border-radius: 50%; width: 32px; height: 32px; padding: 0; font-family: serif; font-style: italic; font-size: 16px; }
+  .btn-info { background-color: #4caf50; border-radius: 50%; width: 30px; height: 30px; padding: 0; font-family: serif; font-style: italic; font-size: 15px; }
   .btn-update { background-color: #3b82f6; }
   .btn-exit { background-color: #c25921; }
-  /* 2. メインエリア（1画面ぴったり収まる構成） */
+  /* 2. メインエリア（100dvhで下まで完全に収まる構成） */
   .main-grid {
     flex: 1;
+    min-height: 0;
     display: grid;
-    grid-template-columns: 310px 1fr;
-    gap: 12px;
-    padding: 10px 14px;
+    grid-template-columns: 300px 1fr;
+    gap: 10px;
+    padding: 8px 12px;
     overflow: hidden;
   }
 
   .left-col {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     height: 100%;
+    min-height: 0;
   }
 
+  /* 学習時間を省いたシンプルプロフィールカード */
   .profile-card {
     background-color: #8c7d70;
     color: #fff;
@@ -175,35 +178,29 @@
   }
 
   .student-name { font-size: 19px; font-weight: bold; }
-  .student-id { font-size: 11px; opacity: 0.9; }
+  .student-id { font-size: 12px; opacity: 0.95; }
   .school-info { text-align: right; font-size: 11px; line-height: 1.3; }
 
   .profile-body {
     display: flex;
-    padding: 10px;
+    padding: 10px 12px;
     background-color: #9e8f82;
-    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
   }
 
-  .study-stats {
+  .profile-note {
     flex: 1;
-    font-size: 12px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    text-align: center;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 1.5;
+    color: #fff;
   }
-
-  .stat-item {
-    border-bottom: 1px solid rgba(255,255,255,0.3);
-    padding-bottom: 4px;
-  }
-  .stat-item:last-child { border-bottom: none; }
-  .stat-value { font-size: 15px; font-weight: bold; margin-top: 1px; }
 
   .avatar-box {
-    width: 88px;
-    height: 118px;
+    width: 80px;
+    height: 104px;
     background-color: #f1f5f9;
     border-radius: 3px;
     display: flex;
@@ -212,14 +209,17 @@
     border: 2px solid #fff;
     color: #475569;
     font-size: 11px;
+    flex-shrink: 0;
   }
 
+  /* 赤丸なしのシンプルカレンダーカード */
   .calendar-card {
     background-color: #fff;
     border-radius: 4px;
     overflow: hidden;
     box-shadow: 0 2px 4px rgba(0,0,0,0.15);
     flex: 1;
+    min-height: 0;
     display: flex;
     flex-direction: column;
   }
@@ -227,16 +227,18 @@
   .cal-header {
     background-color: #4a5568;
     color: #fff;
-    padding: 7px 12px;
+    padding: 6px 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-weight: bold;
     font-size: 14px;
+    flex-shrink: 0;
   }
 
   .cal-table {
     width: 100%;
+    height: 100%;
     border-collapse: collapse;
     text-align: center;
     font-size: 13px;
@@ -244,7 +246,7 @@
   }
 
   .cal-table th {
-    padding: 5px 0;
+    padding: 4px 0;
     background-color: #f8fafc;
     border-bottom: 1px solid #e2e8f0;
   }
@@ -254,19 +256,10 @@
 
   .day-circle {
     display: inline-block;
-    width: 26px;
-    height: 26px;
-    line-height: 26px;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
     border-radius: 50%;
-  }
-
-  .studied {
-    background-image: url('maru.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    color: #c53030;
-    font-weight: bold;
   }
 
   .today { background-color: #3182ce; color: #fff; font-weight: bold; }
@@ -275,15 +268,16 @@
   .right-col {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     height: 100%;
+    min-height: 0;
   }
 
   .info-row {
     display: grid;
     grid-template-columns: 1fr 1.35fr;
-    gap: 10px;
-    height: 112px;
+    gap: 8px;
+    height: 98px;
     flex-shrink: 0;
   }
 
@@ -299,30 +293,30 @@
   .panel-title {
     background-color: #374151;
     color: #fff;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: bold;
-    padding: 5px 12px;
+    padding: 4px 10px;
   }
 
   .panel-content {
-    padding: 6px 12px;
+    padding: 5px 10px;
     font-size: 12px;
     overflow-y: auto;
     flex: 1;
   }
 
   .info-list { list-style: none; }
-  .info-list li { padding: 3px 0; border-bottom: 1px dashed #cbd5e1; }
+  .info-list li { padding: 2px 0; border-bottom: 1px dashed #cbd5e1; }
   .info-list li:last-child { border-bottom: none; }
   .info-list a { color: #2563eb; text-decoration: none; }
 
-  /* 元の比率のまま枠いっぱいに拡大するボタンエリア */
+  /* 3段すべて画面内に収まるボタンエリア */
   .tiles-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr);
-    gap: 12px;
-    padding: 14px;
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    padding: 10px;
     border-radius: 6px;
     background-color: #001f5c;
     background-image: url('btn00.png');
@@ -330,6 +324,7 @@
     background-position: center;
     box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     flex: 1;
+    min-height: 0;
     overflow: hidden;
   }
 
@@ -342,6 +337,7 @@
     padding: 0;
     width: 100%;
     height: 100%;
+    min-height: 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -394,10 +390,10 @@
     </div>
     <div class="status-area">
       <span class="online-badge">
-        <img src="cloud_dl.png" alt="☁️" style="width: 26px; height: 26px; object-fit: contain;">
-        <img src="online_text.png" alt="オンライン（一般）" style="width: auto; height: 22px; object-fit: contain;">
+        <img src="cloud_dl.png" alt="☁️" style="width: 24px; height: 24px; object-fit: contain;">
+        <img src="online_text.png" alt="オンライン（一般）" style="width: auto; height: 20px; object-fit: contain;">
       </span>
-      <button class="img-icon-btn" style="width: 34px; height: 34px;" onclick="alert('SANARU 学習ポータル')">
+      <button class="img-icon-btn" style="width: 32px; height: 32px;" onclick="alert('SANARU 学習ポータル')">
         <img src="info.png" alt="i" onerror="this.outerHTML='<span class=\'status-btn btn-info\' style=\'display:inline-flex;align-items:center;justify-content:center;\'>i</span>'">
       </button>
       <button class="img-icon-btn" onclick="runUpdate()">
@@ -422,10 +418,9 @@
           </div>
         </div>
         <div class="profile-body">
-          <div class="study-stats">
-            <div class="stat-item"><div>今月の合計学習時間</div><div class="stat-value">32時間0分</div></div>
-            <div class="stat-item"><div>今週の累計学習時間</div><div class="stat-value">5時間50分</div></div>
-            <div class="stat-item"><div>連続学習日数</div><div class="stat-value">7</div></div>
+          <div class="profile-note">
+            <div>長久手本部校</div>
+            <div style="font-size: 12px; opacity: 0.9; margin-top: 4px;">中学1年生</div>
           </div>
           <div class="avatar-box"><span>アバター</span></div>
         </div>
@@ -436,8 +431,8 @@
         <table class="cal-table">
           <thead><tr><th>日</th><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th><th>土</th></tr></thead>
           <tbody>
-            <tr><td><span class="day-circle studied">1</span></td><td><span class="day-circle">2</span></td><td><span class="day-circle studied">3</span></td><td><span class="day-circle studied">4</span></td><td><span class="day-circle">5</span></td><td><span class="day-circle">6</span></td><td><span class="day-circle studied">7</span></td></tr>
-            <tr><td><span class="day-circle studied">8</span></td><td><span class="day-circle studied">9</span></td><td><span class="day-circle studied">10</span></td><td><span class="day-circle studied">11</span></td><td><span class="day-circle studied">12</span></td><td><span class="day-circle studied">13</span></td><td><span class="day-circle today">14</span></td></tr>
+            <tr><td><span class="day-circle">1</span></td><td><span class="day-circle">2</span></td><td><span class="day-circle">3</span></td><td><span class="day-circle">4</span></td><td><span class="day-circle">5</span></td><td><span class="day-circle">6</span></td><td><span class="day-circle">7</span></td></tr>
+            <tr><td><span class="day-circle">8</span></td><td><span class="day-circle">9</span></td><td><span class="day-circle">10</span></td><td><span class="day-circle">11</span></td><td><span class="day-circle">12</span></td><td><span class="day-circle">13</span></td><td><span class="day-circle today">14</span></td></tr>
             <tr><td><span class="day-circle">15</span></td><td><span class="day-circle">16</span></td><td><span class="day-circle">17</span></td><td><span class="day-circle">18</span></td><td><span class="day-circle">19</span></td><td><span class="day-circle">20</span></td><td><span class="day-circle">21</span></td></tr>
             <tr><td><span class="day-circle">22</span></td><td><span class="day-circle">23</span></td><td><span class="day-circle">24</span></td><td><span class="day-circle">25</span></td><td><span class="day-circle">26</span></td><td><span class="day-circle">27</span></td><td><span class="day-circle">28</span></td></tr>
             <tr><td><span class="day-circle">29</span></td><td><span class="day-circle">30</span></td><td class="other-month">1</td><td class="other-month">2</td><td class="other-month">3</td><td class="other-month">4</td><td class="other-month">5</td></tr>
@@ -508,7 +503,7 @@
     window.open('', '_self', '');
     window.close();
     setTimeout(() => {
-      document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#1e293b;color:#fff;font-size:18px;font-weight:bold;">終了しました。ブラウザのタブを閉じてください。</div>';
+      document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100dvh;background:#1e293b;color:#fff;font-size:18px;font-weight:bold;">終了しました。ブラウザのタブを閉じてください。</div>';
     }, 200);
   }
 
