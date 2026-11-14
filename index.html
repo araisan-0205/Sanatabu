@@ -29,7 +29,7 @@
   }
 
   /* ==========================================================================
-     1. 上部ヘッダーバー（帯の中の文字サイズ・配置バランスを見直し）
+     1. 上部ヘッダーバー（「開始から」も含めた黒色タイマー枠）
      ========================================================================== */
   .top-bar {
     position: relative;
@@ -83,29 +83,30 @@
     color: #111111;
   }
 
+  /* 「開始から（あと）」も含めて黒背景・白文字にした一体型枠 */
   .timer-area {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
+    background-color: #111111;
+    color: #ffffff;
+    padding: 3px 10px;
+    border-radius: 2px;
     white-space: nowrap;
   }
 
   .timer-label {
     font-size: 10px;
     font-weight: bold;
-    color: #444444;
+    color: #ffffff;
   }
 
-  /* 黒色の時間：分表示枠 */
   .timer-box {
-    background-color: #111111;
     color: #ffffff;
-    padding: 2px 9px;
-    border-radius: 2px;
     font-family: "Courier New", Consolas, monospace;
     font-size: 16px;
     font-weight: bold;
-    min-width: 56px;
+    min-width: 44px;
     text-align: center;
     letter-spacing: 0.5px;
   }
@@ -218,9 +219,12 @@
   .stat-row:last-child {
     border-bottom: none;
   }
+
+  /* 本家と同じ明るい黄緑がかった黄色（#e4f542） */
   .stat-val {
     font-size: 14px;
-    color: #ffffff;
+    color: #e4f542;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.6);
   }
 
   /* カレンダー枠 */
@@ -287,7 +291,7 @@
     line-height: 28px;
   }
 
-  /* 今日の日付：青丸ではなく日付の数字自体を青色太字にする */
+  /* 今日の日付：数字自体を青色太字にする */
   .today {
     color: #1d4ed8;
     font-weight: 900;
@@ -438,7 +442,7 @@
 </div>
 
 <div class="app-container">
-  <!-- 上部ヘッダー（文字バランス調整済み） -->
+  <!-- 上部ヘッダー -->
   <header class="top-bar">
     <div class="header-white-slot">
       <span class="date-badge">11月14日（土）</span>
