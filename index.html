@@ -29,7 +29,7 @@
   }
 
   /* ==========================================================================
-     1. 上部ヘッダーバー
+     1. 上部ヘッダーバー（帯の中の文字サイズ・配置バランスを見直し）
      ========================================================================== */
   .top-bar {
     position: relative;
@@ -45,21 +45,41 @@
 
   .header-white-slot {
     position: absolute;
-    left: 21.8%;
-    width: 49.6%;
+    left: 21.6%;
+    width: 50.0%;
     top: 16%;
     height: 68%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 10px;
-    font-size: 13px;
-    font-weight: bold;
+    padding: 0 8px 0 12px;
     color: #222222;
   }
 
   .date-badge {
     font-size: 18px;
+    font-weight: bold;
+    color: #111111;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+
+  .schedule-group {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+    white-space: nowrap;
+  }
+
+  .schedule-label {
+    font-size: 11px;
+    font-weight: normal;
+    color: #555555;
+  }
+
+  .schedule-val {
+    font-size: 14px;
+    font-weight: bold;
     color: #111111;
   }
 
@@ -67,10 +87,12 @@
     display: flex;
     align-items: center;
     gap: 4px;
+    white-space: nowrap;
   }
 
   .timer-label {
-    font-size: 11px;
+    font-size: 10px;
+    font-weight: bold;
     color: #444444;
   }
 
@@ -78,12 +100,12 @@
   .timer-box {
     background-color: #111111;
     color: #ffffff;
-    padding: 3px 10px;
+    padding: 2px 9px;
     border-radius: 2px;
     font-family: "Courier New", Consolas, monospace;
     font-size: 16px;
     font-weight: bold;
-    min-width: 58px;
+    min-width: 56px;
     text-align: center;
     letter-spacing: 0.5px;
   }
@@ -93,15 +115,16 @@
     background: linear-gradient(to bottom, #f04e45, #d62d20);
     color: #ffffff;
     border: 1px solid #991b1b;
-    padding: 5px 22px;
+    padding: 5px 18px;
     border-radius: 2px;
     font-weight: bold;
     font-size: 13px;
     letter-spacing: 1px;
     cursor: pointer;
     box-shadow: 0 1px 2px rgba(0,0,0,0.3);
-    min-width: 108px;
+    min-width: 104px;
     text-align: center;
+    white-space: nowrap;
   }
   .btn-start:active {
     transform: translateY(1px);
@@ -135,7 +158,7 @@
   .img-icon-btn:active { transform: scale(0.95); }
   .img-icon-btn img { width: 100%; height: 100%; object-fit: contain; display: block; }
   /* ==========================================================================
-     2. メインエリア（カレンダーを下端まで揃えつつ縦横比率をキープ）
+     2. メインエリア（左カラム：profile_bg.png & cal_bg.png）
      ========================================================================== */
   .main-grid {
     flex: 1;
@@ -200,7 +223,7 @@
     color: #ffffff;
   }
 
-  /* カレンダー枠（縦横比を維持したまま画面の下端までぴったり届く設定） */
+  /* カレンダー枠 */
   .calendar-card {
     position: relative;
     width: 100%;
@@ -262,12 +285,17 @@
     width: 28px;
     height: 28px;
     line-height: 28px;
-    border-radius: 50%;
   }
 
-  .today { background-color: #3182ce; color: #fff; font-weight: bold; }
+  /* 今日の日付：青丸ではなく日付の数字自体を青色太字にする */
+  .today {
+    color: #1d4ed8;
+    font-weight: 900;
+  }
+
   .other-month { color: #cbd5e1; }
 
+  /* 学習終了を押した日に付く赤丸スタンプ */
   .studied-mark {
     background-image: url('maru.png');
     background-size: contain;
@@ -410,11 +438,14 @@
 </div>
 
 <div class="app-container">
-  <!-- 上部ヘッダー -->
+  <!-- 上部ヘッダー（文字バランス調整済み） -->
   <header class="top-bar">
     <div class="header-white-slot">
       <span class="date-badge">11月14日（土）</span>
-      <span>予定開始時刻 予定なし</span>
+      <span class="schedule-group">
+        <span class="schedule-label">予定開始時刻</span>
+        <span class="schedule-val">予定なし</span>
+      </span>
       <div class="timer-area">
         <span class="timer-label" id="timerLabel">あと</span>
         <span class="timer-box" id="timerDisplay">-:-</span>
@@ -533,7 +564,6 @@
     return `${h}時間${m}分`;
   }
 
-  // 黒枠用の「時間：分」表示（例：0:00, 0:13, 1:05）
   function formatHourMin(elapsedSec) {
     const totalMins = Math.floor(elapsedSec / 60);
     const h = Math.floor(totalMins / 60);
@@ -596,13 +626,11 @@
     const savedStart = localStorage.getItem('sanaru_study_start');
 
     if (!savedStart) {
-      // 【学習開始】押下時：現在時刻を保存して「0:00」から開始
       const now = Date.now();
       localStorage.setItem('sanaru_study_start', String(now));
       localStorage.setItem('sanaru_start_day', String(new Date().getDate()));
       startTimerLoop(now);
     } else {
-      // 【学習終了】押下時：経過分数を加算（1分未満でも動作確認用に1分加算）
       const startMs = parseInt(savedStart, 10);
       const elapsedSec = Math.max(0, Math.floor((Date.now() - startMs) / 1000));
       const addedMins = Math.max(1, Math.floor(elapsedSec / 60));
@@ -610,7 +638,6 @@
       const prevTotal = parseInt(localStorage.getItem('sanaru_total_mins') || '0', 10);
       localStorage.setItem('sanaru_total_mins', String(prevTotal + addedMins));
 
-      // 開始日と終了日に丸をつける
       const startDay = parseInt(localStorage.getItem('sanaru_start_day') || '14', 10);
       const endDay = new Date().getDate();
       const studiedDays = JSON.parse(localStorage.getItem('sanaru_studied_days') || '[]');
@@ -619,7 +646,6 @@
       if (!studiedDays.includes(14)) studiedDays.push(14);
       localStorage.setItem('sanaru_studied_days', JSON.stringify(studiedDays));
 
-      // リセット処理
       localStorage.removeItem('sanaru_study_start');
       localStorage.removeItem('sanaru_start_day');
       if (timerInterval) {
