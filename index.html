@@ -567,22 +567,6 @@
   const FILEBOX_URL = "https://atwill-net.com";
   const GRADE_ENTRY_URL = "https://" + "araisan-0205.github.io/Grade/";
 
-  // GitHubリポジトリ内部（data.json）へ直接読み書きする設定
-  const GH_OWNER = "araisan-0205";
-  const GH_REPO = "Sanatabu";
-  const GH_PATH = "data.json";
-  const GH_TOKEN = "github_pat_" + "11CAZTTTA0J7xpRuncqV5D_" + "H0yqwyFw8s2DsIup9hxQeBTEDAY6RblLRePpLBi5QQHTHQXKP2Fguu1tyN0";
-  const GH_API_URL = `https://github.com{GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`;
-
-  let fileSha = null;
-  let sharedState = {
-    study_start: null,
-    start_key: null,
-    total_mins: 0,
-    studied_keys: [],
-    updated_at: 0
-  };
-
   function getTodayInfo() {
     const now = new Date();
     const weekNames = ["日", "月", "火", "水", "木", "金", "土"];
@@ -603,95 +587,6 @@
     }
   }
 
-  // GitHub API から data.json を取得
-  async function fetchCloudState() {
-    const localRaw = localStorage.getItem('sanatabu_gh_cache');
-    if (localRaw) {
-      try {
-        const parsed = JSON.parse(localRaw);
-        if (parsed && typeof parsed === 'object') sharedState = parsed;
-      } catch (e) {}
-    }
-
-    try {
-      const res = await fetch(GH_API_URL + "?t=" + Date.now(), {
-        method: "GET",
-        headers: {
-          "Authorization": `Bearer ${GH_TOKEN}`,
-          "Accept": "application/vnd.github+json"
-        },
-        cache: "no-store"
-      });
-      if (res.ok) {
-        const json = await res.json();
-        fileSha = json.sha;
-        const decodedText = decodeURIComponent(escape(atob(json.content.replace(/\n/g, ""))));
-        const data = JSON.parse(decodedText);
-        if (data && typeof data === 'object') {
-          const cloudTime = data.updated_at || 0;
-          const localTime = sharedState.updated_at || 0;
-          if (cloudTime >= localTime) {
-            sharedState = {
-              study_start: data.study_start || null,
-              start_key: data.start_key || null,
-              total_mins: parseInt(data.total_mins || 0, 10),
-              studied_keys: Array.isArray(data.studied_keys) ? data.studied_keys : [],
-              updated_at: cloudTime
-            };
-            localStorage.setItem('sanatabu_gh_cache', JSON.stringify(sharedState));
-          }
-        }
-      }
-    } catch (e) {
-      console.error("GitHub取得エラー:", e);
-    }
-  }
-
-  // GitHub API を使ってリポジトリ内の data.json を直接更新
-  async function saveCloudState() {
-    sharedState.updated_at = Date.now();
-    localStorage.setItem('sanatabu_gh_cache', JSON.stringify(sharedState));
-
-    try {
-      const checkRes = await fetch(GH_API_URL + "?t=" + Date.now(), {
-        headers: {
-          "Authorization": `Bearer ${GH_TOKEN}`,
-          "Accept": "application/vnd.github+json"
-        },
-        cache: "no-store"
-      });
-      if (checkRes.ok) {
-        const checkJson = await checkRes.json();
-        fileSha = checkJson.sha;
-      }
-
-      const contentBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(sharedState, null, 2))));
-      const bodyData = {
-        message: "Update study log",
-        content: contentBase64
-      };
-      if (fileSha) bodyData.sha = fileSha;
-
-      const putRes = await fetch(GH_API_URL, {
-        method: "PUT",
-        headers: {
-          "Authorization": `Bearer ${GH_TOKEN}`,
-          "Accept": "application/vnd.github+json",
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(bodyData)
-      });
-
-      if (putRes.ok) {
-        const putJson = await putRes.json();
-        if (putJson.content && putJson.content.sha) {
-          fileSha = putJson.content.sha;
-        }
-      }
-    } catch (e) {
-      console.error("GitHub保存エラー:", e);
-    }
-  }
   function moveWithLoading(targetUrl) {
     const loader = document.getElementById('loadingOverlay');
     loader.style.display = 'flex';
@@ -704,10 +599,12 @@
   function openFilebox() { moveWithLoading(FILEBOX_URL); }
   function openGradeEntry() { moveWithLoading(GRADE_ENTRY_URL); }
 
-  async function runUpdate() {
+  function runUpdate() {
     const loader = document.getElementById('loadingOverlay');
     loader.style.display = 'flex';
-    await syncAllFromCloud();
+    updateHeaderDate();
+    renderCalendar();
+    renderProfileStats();
     setTimeout(() => { loader.style.display = 'none'; }, 1000);
   }
 
@@ -736,7 +633,7 @@
     const daysInMonth = new Date(viewYear, viewMonth, 0).getDate();
     const prevMonthDays = new Date(viewYear, viewMonth - 1, 0).getDate();
 
-    const studiedKeys = sharedState.studied_keys || [];
+    const studiedKeys = JSON.parse(localStorage.getItem('sanaru_studied_keys') || '[]');
 
     let dayCounter = 1;
     let nextMonthDay = 1;
@@ -788,7 +685,7 @@
     renderCalendar();
   }
 
-  // 学習タイマー＆GitHub同期処理
+  // 学習タイマー＆ブラウザ内自動保存（タブを閉じても継続）
   let timerInterval = null;
 
   function formatMinutesText(totalMins) {
@@ -805,8 +702,8 @@
   }
 
   function renderProfileStats() {
-    const savedTotalMins = sharedState.total_mins || 0;
-    const studiedKeys = sharedState.studied_keys || [];
+    const savedTotalMins = parseInt(localStorage.getItem('sanaru_total_mins') || '0', 10);
+    const studiedKeys = JSON.parse(localStorage.getItem('sanaru_studied_keys') || '[]');
     const slot = document.getElementById('profileSlot');
 
     if (savedTotalMins > 0 || studiedKeys.length > 0) {
@@ -816,94 +713,77 @@
         <div class="stat-row"><div>今週の累計学習時間</div><div class="stat-val">${timeText}</div></div>
         <div class="stat-row"><div>連続学習日数</div><div class="stat-val">${studiedKeys.length}</div></div>
       `;
-    } else {
-      slot.innerHTML = `
-        <div>長久手本部校</div>
-        <div style="font-size: 12px; opacity: 0.9; margin-top: 2px;">中学1年生</div>
-      `;
     }
   }
 
-  function applyTimerUI() {
+  function startTimerLoop(startTimeMs) {
     const btn = document.getElementById('studyStartBtn');
     const display = document.getElementById('timerDisplay');
     const label = document.getElementById('timerLabel');
 
-    if (sharedState.study_start) {
-      const startTimeMs = parseInt(sharedState.study_start, 10);
-      btn.textContent = '学習終了';
-      btn.classList.add('active');
-      label.textContent = '開始から';
+    btn.textContent = '学習終了';
+    btn.classList.add('active');
+    label.textContent = '開始から';
 
-      const updateDisplay = () => {
-        const elapsedSec = Math.max(0, Math.floor((Date.now() - startTimeMs) / 1000));
-        display.textContent = formatHourMin(elapsedSec);
-      };
+    const updateDisplay = () => {
+      const elapsedSec = Math.max(0, Math.floor((Date.now() - startTimeMs) / 1000));
+      display.textContent = formatHourMin(elapsedSec);
+    };
 
-      updateDisplay();
-      if (timerInterval) clearInterval(timerInterval);
-      timerInterval = setInterval(updateDisplay, 5000);
+    updateDisplay();
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(updateDisplay, 5000);
+  }
+
+  function toggleStudy() {
+    const today = getTodayInfo();
+    const savedStart = localStorage.getItem('sanaru_study_start');
+
+    if (!savedStart) {
+      const now = Date.now();
+      localStorage.setItem('sanaru_study_start', String(now));
+      localStorage.setItem('sanaru_start_key', today.key);
+      startTimerLoop(now);
     } else {
+      const startMs = parseInt(savedStart, 10);
+      const elapsedSec = Math.max(0, Math.floor((Date.now() - startMs) / 1000));
+      const addedMins = Math.max(1, Math.floor(elapsedSec / 60));
+
+      const prevTotal = parseInt(localStorage.getItem('sanaru_total_mins') || '0', 10);
+      localStorage.setItem('sanaru_total_mins', String(prevTotal + addedMins));
+
+      const startKey = localStorage.getItem('sanaru_start_key') || today.key;
+      const endKey = today.key;
+      const studiedKeys = JSON.parse(localStorage.getItem('sanaru_studied_keys') || '[]');
+      if (!studiedKeys.includes(startKey)) studiedKeys.push(startKey);
+      if (!studiedKeys.includes(endKey)) studiedKeys.push(endKey);
+      localStorage.setItem('sanaru_studied_keys', JSON.stringify(studiedKeys));
+
+      localStorage.removeItem('sanaru_study_start');
+      localStorage.removeItem('sanaru_start_key');
       if (timerInterval) {
         clearInterval(timerInterval);
         timerInterval = null;
       }
+
+      const btn = document.getElementById('studyStartBtn');
       btn.textContent = '学習開始';
       btn.classList.remove('active');
-      label.textContent = 'あと';
-      display.textContent = '-:-';
-    }
-  }
+      document.getElementById('timerLabel').textContent = 'あと';
+      document.getElementById('timerDisplay').textContent = '-:-';
 
-  async function toggleStudy() {
-    const today = getTodayInfo();
-    await fetchCloudState();
-
-    if (!sharedState.study_start) {
-      sharedState.study_start = Date.now();
-      sharedState.start_key = today.key;
-      applyTimerUI();
-      await saveCloudState();
-    } else {
-      const startMs = parseInt(sharedState.study_start, 10);
-      const elapsedSec = Math.max(0, Math.floor((Date.now() - startMs) / 1000));
-      const addedMins = Math.max(1, Math.floor(elapsedSec / 60));
-
-      sharedState.total_mins = (sharedState.total_mins || 0) + addedMins;
-
-      const startKey = sharedState.start_key || today.key;
-      const endKey = today.key;
-      if (!Array.isArray(sharedState.studied_keys)) sharedState.studied_keys = [];
-      if (!sharedState.studied_keys.includes(startKey)) sharedState.studied_keys.push(startKey);
-      if (!sharedState.studied_keys.includes(endKey)) sharedState.studied_keys.push(endKey);
-
-      sharedState.study_start = null;
-      sharedState.start_key = null;
-
-      applyTimerUI();
       renderProfileStats();
       renderCalendar();
-      await saveCloudState();
     }
-  }
-
-  async function syncAllFromCloud() {
-    updateHeaderDate();
-    await fetchCloudState();
-    renderProfileStats();
-    renderCalendar();
-    applyTimerUI();
   }
 
   window.addEventListener('DOMContentLoaded', () => {
     updateHeaderDate();
+    renderProfileStats();
     renderCalendar();
-    syncAllFromCloud();
-  });
-
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) {
-      syncAllFromCloud();
+    const savedStart = localStorage.getItem('sanaru_study_start');
+    if (savedStart) {
+      startTimerLoop(parseInt(savedStart, 10));
     }
   });
 </script>
