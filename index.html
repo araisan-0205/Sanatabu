@@ -29,15 +29,15 @@
   }
 
   /* ==========================================================================
-     1. 上部ヘッダーバー（潰れ防止のため元の比率 aspect-ratio: 1920 / 105 を維持）
+     1. 上部ヘッダーバー（上下の縁まで切れずに表示）
      ========================================================================== */
   .top-bar {
     position: relative;
     width: 100%;
-    aspect-ratio: 1920 / 105;
+    aspect-ratio: 1920 / 118;
     background-color: #0b3184;
     background-image: url('header_bg.png');
-    background-size: 100% auto;
+    background-size: 100% 100%;
     background-position: center;
     background-repeat: no-repeat;
     flex-shrink: 0;
@@ -90,7 +90,7 @@
 
   .header-right-btns {
     position: absolute;
-    right: 1.5%;
+    right: 1.2%;
     top: 50%;
     transform: translateY(-50%);
     display: flex;
@@ -103,8 +103,8 @@
     background: transparent;
     padding: 0;
     cursor: pointer;
-    width: 34px;
-    height: 34px;
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -229,7 +229,7 @@
   .today { background-color: #3182ce; color: #fff; font-weight: bold; }
   .other-month { color: #cbd5e1; }
   /* ==========================================================================
-     3. 右カラム（info_bg.png 縦横比率合わせ & 2つの機能ボタンエリア）
+     3. 右カラム（info_bg.png & 2つの機能ボタンエリア）
      ========================================================================== */
   .right-col {
     display: flex;
@@ -239,7 +239,6 @@
     min-height: 0;
   }
 
-  /* 横幅に合わせて縦にも伸びる info_bg.png（aspect-ratio: 1000 / 195） */
   .info-panel-wrap {
     position: relative;
     width: 100%;
@@ -281,7 +280,6 @@
   .info-list li:last-child { border-bottom: none; }
   .info-list a { color: #2563eb; text-decoration: none; }
 
-  /* 1つあたりのボタンサイズを維持したまま2つだけ配置するエリア */
   .tiles-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -349,7 +347,7 @@
 </div>
 
 <div class="app-container">
-  <!-- 上部ヘッダー（header_bg.png の上に要素を配置） -->
+  <!-- 上部ヘッダー -->
   <header class="top-bar">
     <div class="header-white-slot">
       <span class="date-badge">11月14日（土）</span>
@@ -368,7 +366,7 @@
     </div>
   </header>
   <main class="main-grid">
-    <!-- 左カラム：profile_bg.png & cal_bg.png -->
+    <!-- 左カラム -->
     <div class="left-col">
       <section class="profile-card">
         <div class="profile-dark-slot">
@@ -394,7 +392,7 @@
       </section>
     </div>
 
-    <!-- 右カラム：info_bg.png & 2ボタン -->
+    <!-- 右カラム -->
     <div class="right-col">
       <section class="info-panel-wrap">
         <div class="info-left-content">
