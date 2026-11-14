@@ -567,14 +567,15 @@
   const FILEBOX_URL = "https://atwill-net.com";
   const GRADE_ENTRY_URL = "https://" + "araisan-0205.github.io/Grade/";
 
-  // どのブラウザ・端末からも自動共有されるFirebase Realtime Database
-  const DB_URL = "https://firebaseio.com";
+  // ★ JSONBlob クラウド同期URL（どのブラウザから開いても自動共有）
+  const DB_URL = "https://jsonblob.com/01a1dab7-4bf3-72a5-a3f0-442f44647db4/json";
 
   let sharedState = {
     study_start: null,
     start_key: null,
     total_mins: 0,
-    studied_keys: []
+    studied_keys: [],
+    updated_at: 0
   };
 
   function getTodayInfo() {
@@ -597,50 +598,64 @@
     }
   }
 
-    async function fetchCloudState() {
-    // まず手元の即座バックアップを読み込む
-    const localBackup = localStorage.getItem('sanatabu_backup');
-    if (localBackup) {
-      try { sharedState = JSON.parse(localBackup); } catch (e) {}
+  async function fetchCloudState() {
+    // 1. まず手元の即座バックアップを読み込む
+    const localRaw = localStorage.getItem('sanatabu_jsonblob_cache');
+    if (localRaw) {
+      try {
+        const parsed = JSON.parse(localRaw);
+        if (parsed && typeof parsed === 'object') sharedState = parsed;
+      } catch (e) {}
     }
-    // 次にクラウドから最新データを取得して上書き
+
+    // 2. JSONBlob クラウドから最新データを取得
     try {
-      const res = await fetch(DB_URL + "?t=" + Date.now(), { cache: "no-store" });
+      const res = await fetch(DB_URL, {
+        method: "GET",
+        headers: { "Accept": "application/json" },
+        cache: "no-store"
+      });
       if (res.ok) {
         const data = await res.json();
-        if (data) {
-          sharedState = {
-            study_start: data.study_start || null,
-            start_key: data.start_key || null,
-            total_mins: parseInt(data.total_mins || 0, 10),
-            studied_keys: Array.isArray(data.studied_keys) ? data.studied_keys : []
-          };
-          localStorage.setItem('sanatabu_backup', JSON.stringify(sharedState));
+        if (data && typeof data === 'object') {
+          const cloudTime = data.updated_at || 0;
+          const localTime = sharedState.updated_at || 0;
+          if (cloudTime >= localTime) {
+            sharedState = {
+              study_start: data.study_start || null,
+              start_key: data.start_key || null,
+              total_mins: parseInt(data.total_mins || 0, 10),
+              studied_keys: Array.isArray(data.studied_keys) ? data.studied_keys : [],
+              updated_at: cloudTime
+            };
+            localStorage.setItem('sanatabu_jsonblob_cache', JSON.stringify(sharedState));
+          }
         }
       }
     } catch (e) {
-      console.error("同期エラー:", e);
+      console.error("JSONBlob 取得エラー:", e);
     }
   }
 
   async function saveCloudState() {
-    // 1. 押した瞬間に即座に保存（0.1秒後に再読み込みしても消えない）
-    localStorage.setItem('sanatabu_backup', JSON.stringify(sharedState));
-    // 2. クラウド（全ブラウザ共有）へ送信
+    sharedState.updated_at = Date.now();
+    // 1. 押した瞬間に即座に端末へ保存（0.1秒後の再読み込みでも絶対に消えない）
+    localStorage.setItem('sanatabu_jsonblob_cache', JSON.stringify(sharedState));
+
+    // 2. JSONBlob クラウドへ保存して他のブラウザと共有
     try {
-      const res = await fetch(DB_URL, {
+      await fetch(DB_URL, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
         body: JSON.stringify(sharedState)
       });
-      if (!res.ok) {
-        alert("クラウド保存エラー: Firebaseのルールが公開されているか確認してください");
-      }
     } catch (e) {
-      console.error("保存エラー:", e);
+      console.error("JSONBlob 保存エラー:", e);
     }
   }
-
 
   function moveWithLoading(targetUrl) {
     const loader = document.getElementById('loadingOverlay');
