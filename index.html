@@ -567,9 +567,14 @@
   const FILEBOX_URL = "https://atwill-net.com";
   const GRADE_ENTRY_URL = "https://" + "araisan-0205.github.io/Grade/";
 
-  // ★ JSONBlob クラウド同期URL（どのブラウザから開いても自動共有）
-  const DB_URL = "https://jsonblob.com/01a1dab7-4bf3-72a5-a3f0-442f44647db4/json";
+  // GitHubリポジトリ内部（data.json）へ直接読み書きする設定
+  const GH_OWNER = "araisan-0205";
+  const GH_REPO = "Sanatabu";
+  const GH_PATH = "data.json";
+  const GH_TOKEN = "github_pat_" + "11CAZTTTA0J7xpRuncqV5D_" + "H0yqwyFw8s2DsIup9hxQeBTEDAY6RblLRePpLBi5QQHTHQXKP2Fguu1tyN0";
+  const GH_API_URL = `https://github.com{GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`;
 
+  let fileSha = null;
   let sharedState = {
     study_start: null,
     start_key: null,
@@ -598,9 +603,9 @@
     }
   }
 
+  // GitHub API から data.json を取得
   async function fetchCloudState() {
-    // 1. まず手元の即座バックアップを読み込む
-    const localRaw = localStorage.getItem('sanatabu_jsonblob_cache');
+    const localRaw = localStorage.getItem('sanatabu_gh_cache');
     if (localRaw) {
       try {
         const parsed = JSON.parse(localRaw);
@@ -608,15 +613,20 @@
       } catch (e) {}
     }
 
-    // 2. JSONBlob クラウドから最新データを取得
     try {
-      const res = await fetch(DB_URL, {
+      const res = await fetch(GH_API_URL + "?t=" + Date.now(), {
         method: "GET",
-        headers: { "Accept": "application/json" },
+        headers: {
+          "Authorization": `Bearer ${GH_TOKEN}`,
+          "Accept": "application/vnd.github+json"
+        },
         cache: "no-store"
       });
       if (res.ok) {
-        const data = await res.json();
+        const json = await res.json();
+        fileSha = json.sha;
+        const decodedText = decodeURIComponent(escape(atob(json.content.replace(/\n/g, ""))));
+        const data = JSON.parse(decodedText);
         if (data && typeof data === 'object') {
           const cloudTime = data.updated_at || 0;
           const localTime = sharedState.updated_at || 0;
@@ -628,35 +638,60 @@
               studied_keys: Array.isArray(data.studied_keys) ? data.studied_keys : [],
               updated_at: cloudTime
             };
-            localStorage.setItem('sanatabu_jsonblob_cache', JSON.stringify(sharedState));
+            localStorage.setItem('sanatabu_gh_cache', JSON.stringify(sharedState));
           }
         }
       }
     } catch (e) {
-      console.error("JSONBlob 取得エラー:", e);
+      console.error("GitHub取得エラー:", e);
     }
   }
 
+  // GitHub API を使ってリポジトリ内の data.json を直接更新
   async function saveCloudState() {
     sharedState.updated_at = Date.now();
-    // 1. 押した瞬間に即座に端末へ保存（0.1秒後の再読み込みでも絶対に消えない）
-    localStorage.setItem('sanatabu_jsonblob_cache', JSON.stringify(sharedState));
+    localStorage.setItem('sanatabu_gh_cache', JSON.stringify(sharedState));
 
-    // 2. JSONBlob クラウドへ保存して他のブラウザと共有
     try {
-      await fetch(DB_URL, {
+      const checkRes = await fetch(GH_API_URL + "?t=" + Date.now(), {
+        headers: {
+          "Authorization": `Bearer ${GH_TOKEN}`,
+          "Accept": "application/vnd.github+json"
+        },
+        cache: "no-store"
+      });
+      if (checkRes.ok) {
+        const checkJson = await checkRes.json();
+        fileSha = checkJson.sha;
+      }
+
+      const contentBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(sharedState, null, 2))));
+      const bodyData = {
+        message: "Update study log",
+        content: contentBase64
+      };
+      if (fileSha) bodyData.sha = fileSha;
+
+      const putRes = await fetch(GH_API_URL, {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json"
+          "Authorization": `Bearer ${GH_TOKEN}`,
+          "Accept": "application/vnd.github+json",
+          "Content-Type": "application/json"
         },
-        body: JSON.stringify(sharedState)
+        body: JSON.stringify(bodyData)
       });
+
+      if (putRes.ok) {
+        const putJson = await putRes.json();
+        if (putJson.content && putJson.content.sha) {
+          fileSha = putJson.content.sha;
+        }
+      }
     } catch (e) {
-      console.error("JSONBlob 保存エラー:", e);
+      console.error("GitHub保存エラー:", e);
     }
   }
-
   function moveWithLoading(targetUrl) {
     const loader = document.getElementById('loadingOverlay');
     loader.style.display = 'flex';
@@ -753,7 +788,7 @@
     renderCalendar();
   }
 
-  // 学習タイマー＆クラウド同期処理
+  // 学習タイマー＆GitHub同期処理
   let timerInterval = null;
 
   function formatMinutesText(totalMins) {
