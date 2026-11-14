@@ -157,7 +157,7 @@
   .img-icon-btn:active { transform: scale(0.95); }
   .img-icon-btn img { width: 100%; height: 100%; object-fit: contain; display: block; }
   /* ==========================================================================
-     2. メインエリア（左カラム：白いモヤ付きプロフィール & カレンダー）
+     2. メインエリア（左カラム：プロフィール & 今日のマスが青いカレンダー）
      ========================================================================== */
   .main-grid {
     flex: 1;
@@ -209,27 +209,12 @@
     padding: 2px;
   }
 
-  /* 区切り線をなくし、本家と同じ横長の白い光の帯（モヤ）を表示 */
   .stat-row {
-    position: relative;
     width: 100%;
-    padding: 3px 0 5px 0;
-  }
-
-  .stat-row::after {
-    content: "";
-    position: absolute;
-    left: 6%;
-    right: 6%;
-    bottom: 2px;
-    height: 11px;
-    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.18) 45%, rgba(255, 255, 255, 0) 75%);
-    pointer-events: none;
+    padding: 3px 0;
   }
 
   .stat-val {
-    position: relative;
-    z-index: 1;
     font-size: 14px;
     color: #e4f542;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
@@ -342,6 +327,15 @@
     background-color: #e6f2ff;
   }
 
+  /* 今日のマス：背景全体を青くし、中の文字を白にする */
+  .cal-table td.today-cell {
+    background-color: #2563eb !important;
+  }
+  .cal-table td.today-cell .day-circle {
+    color: #ffffff !important;
+    font-weight: 900;
+  }
+
   .day-circle {
     display: inline-block;
     width: 26px;
@@ -349,12 +343,6 @@
     line-height: 26px;
     font-weight: bold;
     color: #334155;
-  }
-
-  /* 今日の日付：数字自体を確実に青色太字にする */
-  .day-circle.today {
-    color: #1d4ed8 !important;
-    font-weight: 900;
   }
 
   .other-month {
@@ -368,7 +356,7 @@
     background-repeat: no-repeat;
     background-position: center;
   }
-  .studied-mark:not(.today) {
+  .cal-table td:not(.today-cell) .studied-mark {
     color: #c53030;
   }
   /* ==========================================================================
@@ -659,8 +647,9 @@
           const dateKey = `${viewYear}-${viewMonth}-${d}`;
           const isStudied = studiedKeys.includes(dateKey) || (viewYear === TODAY_YEAR && viewMonth === TODAY_MONTH && legacyDays.includes(d));
 
+          if (isToday) td.classList.add('today-cell');
+
           const classes = ['day-circle'];
-          if (isToday) classes.push('today');
           if (isStudied) classes.push('studied-mark');
 
           td.innerHTML = `<span class="${classes.join(' ')}">${d}</span>`;
