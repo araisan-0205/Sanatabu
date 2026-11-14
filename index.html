@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>さなタブ</title>
+<title>SANARU</title>
 <style>
   * {
     box-sizing: border-box;
@@ -29,53 +29,52 @@
   }
 
   /* ==========================================================================
-     1. 上部ヘッダーバー（背景画像: header_bg.png）
+     1. 上部ヘッダーバー（潰れ防止のため高さを44pxに最適化）
      ========================================================================== */
   .top-bar {
     position: relative;
     width: 100%;
-    height: 54px;
+    height: 44px;
     background-image: url('header_bg.png');
     background-size: 100% 100%;
     background-repeat: no-repeat;
     flex-shrink: 0;
   }
 
-  /* header_bg.png の中央の白い枠エリアに日付と学習開始ボタンを配置 */
   .header-white-slot {
     position: absolute;
     left: 21.8%;
     width: 49.6%;
-    top: 16%;
-    height: 68%;
+    top: 15%;
+    height: 70%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 12px;
+    padding: 0 10px;
     font-size: 13px;
     font-weight: bold;
     color: #222222;
   }
 
   .date-badge {
-    font-size: 18px;
+    font-size: 17px;
     color: #111111;
   }
 
   .timer-box {
     background-color: #2d3748;
     color: #ffffff;
-    padding: 2px 8px;
+    padding: 1px 8px;
     border-radius: 3px;
     font-family: monospace;
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .btn-start {
     background: linear-gradient(to bottom, #ef4444, #dc2626);
     color: #fff;
     border: 1px solid #991b1b;
-    padding: 4px 14px;
+    padding: 3px 12px;
     border-radius: 4px;
     font-weight: bold;
     font-size: 12px;
@@ -87,7 +86,6 @@
     border-color: #166534;
   }
 
-  /* header_bg.png の右側の青い余白に「更新」と「×」ボタンを配置 */
   .header-right-btns {
     position: absolute;
     right: 1.5%;
@@ -103,8 +101,8 @@
     background: transparent;
     padding: 0;
     cursor: pointer;
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -146,7 +144,6 @@
     flex-shrink: 0;
   }
 
-  /* profile_bg.png の左下の濃紺枠内に校舎情報を配置 */
   .profile-dark-slot {
     position: absolute;
     left: 6.5%;
@@ -164,12 +161,12 @@
     line-height: 1.6;
   }
 
-  /* カレンダーカード（背景画像: cal_bg.png） */
+  /* カレンダーカード（縦潰れ防止のため元の比率 aspect-ratio: 1000 / 980 を維持） */
   .calendar-card {
     position: relative;
     width: 100%;
-    flex: 1;
-    min-height: 0;
+    aspect-ratio: 1000 / 980;
+    flex-shrink: 0;
     background-image: url('cal_bg.png');
     background-size: 100% 100%;
     background-repeat: no-repeat;
@@ -180,9 +177,8 @@
     flex-direction: column;
   }
 
-  /* cal_bg.png の上部グレー帯に「11月」を表示 */
   .cal-month-title {
-    height: 13.5%;
+    height: 14.5%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -192,7 +188,6 @@
     flex-shrink: 0;
   }
 
-  /* cal_bg.png の下の白い枠内に正方形マスのカレンダーを配置 */
   .cal-table-wrap {
     flex: 1;
     min-height: 0;
@@ -244,7 +239,6 @@
     min-height: 0;
   }
 
-  /* 本日の予定＆インフォメーション枠（背景画像: info_bg.png） */
   .info-panel-wrap {
     position: relative;
     width: 100%;
@@ -258,7 +252,6 @@
     flex-shrink: 0;
   }
 
-  /* info_bg.png の左側白い枠（本日の予定） */
   .info-left-content {
     position: absolute;
     left: 1.5%;
@@ -271,7 +264,6 @@
     overflow-y: auto;
   }
 
-  /* info_bg.png の右側白い枠（インフォメーション） */
   .info-right-content {
     position: absolute;
     left: 50%;
