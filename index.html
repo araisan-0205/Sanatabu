@@ -163,7 +163,7 @@
   .img-icon-btn:active { transform: scale(0.95); }
   .img-icon-btn img { width: 100%; height: 100%; object-fit: contain; display: block; }
   /* ==========================================================================
-     2. メインエリア（左カラム：プロフィール & 今日のマスが青いカレンダー）
+     2. メインエリア（左カラム：プロフィール & 土曜日白背景のカレンダー）
      ========================================================================== */
   .main-grid {
     flex: 1;
@@ -326,11 +326,13 @@
 
   .cal-table td {
     border: 1px solid #f1f5f9;
+    background-color: #ffffff;
     vertical-align: middle;
   }
 
+  /* 土曜日の列も他の曜日と同じ白背景 */
   .cal-table td.sat-col {
-    background-color: #e6f2ff;
+    background-color: #ffffff;
   }
 
   /* 今日のマス：背景全体を青くし、中の文字を白にする */
@@ -366,7 +368,7 @@
     color: #c53030;
   }
   /* ==========================================================================
-     3. 右カラム（info_bg.png & 2つの機能ボタンエリア）
+     3. 右カラム（info_bg.png & 左詰めの2ボタンエリア）
      ========================================================================== */
   .right-col {
     display: flex;
@@ -412,25 +414,8 @@
     overflow-y: auto;
   }
 
-  .info-list {
-    list-style: none;
-    width: 100%;
-  }
-
-  .info-list li {
-    padding: 6px 4px;
-    border-bottom: 1px solid #d1d5db;
-    line-height: 1.4;
-  }
-
-  .info-list a {
-    color: #1d4ed8;
-    text-decoration: underline;
-    font-weight: 500;
-    display: block;
-  }
-
-    .tiles-grid {
+  /* 隙間を詰めて左側に揃えるボタンエリア */
+  .tiles-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, minmax(0, 1fr));
@@ -468,6 +453,7 @@
     width: 100%;
     height: 100%;
     object-fit: contain;
+    object-position: left center;
     display: block;
     pointer-events: none;
   }
@@ -552,18 +538,14 @@
       </section>
     </div>
 
-    <!-- 右カラム -->
+    <!-- 右カラム（本日の予定・インフォメーションともに空欄） -->
     <div class="right-col">
       <section class="info-panel-wrap">
         <div class="info-left-content"></div>
-        <div class="info-right-content">
-          <ul class="info-list">
-            <li><a href="https://github.io" target="_blank" rel="noopener noreferrer">定期テスト模試 範囲閲覧サイト</a></li>
-            <li><a href="https://sanaru-net.com" target="_blank" rel="noopener noreferrer">さなる生の心得・生徒規則について</a></li>
-          </ul>
-        </div>
+        <div class="info-right-content"></div>
       </section>
 
+      <!-- 左詰めで配置された2つのボタン -->
       <section class="tiles-grid">
         <button class="tile-btn" onclick="openGradeEntry()">
           <img src="btn22_GradeEntry.png" alt="成績登録"
