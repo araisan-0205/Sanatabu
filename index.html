@@ -289,11 +289,10 @@
   .info-list li:last-child { border-bottom: none; }
   .info-list a { color: #2563eb; text-decoration: none; }
 
+  /* 縦幅を短く抑えた横長バランスのボタンエリア */
   .tiles-grid {
-    flex: 1;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr);
     gap: 10px;
     padding: 10px;
     border-radius: 6px;
@@ -315,7 +314,7 @@
     padding: 0;
     box-shadow: 0 2px 5px rgba(0,0,0,0.3);
     width: 100%;
-    height: 100%;
+    aspect-ratio: 2.2 / 1;
     display: block;
   }
 
@@ -329,7 +328,7 @@
     pointer-events: none;
   }
 
-  /* 4. loading.gif 画像のみ表示オーバーレイ */
+  /* 4. 大きめサイズの loading.gif オーバーレイ画面 */
   .loading-overlay {
     position: fixed;
     inset: 0;
@@ -341,8 +340,8 @@
   }
 
   .loading-overlay img {
-    width: 80px;
-    height: 80px;
+    width: 150px;
+    height: 150px;
     object-fit: contain;
   }
 </style>
@@ -445,7 +444,7 @@
   // ★ 後から書き換えるファイルBOXのURL
   const FILEBOX_URL = "https://" + "araisan-0205.github.io/Filebox/";
 
-  // ファイルBOXを押したとき：loading.gif の画像だけを1秒表示してから移動
+  // ファイルBOXを押したとき：150pxの loading.gif を1秒表示してから移動
   function openFilebox() {
     const loader = document.getElementById('loadingOverlay');
     loader.style.display = 'flex';
