@@ -768,6 +768,20 @@
     flex-shrink: 0;
   }
 
+   .sched-day-num.studied-mark {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    line-height: 22px;
+    text-align: center;
+    padding-left: 0;
+    background-image: url('maru.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    color: #c53030;
+  }
+
   .sched-home-inline {
     flex: 1;
     background-color: #d86c88;
@@ -2123,6 +2137,7 @@
     tbody.innerHTML = '';
     const events = getScheduleEvents();
     const today = getTodayInfo();
+    const studiedKeys = JSON.parse(localStorage.getItem('sanaru_studied_keys') || '[]');
 
     if (schedViewMode === 'month') {
       titleEl.textContent = schedYear + "年" + schedMonth + "月";
@@ -2162,7 +2177,7 @@
           const topRow = document.createElement('div');
           topRow.className = 'sched-cell-top';
           const numSpan = document.createElement('span');
-          numSpan.className = 'sched-day-num';
+          numSpan.className = studiedKeys.includes(dKey) ? 'sched-day-num studied-mark' : 'sched-day-num';
           numSpan.textContent = cellD;
           topRow.appendChild(numSpan);
 
