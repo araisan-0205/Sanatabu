@@ -494,7 +494,7 @@
     height: 0;
     border-style: solid;
     border-width: 14px 14px 14px 0;
-    border-color: transparent #3b82f6 transparent transparent;
+    border-color: transparent #e2e8f0 transparent transparent;
     transition: border-color 0.15s;
   }
   .page-arrow-btn.active .tri-shape-left {
@@ -1524,9 +1524,13 @@
     </div>
 
     <div class="right-col">
+           <section class="info-panel-wrap">
+        <div class="info-left-content" id="todayPlansBox"></div>
+        <div class="info-right-content"></div>
+      </section>
             <div class="tiles-wrapper">
         <!-- 左向き三角矢印（2ページ目の時に白く光って押せる） -->
-        <button class="page-arrow-btn" id="btnPrevTilePage" onclick="switchTilePage(1)" aria-label="前のページ">
+          <button class="page-arrow-btn active" id="btnPrevTilePage" onclick="stepTilePage(-1)" aria-label="前のページ">
           <span class="tri-shape-left"></span>
         </button>
 
@@ -1663,7 +1667,7 @@
         </section>
 
         <!-- 右向き三角矢印（1ページ目の時に白く光って押せる） -->
-        <button class="page-arrow-btn active" id="btnNextTilePage" onclick="switchTilePage(2)" aria-label="次のページ">
+        <button class="page-arrow-btn active" id="btnNextTilePage" onclick="stepTilePage(1)" aria-label="次のページ">
           <span class="tri-shape-right"></span>
         </button>
       </div>
@@ -2487,24 +2491,21 @@
     document.getElementById('explainCamWindow').style.display = 'none';
   }
    // ============================================================================
-  // ★ タイルボタンの1ページ目・2ページ目切り替え
+  // ★ タイルボタンの1ページ目・2ページ目ループ切り替え
   // ============================================================================
-  function switchTilePage(pageNum) {
+  let currentTilePage = 1;
+
+  function stepTilePage(dir) {
+    currentTilePage = (currentTilePage === 1) ? 2 : 1;
     const p1 = document.getElementById('tilePage1');
     const p2 = document.getElementById('tilePage2');
-    const prevBtn = document.getElementById('btnPrevTilePage');
-    const nextBtn = document.getElementById('btnNextTilePage');
 
-    if (pageNum === 1) {
+    if (currentTilePage === 1) {
       p1.style.display = 'grid';
       p2.style.display = 'none';
-      prevBtn.classList.remove('active');
-      nextBtn.classList.add('active');
     } else {
       p1.style.display = 'none';
       p2.style.display = 'grid';
-      prevBtn.classList.add('active');
-      nextBtn.classList.remove('active');
     }
   }
 </script>
