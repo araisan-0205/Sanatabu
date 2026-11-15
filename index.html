@@ -28,9 +28,9 @@
   }
 
   /* ==========================================================================
-     0. 起動画面（loading.png ＋ 緑色太めプログレスバー）
+     0. 起動画面（loading.png ＋ 太めの緑色プログレスバー・フェードなし）
      ========================================================================== */
-    .boot-screen {
+  .boot-screen {
     position: fixed;
     inset: 0;
     z-index: 10000;
@@ -44,20 +44,20 @@
     justify-content: center;
   }
 
-  /* 左のSanaruロゴの右横に配置されるプログレスバー枠 */
   .boot-progress-box {
     position: absolute;
     left: 43%;
-    top: 47.5%;
+    top: 47%;
     width: 31%;
     max-width: 380px;
     min-width: 240px;
   }
 
+  /* バーを少し太く（height: 28px）調整 */
   .boot-bar-track {
     width: 100%;
-    height: 22px;
-    background-color: rgba(255, 255, 255, 0.75);
+    height: 28px;
+    background-color: rgba(255, 255, 255, 0.78);
     border: 1px solid #94a3b8;
     border-radius: 1px;
     overflow: hidden;
@@ -68,11 +68,11 @@
     width: 0%;
     height: 100%;
     background: linear-gradient(to bottom, #92d050 0%, #76b900 50%, #65a30d 100%);
-    transition: width 0.12s linear;
+    transition: width 0.14s linear;
   }
 
   .boot-status-text {
-    margin-top: 5px;
+    margin-top: 6px;
     font-size: 13px;
     font-weight: bold;
     color: #334155;
@@ -531,7 +531,7 @@
 </head>
 <body>
 
-<!-- 起動画面（loading.png ＋ 緑色太めプログレスバー） -->
+<!-- 起動画面（loading.png ＋ 太めの緑色プログレスバー） -->
 <div class="boot-screen" id="bootScreen">
   <div class="boot-progress-box">
     <div class="boot-bar-track">
@@ -631,7 +631,7 @@
   const GRADE_ENTRY_URL = "https://" + "araisan-0205.github.io/Grade/";
 
   // ============================================================================
-  // ★ 起動画面（loading.png ＋ 緑色太めプログレスバー）アニメーション
+  // ★ 起動画面（loading.png ＋ 太めの緑色プログレスバー・フェードなし約2秒）
   // ============================================================================
   function runBootSequence() {
     const bootScreen = document.getElementById('bootScreen');
@@ -654,13 +654,14 @@
         statusText.textContent = `起動準備完了・・・${progress}%`;
       }
 
-            if (progress >= 100) {
+      if (progress >= 100) {
         clearInterval(stepTimer);
         setTimeout(() => {
           bootScreen.style.display = "none";
         }, 200);
       }
     }, 180);
+  }
 
   function getTodayInfo() {
     const now = new Date();
