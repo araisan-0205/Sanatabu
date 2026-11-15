@@ -514,26 +514,27 @@
   }
 
   /* 隙間を本物と同じ狭さに詰めた3×3グリッド */
+    /* 元画像の画素（縦横比）そのままの大きさで3×3に並べるグリッド */
   .tiles-grid {
     flex: 1;
-    height: 100%;
+    align-self: stretch;
     min-width: 0;
     min-height: 0;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     grid-template-rows: repeat(3, minmax(0, 1fr));
     gap: 8px 10px;
-    padding: 2px 6px;
+    padding: 4px 8px;
+    place-items: center;
     overflow: hidden;
   }
 
   .tile-btn {
     border: none;
     background-color: transparent;
-    border-radius: 3px;
-    overflow: hidden;
-    cursor: pointer;
     padding: 0;
+    margin: 0;
+    cursor: pointer;
     width: 100%;
     height: 100%;
     min-width: 0;
@@ -544,14 +545,16 @@
   }
   .tile-btn:active { transform: scale(0.98); }
 
+  /* 1ページ目・2ページ目すべてのボタン画像を元画素の比率のまま表示 */
   .tile-btn img {
-    width: 100%;
-    height: 100%;
-    object-fit: fill;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
     display: block;
     pointer-events: none;
   }
-
   .loading-overlay {
     position: fixed;
     inset: 0;
