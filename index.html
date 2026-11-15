@@ -711,14 +711,15 @@
     setTimeout(() => { loader.style.display = 'none'; }, 1000);
   }
 
-  function closeTab() {
-    window.open('', '_self', '');
-    window.close();
-    setTimeout(() => {
-      document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100dvh;background:#1e293b;color:#fff;font-size:18px;font-weight:bold;">終了しました。ブラウザのタブを閉じてください。</div>';
-    }, 200);
+    function closeTab() {
+    if (confirm("終了しますか？")) {
+      window.open('', '_self', '');
+      window.close();
+      setTimeout(() => {
+        document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100dvh;background:#1e293b;color:#fff;font-size:18px;font-weight:bold;">終了しました。ブラウザのタブを閉じてください。</div>';
+      }, 200);
+    }
   }
-
   // カレンダー月切り替え（« 先月 / » 来月 / 今日）
   const initToday = getTodayInfo();
   let viewYear = initToday.year;
