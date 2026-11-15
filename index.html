@@ -618,37 +618,42 @@
     color: #ffffff;
   }
 
-    .sched-create-bar {
+      /* sched_header.png の白い枠部分にぴったり収める調整 */
+  .sched-create-bar {
     position: absolute;
-    left: 30.2%;
-    width: 42.2%;
-    top: 16%;
-    height: 68%;
+    left: 30.8%;
+    width: 41.2%;
+    top: 17%;
+    height: 66%;
     display: flex;
     align-items: center;
-    justify-content: space-around;
     padding: 0 4px;
-    gap: 4px;
+    gap: 3px;
+    overflow: hidden;
   }
 
   .sched-create-label {
-    font-size: 11px;
+    font-size: 10px;
     line-height: 1.05;
     color: #1e293b;
     font-weight: bold;
     flex-shrink: 0;
+    padding: 0 2px;
   }
 
   .sched-cat-btn {
     flex: 1;
+    min-width: 0;
     height: 86%;
     border: none;
-    font-size: 13px;
+    font-size: 11px;
     font-weight: bold;
     color: #ffffff;
     border-radius: 2px;
     cursor: pointer;
     box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    white-space: nowrap;
+    padding: 0 2px;
   }
   .sched-cat-btn:active { transform: translateY(1px); }
   .cat-self { background-color: #558b2f; }
@@ -656,9 +661,18 @@
   .cat-school { background-color: #c0a020; }
   .cat-home { background-color: #d86c88; }
 
-    .sched-close-btn {
-    width: 38px;
-    height: 38px;
+  /* 右上の更新・×ボタンを横並びにする */
+  .sched-top-right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .sched-close-btn {
+    width: 36px;
+    height: 36px;
     background: transparent;
     border: none;
     padding: 0;
@@ -666,6 +680,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
   }
   .sched-close-btn img {
     width: 100%;
@@ -673,6 +688,7 @@
     object-fit: contain;
     display: block;
   }
+
 
   .sched-grid-wrap {
     flex: 1;
@@ -718,14 +734,26 @@
     background: linear-gradient(to bottom, #bae6fd 0%, #7dd3fc 100%);
   }
 
-  .sched-day-num {
+    .sched-day-num {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    line-height: 22px;
+    text-align: center;
     font-size: 12px;
     font-weight: bold;
     color: #1e293b;
     margin-bottom: 2px;
-    padding-left: 2px;
   }
 
+  .sched-day-num.studied-mark {
+    background-image: url('maru.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    color: #c53030;
+  }
+ 
   .sched-ev-bar {
     display: flex;
     align-items: center;
@@ -1614,12 +1642,13 @@
     renderScheduleGrid();
   }
 
-  function renderScheduleGrid() {
+    function renderScheduleGrid() {
     const titleEl = document.getElementById('schedYmTitle');
     const tbody = document.getElementById('schedCalBody');
     tbody.innerHTML = '';
     const events = getScheduleEvents();
     const today = getTodayInfo();
+    const studiedKeys = JSON.parse(localStorage.getItem('sanaru_studied_keys') || '[]');
 
     if (schedViewMode === 'month') {
       titleEl.textContent = schedYear + "年" + schedMonth + "月";
@@ -1651,7 +1680,10 @@
           if (isOther) td.classList.add('other-m');
           if (dKey === today.key) td.classList.add('today-highlight');
 
-          td.innerHTML = '<div class="sched-day-num">' + cellD + '</div>';
+          const isStudied = studiedKeys.includes(dKey);
+          const numClass = isStudied ? 'sched-day-num studied-mark' : 'sched-day-num';
+          td.innerHTML = '<div class="' + numClass + '">' + cellD + '</div>';
+
           const dayEvs = events.filter(ev => ev.date === dKey);
           dayEvs.forEach(ev => {
             const bar = document.createElement('div');
@@ -1666,12 +1698,40 @@
             selCat = 'self';
             editingEventId = null;
             editingTargetDates = [dKey];
-            openEventFormUI();
+            openEventFormUI(null);
           };
           tr.appendChild(td);
         }
         tbody.appendChild(tr);
       }
+    } 
+    else {
+      titleEl.textContent = schedYear + "年" + schedMonth + "月（週）";
+      const tr = document.createElement('tr');
+      for (let c = 0; c < 7; c++) {
+        const dObj = new Date(schedWeekStart.getFullYear(), schedWeekStart.getMonth(), schedWeekStart.getDate() + c);
+        const dKey = dObj.getFullYear() + "-" + (dObj.getMonth() + 1) + "-" + dObj.getDate();
+        const td = document.createElement('td');
+        if (dKey === today.key) td.classList.add('today-highlight');
+
+        const isStudied = studiedKeys.includes(dKey);
+        const numClass = isStudied ? 'sched-day-num studied-mark' : 'sched-day-num';
+        td.innerHTML = '<div class="' + numClass + '">' + (dObj.getMonth() + 1) + '/' + dObj.getDate() + '</div>';
+
+        events.filter(ev => ev.date === dKey).forEach(ev => {
+          const bar = document.createElement('div');
+          bar.className = 'sched-ev-bar';
+          bar.style.backgroundColor = (CAT_CONFIG[ev.cat] || CAT_CONFIG.self).color;
+          bar.textContent = (ev.allDay ? "" : (ev.start + "-" + ev.end + " ")) + ev.title;
+          bar.onclick = (e) => { e.stopPropagation(); openEditEventForm(ev.id); };
+          td.appendChild(bar);
+        });
+        tr.appendChild(td);
+      }
+      tbody.appendChild(tr);
+    }
+  }
+
     } else {
       titleEl.textContent = schedYear + "年" + schedMonth + "月（週）";
       const tr = document.createElement('tr');
