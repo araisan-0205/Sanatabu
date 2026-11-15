@@ -591,17 +591,16 @@
   }
 
   /* 白い枠の中にぴったり収まる作成ボタンエリア */
-  .sched-create-bar {
+    .sched-create-bar {
     position: absolute;
-    left: 31.2%;
-    width: 40.4%;
-    top: 17%;
-    height: 66%;
+    left: 28.5%;
+    width: 43.0%;
+    top: 16%;
+    height: 68%;
     display: flex;
     align-items: center;
-    padding: 0 4px;
-    gap: 3px;
-    overflow: hidden;
+    padding: 0 5px;
+    gap: 4px;
   }
 
   .sched-create-label {
@@ -698,25 +697,47 @@
   .sched-table td.other-m { background: #cbd5e1; color: #64748b; }
   .sched-table td.today-highlight { background: linear-gradient(to bottom, #bae6fd 0%, #7dd3fc 100%); }
 
+    .sched-cell-top {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 2px;
+    min-height: 18px;
+  }
+
   .sched-day-num {
-    display: inline-block;
-    width: 22px;
-    height: 22px;
-    line-height: 22px;
-    text-align: center;
     font-size: 12px;
     font-weight: bold;
     color: #1e293b;
-    margin-bottom: 2px;
+    padding-left: 2px;
+    flex-shrink: 0;
   }
 
-  .sched-day-num.studied-mark {
-    background-image: url('maru.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    color: #c53030;
+  .sched-home-inline {
+    flex: 1;
+    background-color: #d86c88;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 1px 4px;
+    border-radius: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    gap: 3px;
   }
+
+  .sched-home-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 1px solid #ffffff;
+    background-color: rgba(255,255,255,0.35);
+    flex-shrink: 0;
+  }
+
 
   .sched-ev-bar {
     display: flex;
@@ -1582,13 +1603,12 @@
     renderScheduleGrid();
   }
 
-  function renderScheduleGrid() {
+    function renderScheduleGrid() {
     const titleEl = document.getElementById('schedYmTitle');
     const tbody = document.getElementById('schedCalBody');
     tbody.innerHTML = '';
     const events = getScheduleEvents();
     const today = getTodayInfo();
-    const studiedKeys = JSON.parse(localStorage.getItem('sanaru_studied_keys') || '[]');
 
     if (schedViewMode === 'month') {
       titleEl.textContent = schedYear + "年" + schedMonth + "月";
@@ -1620,20 +1640,39 @@
           if (isOther) td.classList.add('other-m');
           if (dKey === today.key) td.classList.add('today-highlight');
 
-          const isStudied = studiedKeys.includes(dKey);
-          const numClass = isStudied ? 'sched-day-num studied-mark' : 'sched-day-num';
-          td.innerHTML = '<div class="' + numClass + '">' + cellD + '</div>';
-
           const dayEvs = events.filter(ev => ev.date === dKey);
-          dayEvs.forEach(ev => {
+          const homeEv = dayEvs.find(ev => ev.cat === 'home');
+          const otherEvs = dayEvs.filter(ev => ev !== homeEv);
+
+          // 1行目：日付の数字 ＋ 家庭学習ピンク帯（横並び）
+          const topRow = document.createElement('div');
+          topRow.className = 'sched-cell-top';
+          const numSpan = document.createElement('span');
+          numSpan.className = 'sched-day-num';
+          numSpan.textContent = cellD;
+          topRow.appendChild(numSpan);
+
+          if (homeEv) {
+            const hBar = document.createElement('div');
+            hBar.className = 'sched-home-inline';
+            const hTime = homeEv.allDay ? homeEv.title : (homeEv.start + "-" + homeEv.end);
+            hBar.innerHTML = '<span class="sched-home-dot"></span><span>' + hTime + '</span>';
+            hBar.onclick = (e) => { e.stopPropagation(); openEditEventForm(homeEv.id); };
+            topRow.appendChild(hBar);
+          }
+          td.appendChild(topRow);
+
+          // 2行目以降：さなる・自分・学校などの予定帯（時間とタイトルを詰めて表示）
+          otherEvs.forEach(ev => {
             const bar = document.createElement('div');
             bar.className = 'sched-ev-bar';
             bar.style.backgroundColor = (CAT_CONFIG[ev.cat] || CAT_CONFIG.self).color;
-            const timeStr = ev.allDay ? "" : (ev.start + "-" + ev.end + " ");
+            const timeStr = ev.allDay ? "" : (ev.start + "-" + ev.end);
             bar.textContent = timeStr + ev.title;
             bar.onclick = (e) => { e.stopPropagation(); openEditEventForm(ev.id); };
             td.appendChild(bar);
           });
+
           td.onclick = () => {
             selCat = 'self';
             editingEventId = null;
@@ -1653,15 +1692,32 @@
         const td = document.createElement('td');
         if (dKey === today.key) td.classList.add('today-highlight');
 
-        const isStudied = studiedKeys.includes(dKey);
-        const numClass = isStudied ? 'sched-day-num studied-mark' : 'sched-day-num';
-        td.innerHTML = '<div class="' + numClass + '">' + (dObj.getMonth() + 1) + '/' + dObj.getDate() + '</div>';
+        const dayEvs = events.filter(ev => ev.date === dKey);
+        const homeEv = dayEvs.find(ev => ev.cat === 'home');
+        const otherEvs = dayEvs.filter(ev => ev !== homeEv);
 
-        events.filter(ev => ev.date === dKey).forEach(ev => {
+        const topRow = document.createElement('div');
+        topRow.className = 'sched-cell-top';
+        const numSpan = document.createElement('span');
+        numSpan.className = 'sched-day-num';
+        numSpan.textContent = (dObj.getMonth() + 1) + '/' + dObj.getDate();
+        topRow.appendChild(numSpan);
+
+        if (homeEv) {
+          const hBar = document.createElement('div');
+          hBar.className = 'sched-home-inline';
+          const hTime = homeEv.allDay ? homeEv.title : (homeEv.start + "-" + homeEv.end);
+          hBar.innerHTML = '<span class="sched-home-dot"></span><span>' + hTime + '</span>';
+          hBar.onclick = (e) => { e.stopPropagation(); openEditEventForm(homeEv.id); };
+          topRow.appendChild(hBar);
+        }
+        td.appendChild(topRow);
+
+        otherEvs.forEach(ev => {
           const bar = document.createElement('div');
           bar.className = 'sched-ev-bar';
           bar.style.backgroundColor = (CAT_CONFIG[ev.cat] || CAT_CONFIG.self).color;
-          bar.textContent = (ev.allDay ? "" : (ev.start + "-" + ev.end + " ")) + ev.title;
+          bar.textContent = (ev.allDay ? "" : (ev.start + "-" + ev.end)) + ev.title;
           bar.onclick = (e) => { e.stopPropagation(); openEditEventForm(ev.id); };
           td.appendChild(bar);
         });
