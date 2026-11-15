@@ -1344,17 +1344,17 @@
     padding: 0 4px;
   }
 
-      .bigtimer-display {
+        .bigtimer-display {
     flex: 1;
     min-height: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: "Meiryo", "Arial", sans-serif;
-    font-size: clamp(92px, 14.2vw, 152px);
+    font-size: clamp(110px, 16.5vw, 182px);
     font-weight: bold;
     color: #1a1a1a;
-    letter-spacing: -2px;
+    letter-spacing: -3px;
     line-height: 1;
     white-space: nowrap;
     overflow: hidden;
@@ -2783,6 +2783,8 @@
   let bigTimerInterval = null;
 
   function renderBigTimerDisplay() {
+    const clockEl = document.getElementById('bigTimerClock');
+    if (clockEl) clockEl.style.color = "#1a1a1a";
     const m = Math.floor(bigTimerSec / 60);
     const s = bigTimerSec % 60;
     document.getElementById('bigTimerClock').textContent =
@@ -2829,26 +2831,20 @@
     }, 400);
   }
 
-  function playBigTimerBeep() {
+    function playBigTimerBeep() {
     try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      for (let i = 0; i < 3; i++) {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(880, ctx.currentTime + i * 0.25);
-        gain.gain.setValueAtTime(0.2, ctx.currentTime + i * 0.25);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(ctx.currentTime + i * 0.25);
-        osc.stop(ctx.currentTime + i * 0.25 + 0.15);
-      }
+      const audio = new Audio("Windows%20Background.wav");
+      audio.play().catch(() => {
+        const fallback = new Audio("Windows Background.wav");
+        fallback.play().catch(() => {});
+      });
     } catch (e) {}
   }
 
   function toggleBigTimer() {
     const runBtn = document.getElementById('bigTimerRunBtn');
     const inputEl = document.getElementById('bigTimerMinInput');
+    const clockEl = document.getElementById('bigTimerClock');
 
     if (bigTimerInterval) {
       clearInterval(bigTimerInterval);
@@ -2868,6 +2864,7 @@
       renderBigTimerDisplay();
     }
 
+    if (clockEl) clockEl.style.color = "#1a1a1a";
     runBtn.textContent = "停 止";
     inputEl.disabled = true;
 
@@ -2876,12 +2873,12 @@
       if (bigTimerSec <= 0) {
         bigTimerSec = 0;
         renderBigTimerDisplay();
+        if (clockEl) clockEl.style.color = "#dc2626";
         clearInterval(bigTimerInterval);
         bigTimerInterval = null;
         runBtn.textContent = "実 行";
         inputEl.disabled = false;
         playBigTimerBeep();
-        setTimeout(() => alert("設定時間が終了しました！"), 100);
       } else {
         renderBigTimerDisplay();
       }
@@ -2893,6 +2890,8 @@
       clearInterval(bigTimerInterval);
       bigTimerInterval = null;
     }
+    const clockEl = document.getElementById('bigTimerClock');
+    if (clockEl) clockEl.style.color = "#1a1a1a";
     document.getElementById('bigTimerRunBtn').textContent = "実 行";
     document.getElementById('bigTimerMinInput').disabled = false;
     document.getElementById('bigTimerWindow').style.display = 'none';
