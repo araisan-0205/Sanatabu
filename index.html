@@ -632,34 +632,40 @@
   // ============================================================================
   // ★ 起動画面（loading.png ＋ 太めの緑色プログレスバー・フェードなし約2秒）
   // ============================================================================
-  function runBootSequence() {
+    function runBootSequence() {
     const bootScreen = document.getElementById('bootScreen');
     const barFill = document.getElementById('bootBarFill');
     const statusText = document.getElementById('bootStatusText');
     if (!bootScreen) return;
 
-    let progress = 0;
-    const stepTimer = setInterval(() => {
-      progress += 10;
-      if (progress > 100) progress = 100;
+    // 最初は0%のまま0.3秒間を置く
+    barFill.style.width = "0%";
+    statusText.textContent = "起動準備中・・・0%";
 
-      barFill.style.width = progress + "%";
+    setTimeout(() => {
+      // カクカクッと一気に進む段階データ
+      const steps = [
+        { pct: 15, text: "システム初期化中・・・15%", delay: 220 },
+        { pct: 35, text: "システム初期化中・・・35%", delay: 420 },
+        { pct: 60, text: "時間合わせ処理中・・・60%", delay: 620 },
+        { pct: 80, text: "時間合わせ処理中・・・80%", delay: 980 },
+        { pct: 95, text: "起動準備完了・・・95%", delay: 1350 },
+        { pct: 100, text: "起動準備完了・・・100%", delay: 1550 }
+      ];
 
-      if (progress < 40) {
-        statusText.textContent = `システム初期化中・・・${progress}%`;
-      } else if (progress < 90) {
-        statusText.textContent = `時間合わせ処理中・・・${progress}%`;
-      } else {
-        statusText.textContent = `起動準備完了・・・${progress}%`;
-      }
-
-      if (progress >= 100) {
-        clearInterval(stepTimer);
+      steps.forEach((step) => {
         setTimeout(() => {
-          bootScreen.style.display = "none";
-        }, 200);
-      }
-    }, 180);
+          barFill.style.width = step.pct + "%";
+          statusText.textContent = step.text;
+
+          if (step.pct === 100) {
+            setTimeout(() => {
+              bootScreen.style.display = "none";
+            }, 150);
+          }
+        }, step.delay);
+      });
+    }, 300);
   }
 
   function getTodayInfo() {
