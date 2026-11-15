@@ -1078,6 +1078,122 @@
     resize: none;
     margin-bottom: 8px;
   }
+   /* 解説カメラタイルボタン */
+  .cam-tile-card {
+    width: 100%;
+    height: 100%;
+    max-width: 245px;
+    background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 8px 12px;
+    color: #ffffff;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+  }
+  .cam-tile-icon {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cam-tile-label {
+    font-size: 13px;
+    font-weight: bold;
+    text-align: left;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  }
+
+  /* 左半分に浮かぶ「解説カメラ」枠（タイトルバーなし） */
+  .cam-window-overlay {
+    position: fixed;
+    left: 2.2%;
+    top: 8.5%;
+    width: 48.5%;
+    height: 58%;
+    min-width: 310px;
+    max-width: 540px;
+    background-color: #111827;
+    border: 1px solid #475569;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55);
+    display: none;
+    flex-direction: column;
+    z-index: 9800;
+    overflow: hidden;
+  }
+
+  .cam-video-area {
+    flex: 1;
+    min-height: 0;
+    background-color: #111827;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .cam-video-area video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .cam-bottom-bar {
+    height: 46px;
+    background-color: #2b2b2b;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8px;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .cam-switch-btn {
+    width: 38px;
+    height: 34px;
+    background-color: #3f3f46;
+    border: 1px solid #52525b;
+    border-radius: 3px;
+    color: #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .cam-switch-btn:active {
+    background-color: #52525b;
+    transform: scale(0.95);
+  }
+
+  .cam-guide-text {
+    flex: 1;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: bold;
+    line-height: 1.25;
+    text-align: left;
+  }
+
+  .cam-close-img-btn {
+    width: 34px;
+    height: 34px;
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .cam-close-img-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
 </style>
 </head>
 <body>
@@ -1277,6 +1393,25 @@
   </div>
 </div>
 
+ <!-- 解説カメラ（タイトルバーなし） -->
+<div class="cam-window-overlay" id="explainCamWindow">
+  <div class="cam-video-area">
+    <video id="explainCamVideo" autoplay playsinline muted></video>
+  </div>
+  <div class="cam-bottom-bar">
+    <button class="cam-switch-btn" onclick="switchExplainCamera()" title="カメラ切替">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
+        <path d="M20 11A8.1 8.1 0 0 0 4.5 9M4 5v4h4"></path>
+        <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"></path>
+        <circle cx="12" cy="12" r="2.5"></circle>
+      </svg>
+    </button>
+    <div class="cam-guide-text">バーコードにカメラを少しずつ近づけて、ピントを合わせて下さい。</div>
+    <button class="cam-close-img-btn" onclick="closeExplainCamera()">
+      <img src="btnClose.png" alt="閉じる">
+    </button>
+  </div>
+</div>
 <div class="loading-overlay" id="loadingOverlay">
   <img src="loading.gif" alt="">
 </div>
@@ -1363,6 +1498,17 @@
                onpointerdown="this.src='btn05_FileBoxA.png'"
                onpointerup="this.src='btn05_FileBox.png'"
                onpointerleave="this.src='btn05_FileBox.png'">
+        </button>
+         <button class="tile-btn" onclick="openExplainCamera()">
+          <div class="cam-tile-card">
+            <div class="cam-tile-icon">
+              <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                <circle cx="12" cy="13" r="4"></circle>
+              </svg>
+            </div>
+            <div class="cam-tile-label">解説カメラ</div>
+          </div>
         </button>
       </section>
     </div>
@@ -2128,6 +2274,62 @@
     const savedStart = localStorage.getItem('sanaru_study_start');
     if (savedStart) startTimerLoop(parseInt(savedStart, 10));
   });
+   // ============================================================================
+  // ★ 内蔵「解説カメラ」（起動・内/外カメラ切替・停止）
+  // ============================================================================
+  let currentCamStream = null;
+  let useFrontCamera = false;
+
+  async function startCameraStream() {
+    if (currentCamStream) {
+      currentCamStream.getTracks().forEach(track => track.stop());
+      currentCamStream = null;
+    }
+    const videoEl = document.getElementById('explainCamVideo');
+    const facing = useFrontCamera ? 'user' : 'environment';
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: facing },
+        audio: false
+      });
+      currentCamStream = stream;
+      videoEl.srcObject = stream;
+    } catch (err) {
+      try {
+        const fallbackStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        currentCamStream = fallbackStream;
+        videoEl.srcObject = fallbackStream;
+      } catch (e) {
+        alert("カメラの起動が許可されていないか、カメラが見つかりませんでした。Safariの設定でカメラを許可してください。");
+      }
+    }
+  }
+
+  function openExplainCamera() {
+    const loader = document.getElementById('loadingOverlay');
+    loader.style.display = 'flex';
+    setTimeout(() => {
+      loader.style.display = 'none';
+      document.getElementById('explainCamWindow').style.display = 'flex';
+      startCameraStream();
+    }, 500);
+  }
+
+  function switchExplainCamera() {
+    useFrontCamera = !useFrontCamera;
+    startCameraStream();
+  }
+
+  function closeExplainCamera() {
+    if (currentCamStream) {
+      currentCamStream.getTracks().forEach(track => track.stop());
+      currentCamStream = null;
+    }
+    const videoEl = document.getElementById('explainCamVideo');
+    if (videoEl) videoEl.srcObject = null;
+    document.getElementById('explainCamWindow').style.display = 'none';
+  }
 </script>
 </body>
 </html>
