@@ -1248,6 +1248,135 @@
     object-fit: contain;
     display: block;
   }
+   /* 内蔵「BIGタイマー」ウィンドウ（写真完全再現・ドラッグ移動対応） */
+  .bigtimer-overlay {
+    position: fixed;
+    left: 22.5%;
+    top: 25.5%;
+    width: 54.5%;
+    height: 49.5%;
+    min-width: 340px;
+    max-width: 640px;
+    background-color: #f0f0f0;
+    border: 1px solid #7a7a7a;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+    display: none;
+    flex-direction: column;
+    z-index: 9850;
+    overflow: hidden;
+    color: #111111;
+    user-select: none;
+  }
+
+  .bigtimer-titlebar {
+    height: 26px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #d4d4d4;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8px;
+    font-size: 11px;
+    color: #333333;
+    flex-shrink: 0;
+    cursor: move;
+    touch-action: none;
+  }
+
+  .bigtimer-title-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .bigtimer-close-x {
+    background: transparent;
+    border: none;
+    font-size: 14px;
+    color: #555555;
+    cursor: pointer;
+    padding: 0 4px;
+  }
+
+  .bigtimer-display {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Arial", "Helvetica Neue", sans-serif;
+    font-size: clamp(68px, 12vw, 138px);
+    font-weight: 500;
+    color: #1a1a1a;
+    letter-spacing: 2px;
+    line-height: 1;
+  }
+
+  .bigtimer-controls {
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px 8px 16px;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .bigtimer-set-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 15px;
+    color: #111111;
+  }
+
+  .bigtimer-min-input {
+    width: 58px;
+    height: 32px;
+    border: 1px solid #8e8e8e;
+    background-color: #ffffff;
+    font-size: 17px;
+    text-align: center;
+    color: #111111;
+  }
+
+  .bigtimer-btn {
+    height: 36px;
+    min-width: 96px;
+    background: linear-gradient(to bottom, #f9f9f9 0%, #e1e1e1 100%);
+    border: 1px solid #adadad;
+    font-size: 15px;
+    color: #111111;
+    letter-spacing: 4px;
+    cursor: pointer;
+    padding: 0 12px;
+  }
+  .bigtimer-btn:active {
+    background: #d5d5d5;
+  }
+
+  .bigtimer-ver-btn {
+    height: 26px;
+    padding: 0 8px;
+    background: linear-gradient(to bottom, #f9f9f9 0%, #e1e1e1 100%);
+    border: 1px solid #adadad;
+    font-size: 10px;
+    color: #333333;
+    cursor: pointer;
+    align-self: flex-end;
+  }
+
+  .bigtimer-scrollbar {
+    height: 14px;
+    background-color: #f1f1f1;
+    border-top: 1px solid #dcdcdc;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4px;
+    font-size: 9px;
+    color: #666666;
+    flex-shrink: 0;
+  }
 </style>
 </head>
 <body>
@@ -1466,7 +1595,40 @@
     </button>
   </div>
 </div>
-<div class="loading-overlay" id="loadingOverlay">
+<!-- BIGタイマー ウィンドウ（写真完全再現） -->
+<div class="bigtimer-overlay" id="bigTimerWindow">
+  <div class="bigtimer-titlebar">
+    <div class="bigtimer-title-left">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.2">
+        <circle cx="12" cy="13" r="8"></circle>
+        <path d="M12 9v4l2 2"></path>
+        <path d="M9 2h6"></path>
+      </svg>
+      <span>BIGタイマー</span>
+    </div>
+    <button class="bigtimer-close-x" onclick="closeBigTimer()">×</button>
+  </div>
+
+  <div class="bigtimer-display" id="bigTimerClock">00 : 00</div>
+
+  <div class="bigtimer-controls">
+    <div class="bigtimer-set-group">
+      <span>設定時間</span>
+      <input type="number" id="bigTimerMinInput" class="bigtimer-min-input" min="1" max="999" oninput="onBigTimerInputChange()">
+      <span>分</span>
+    </div>
+
+    <button class="bigtimer-btn" id="bigTimerRunBtn" onclick="toggleBigTimer()">実 行</button>
+    <button class="bigtimer-btn" onclick="closeBigTimer()">終 了</button>
+    <button class="bigtimer-ver-btn" onclick="alert('BIGタイマー Version 1.0')">Version</button>
+  </div>
+
+  <div class="bigtimer-scrollbar">
+    <span>◀</span>
+    <span>▶</span>
+  </div>
+</div>
+ <div class="loading-overlay" id="loadingOverlay">
   <img src="loading.gif" alt="">
 </div>
 
@@ -1659,7 +1821,7 @@
                  onpointerleave="this.src='btn23_Questionnaire.png'">
           </button>
 
-          <button class="tile-btn" onclick="alert('タイマー')">
+          <button class="tile-btn" onclick="openBigTimer()">
             <img src="btn24_Timer.png" alt="タイマー"
                  onpointerdown="this.src='btn24_TimerA.png'"
                  onpointerup="this.src='btn24_Timer.png'"
@@ -2513,6 +2675,140 @@
       p2.style.display = 'grid';
     }
   }
+  // ============================================================================
+  // ★ 内蔵「BIGタイマー」（カウントダウン・停止・アラーム・終了・ドラッグ移動）
+  // ============================================================================
+  let bigTimerSec = 0;
+  let bigTimerInterval = null;
+
+  function renderBigTimerDisplay() {
+    const m = Math.floor(bigTimerSec / 60);
+    const s = bigTimerSec % 60;
+    document.getElementById('bigTimerClock').textContent =
+      String(m).padStart(2, '0') + " : " + String(s).padStart(2, '0');
+  }
+
+  function onBigTimerInputChange() {
+    if (bigTimerInterval) return;
+    const val = Math.max(0, parseInt(document.getElementById('bigTimerMinInput').value || '0', 10));
+    bigTimerSec = val * 60;
+    renderBigTimerDisplay();
+  }
+
+  function openBigTimer() {
+    const loader = document.getElementById('loadingOverlay');
+    loader.style.display = 'flex';
+    setTimeout(() => {
+      loader.style.display = 'none';
+      document.getElementById('bigTimerWindow').style.display = 'flex';
+    }, 400);
+  }
+
+  function playBigTimerBeep() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      for (let i = 0; i < 3; i++) {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, ctx.currentTime + i * 0.25);
+        gain.gain.setValueAtTime(0.2, ctx.currentTime + i * 0.25);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(ctx.currentTime + i * 0.25);
+        osc.stop(ctx.currentTime + i * 0.25 + 0.15);
+      }
+    } catch (e) {}
+  }
+
+  function toggleBigTimer() {
+    const runBtn = document.getElementById('bigTimerRunBtn');
+    const inputEl = document.getElementById('bigTimerMinInput');
+
+    if (bigTimerInterval) {
+      clearInterval(bigTimerInterval);
+      bigTimerInterval = null;
+      runBtn.textContent = "実 行";
+      inputEl.disabled = false;
+      return;
+    }
+
+    if (bigTimerSec <= 0) {
+      const mins = parseInt(inputEl.value || '0', 10);
+      if (mins <= 0) {
+        alert("設定時間（分）を入力してください。");
+        return;
+      }
+      bigTimerSec = mins * 60;
+      renderBigTimerDisplay();
+    }
+
+    runBtn.textContent = "停 止";
+    inputEl.disabled = true;
+
+    bigTimerInterval = setInterval(() => {
+      bigTimerSec--;
+      if (bigTimerSec <= 0) {
+        bigTimerSec = 0;
+        renderBigTimerDisplay();
+        clearInterval(bigTimerInterval);
+        bigTimerInterval = null;
+        runBtn.textContent = "実 行";
+        inputEl.disabled = false;
+        playBigTimerBeep();
+        setTimeout(() => alert("設定時間が終了しました！"), 100);
+      } else {
+        renderBigTimerDisplay();
+      }
+    }, 1000);
+  }
+
+  function closeBigTimer() {
+    if (bigTimerInterval) {
+      clearInterval(bigTimerInterval);
+      bigTimerInterval = null;
+    }
+    document.getElementById('bigTimerRunBtn').textContent = "実 行";
+    document.getElementById('bigTimerMinInput').disabled = false;
+    document.getElementById('bigTimerWindow').style.display = 'none';
+  }
+
+  // タイトルバーのドラッグ移動（タッチ＆マウス対応）
+  (function enableBigTimerDrag() {
+    const win = document.getElementById('bigTimerWindow');
+    if (!win) return;
+    const bar = win.querySelector('.bigtimer-titlebar');
+    if (!bar) return;
+
+    let isDragging = false;
+    let startX = 0, startY = 0;
+    let origLeft = 0, origTop = 0;
+
+    bar.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('button')) return;
+      isDragging = true;
+      const rect = win.getBoundingClientRect();
+      origLeft = rect.left;
+      origTop = rect.top;
+      startX = e.clientX;
+      startY = e.clientY;
+      bar.setPointerCapture(e.pointerId);
+    });
+
+    bar.addEventListener('pointermove', (e) => {
+      if (!isDragging) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      const maxLeft = window.innerWidth - win.offsetWidth;
+      const maxTop = window.innerHeight - win.offsetHeight;
+      win.style.left = Math.max(0, Math.min(maxLeft, origLeft + dx)) + 'px';
+      win.style.top = Math.max(0, Math.min(maxTop, origTop + dy)) + 'px';
+    });
+
+    const stopDrag = () => { isDragging = false; };
+    bar.addEventListener('pointerup', stopDrag);
+    bar.addEventListener('pointercancel', stopDrag);
+  })();
 </script>
 </body>
 </html>
