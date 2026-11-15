@@ -1298,19 +1298,21 @@
     padding: 0 4px;
   }
 
-    .bigtimer-display {
+      .bigtimer-display {
     flex: 1;
+    min-height: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: "Meiryo", "Arial", sans-serif;
-    font-size: clamp(120px, 18.5vw, 210px);
+    font-size: clamp(92px, 14.2vw, 152px);
     font-weight: bold;
     color: #1a1a1a;
-    letter-spacing: 0px;
-    line-height: 0.95;
+    letter-spacing: -2px;
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
   }
-
   .bigtimer-controls {
     height: 52px;
     display: flex;
