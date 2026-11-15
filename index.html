@@ -83,7 +83,6 @@
     flex-direction: column;
     overflow: hidden;
   }
-
   /* 上部ヘッダーバー */
   .top-bar {
     position: relative;
@@ -177,6 +176,7 @@
     top: 50%;
     transform: translateY(-50%);
     display: flex;
+    flex-direction: row;
     align-items: center;
     gap: 8px;
   }
@@ -501,34 +501,6 @@
     pointer-events: none;
   }
 
-  .schedule-tile-card {
-    width: 100%;
-    height: 100%;
-    max-width: 245px;
-    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-    border-radius: 4px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 8px 12px;
-    color: #ffffff;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.35);
-  }
-
-  .schedule-tile-icon {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .schedule-tile-label {
-    font-size: 13px;
-    font-weight: bold;
-    text-align: left;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.35);
-  }
-
   .loading-overlay {
     position: fixed;
     inset: 0;
@@ -539,7 +511,7 @@
     z-index: 9999;
   }
   .loading-overlay img { width: 150px; height: 150px; object-fit: contain; }
-  /* 内蔵スケジュール画面 */
+  /* 内蔵スケジュール画面（sched_header.png ＋ 白枠内4ボタン ＋ 横並び右上アイコン） */
   .sched-overlay {
     position: fixed;
     inset: 0;
@@ -550,7 +522,7 @@
     overflow: hidden;
   }
 
-    .sched-topbar {
+  .sched-topbar {
     position: relative;
     height: 56px;
     background-color: #0b3184;
@@ -590,9 +562,9 @@
   }
 
   .sched-ym-title {
-    font-size: 19px;
+    font-size: 18px;
     font-weight: bold;
-    min-width: 108px;
+    min-width: 102px;
     text-align: center;
   }
 
@@ -601,12 +573,12 @@
     border: 1px solid #3b82f6;
     border-radius: 3px;
     overflow: hidden;
-    margin-left: 4px;
+    margin-left: 2px;
   }
 
   .sched-view-btn {
-    padding: 5px 11px;
-    font-size: 13px;
+    padding: 4px 10px;
+    font-size: 12px;
     font-weight: bold;
     border: none;
     background-color: #1e3a8a;
@@ -618,11 +590,11 @@
     color: #ffffff;
   }
 
-      /* sched_header.png の白い枠部分にぴったり収める調整 */
+  /* 白い枠の中にぴったり収まる作成ボタンエリア */
   .sched-create-bar {
     position: absolute;
-    left: 30.8%;
-    width: 41.2%;
+    left: 31.2%;
+    width: 40.4%;
     top: 17%;
     height: 66%;
     display: flex;
@@ -661,7 +633,6 @@
   .cat-school { background-color: #c0a020; }
   .cat-home { background-color: #d86c88; }
 
-  /* 右上の更新・×ボタンを横並びにする */
   .sched-top-right {
     display: flex;
     flex-direction: row;
@@ -688,7 +659,6 @@
     object-fit: contain;
     display: block;
   }
-
 
   .sched-grid-wrap {
     flex: 1;
@@ -725,16 +695,10 @@
     cursor: pointer;
   }
 
-  .sched-table td.other-m {
-    background: #cbd5e1;
-    color: #64748b;
-  }
+  .sched-table td.other-m { background: #cbd5e1; color: #64748b; }
+  .sched-table td.today-highlight { background: linear-gradient(to bottom, #bae6fd 0%, #7dd3fc 100%); }
 
-  .sched-table td.today-highlight {
-    background: linear-gradient(to bottom, #bae6fd 0%, #7dd3fc 100%);
-  }
-
-    .sched-day-num {
+  .sched-day-num {
     display: inline-block;
     width: 22px;
     height: 22px;
@@ -753,7 +717,7 @@
     background-position: center;
     color: #c53030;
   }
- 
+
   .sched-ev-bar {
     display: flex;
     align-items: center;
@@ -769,7 +733,7 @@
     text-overflow: ellipsis;
     box-shadow: 0 1px 1px rgba(0,0,0,0.2);
   }
-  /* 日付選択モーダル */
+  /* 日付選択・予定登録・設定変更モーダル */
   .datesel-overlay {
     position: fixed;
     inset: 0;
@@ -855,7 +819,6 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.3);
   }
 
-  /* 予定内容登録・修正モーダル */
   .evform-overlay {
     position: fixed;
     inset: 0;
@@ -920,36 +883,12 @@
     color: #334155;
   }
 
-  .evform-checks label {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-  }
+  .evform-checks label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+  .evform-checks input[type="checkbox"] { width: 18px; height: 18px; }
 
-  .evform-checks input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-  }
-
-  .clock-drums-wrap {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-  }
-
-  .clock-group {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .drum-col {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-  }
+  .clock-drums-wrap { display: flex; align-items: center; gap: 24px; }
+  .clock-group { display: flex; align-items: center; gap: 6px; }
+  .drum-col { display: flex; flex-direction: column; align-items: center; gap: 6px; }
 
   .drum-arrow {
     width: 0;
@@ -982,11 +921,7 @@
     user-select: none;
   }
 
-  .clock-colon {
-    font-size: 36px;
-    font-weight: bold;
-    color: #334155;
-  }
+  .clock-colon { font-size: 36px; font-weight: bold; color: #334155; }
 
   .evform-actions {
     display: flex;
@@ -1009,7 +944,6 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.25);
   }
 
-  /* 設定変更モーダル */
   .settings-overlay {
     position: fixed;
     inset: 0;
@@ -1215,7 +1149,9 @@
       <button class="img-icon-btn" style="width:36px;height:36px;" onclick="refreshSchedule()">
         <img src="update.png" alt="更新">
       </button>
-      <button class="sched-close-btn" onclick="closeScheduleScreen()"><img src="btnClose.png" alt="閉じる"></button>
+      <button class="sched-close-btn" onclick="closeScheduleScreen()">
+        <img src="btnClose.png" alt="閉じる">
+      </button>
     </div>
   </div>
 
@@ -1237,7 +1173,9 @@
       <span id="dateSelYmLabel">2026年11月</span>
       <button class="sched-tri-btn sched-tri-next" style="border-left-color:#ffffff;" onclick="moveDateSelMonth(1)"></button>
     </div>
-    <button class="sched-close-btn" onclick="closeDateSelect()"><img src="btnClose.png" alt="閉じる"></button>
+    <button class="sched-close-btn" onclick="closeDateSelect()">
+      <img src="btnClose.png" alt="閉じる">
+    </button>
   </div>
   <div class="datesel-body">
     <table class="datesel-table">
@@ -1256,7 +1194,9 @@
 <div class="evform-overlay" id="eventFormScreen">
   <div class="evform-header" id="evFormHeader">
     <span id="evFormTitleBar">予定内容登録</span>
-    <button class="sched-close-btn" onclick="closeEventForm()"><img src="btnClose.png" alt="閉じる"></button>
+    <button class="sched-close-btn" onclick="closeEventForm()">
+      <img src="btnClose.png" alt="閉じる">
+    </button>
   </div>
   <div class="evform-body">
     <div>
@@ -1383,7 +1323,7 @@
 
       <section class="tiles-grid">
         <button class="tile-btn" onclick="openScheduleScreen()">
-                    <img src="btn01_Schedule.png" alt="スケジュール"
+          <img src="btn01_Schedule.png" alt="スケジュール"
                onpointerdown="this.src='btn01_ScheduleA.png'"
                onpointerup="this.src='btn01_Schedule.png'"
                onpointerleave="this.src='btn01_Schedule.png'">
@@ -1580,7 +1520,7 @@
     }
   }
   // ============================================================================
-  // ★ 内蔵スケジュール機能
+  // ★ 内蔵スケジュール機能（月/週・丸印反映・日付選択・ドラム時間設定）
   // ============================================================================
   let schedYear = new Date().getFullYear();
   let schedMonth = new Date().getMonth() + 1;
@@ -1642,7 +1582,7 @@
     renderScheduleGrid();
   }
 
-    function renderScheduleGrid() {
+  function renderScheduleGrid() {
     const titleEl = document.getElementById('schedYmTitle');
     const tbody = document.getElementById('schedCalBody');
     tbody.innerHTML = '';
@@ -1704,8 +1644,7 @@
         }
         tbody.appendChild(tr);
       }
-    } 
-    else {
+    } else {
       titleEl.textContent = schedYear + "年" + schedMonth + "月（週）";
       const tr = document.createElement('tr');
       for (let c = 0; c < 7; c++) {
@@ -1731,30 +1670,6 @@
       tbody.appendChild(tr);
     }
   }
-
-    } else {
-      titleEl.textContent = schedYear + "年" + schedMonth + "月（週）";
-      const tr = document.createElement('tr');
-      for (let c = 0; c < 7; c++) {
-        const dObj = new Date(schedWeekStart.getFullYear(), schedWeekStart.getMonth(), schedWeekStart.getDate() + c);
-        const dKey = dObj.getFullYear() + "-" + (dObj.getMonth() + 1) + "-" + dObj.getDate();
-        const td = document.createElement('td');
-        if (dKey === today.key) td.classList.add('today-highlight');
-        td.innerHTML = '<div class="sched-day-num">' + (dObj.getMonth() + 1) + '/' + dObj.getDate() + '</div>';
-        events.filter(ev => ev.date === dKey).forEach(ev => {
-          const bar = document.createElement('div');
-          bar.className = 'sched-ev-bar';
-          bar.style.backgroundColor = (CAT_CONFIG[ev.cat] || CAT_CONFIG.self).color;
-          bar.textContent = (ev.allDay ? "" : (ev.start + "-" + ev.end + " ")) + ev.title;
-          bar.onclick = (e) => { e.stopPropagation(); openEditEventForm(ev.id); };
-          td.appendChild(bar);
-        });
-        tr.appendChild(td);
-      }
-      tbody.appendChild(tr);
-    }
-  }
-
   function openDateSelect(cat) {
     selCat = cat;
     selYear = schedYear;
@@ -1807,11 +1722,14 @@
   }
 
   function proceedToEventForm() {
-    if (selectedDateKeys.length === 0) { alert("カレンダーから日付を選択してください。"); return; }
+    if (!selectedDateKeys || selectedDateKeys.length === 0) {
+      alert("カレンダーから日付を選択してください。");
+      return;
+    }
     editingEventId = null;
-    editingTargetDates = [...selectedDateKeys];
+    editingTargetDates = selectedDateKeys.slice();
     closeDateSelect();
-    openEventFormUI();
+    openEventFormUI(null);
   }
 
   function openEditEventForm(evId) {
@@ -1822,7 +1740,8 @@
     editingTargetDates = [ev.date];
     openEventFormUI(ev);
   }
-   function openEventFormUI(existingEv) {
+
+  function openEventFormUI(existingEv) {
     const cfg = CAT_CONFIG[selCat] || CAT_CONFIG.self;
     document.getElementById('evFormHeader').style.backgroundColor = cfg.color;
     document.getElementById('evSaveBtn').style.backgroundColor = cfg.color;
@@ -1864,9 +1783,7 @@
     document.getElementById('eventFormScreen').style.display = 'flex';
   }
 
-  function closeEventForm() {
-    document.getElementById('eventFormScreen').style.display = 'none';
-  }
+  function closeEventForm() { document.getElementById('eventFormScreen').style.display = 'none'; }
 
   function toggleAllDayCheck() {
     const isAll = document.getElementById('evAllDayCheck').checked;
@@ -1951,7 +1868,6 @@
       headerNext.textContent = countdownEvs.length > 0 ? countdownEvs.start : "予定なし";
     }
   }
-
   function getTodayInfo() {
     const now = new Date();
     const weekNames = ["日", "月", "火", "水", "木", "金", "土"];
@@ -2062,6 +1978,7 @@
     viewMonth = today.month;
     renderCalendar();
   }
+
   let timerInterval = null;
   function formatMinutesText(totalMins) { return Math.floor(totalMins / 60) + "時間" + (totalMins % 60) + "分"; }
   function formatHourMin(elapsedSec) {
