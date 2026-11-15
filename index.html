@@ -2478,7 +2478,7 @@
 
     function syncTodayPlansToMain() {
     const today = getTodayInfo();
-    const todayEvs = getScheduleEvents().filter(ev => ev.date === today.key);
+    const todayEvs = getScheduleEvents().filter(ev => ev.date === today.key && ev.cat !== 'home');
     const box = document.getElementById('todayPlansBox');
     const headerNext = document.getElementById('headerNextSchedule');
 
@@ -2831,14 +2831,53 @@
     }, 400);
   }
 
-    function playBigTimerBeep() {
+      const bigTimerAudio = new Audio("Windows%20Background.wav");
+  bigTimerAudio.preload = "auto";
+
+  function unlockBigTimerAudio() {
     try {
-      const audio = new Audio("Windows%20Background.wav");
-      audio.play().catch(() => {
-        const fallback = new Audio("Windows Background.wav");
-        fallback.play().catch(() => {});
-      });
+      bigTimerAudio.muted = true;
+      const p = bigTimerAudio.play();
+      if (p !== undefined) {
+        p.then(() => {
+          bigTimerAudio.pause();
+          bigTimerAudio.currentTime = 0;
+          bigTimerAudio.muted = false;
+        }).catch(() => {
+          bigTimerAudio.muted = false;
+        });
+      }
     } catch (e) {}
+  }
+
+  function playFallbackBeep() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      for (let i = 0; i < 3; i++) {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, ctx.currentTime + i * 0.25);
+        gain.gain.setValueAtTime(0.25, ctx.currentTime + i * 0.25);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(ctx.currentTime + i * 0.25);
+        osc.stop(ctx.currentTime + i * 0.25 + 0.15);
+      }
+    } catch (e) {}
+  }
+
+  function playBigTimerBeep() {
+    try {
+      bigTimerAudio.muted = false;
+      bigTimerAudio.currentTime = 0;
+      const p = bigTimerAudio.play();
+      if (p !== undefined) {
+        p.catch(() => playFallbackBeep());
+      }
+    } catch (e) {
+      playFallbackBeep();
+    }
   }
 
   function toggleBigTimer() {
@@ -2864,6 +2903,7 @@
       renderBigTimerDisplay();
     }
 
+    unlockBigTimerAudio();
     if (clockEl) clockEl.style.color = "#1a1a1a";
     runBtn.textContent = "停 止";
     inputEl.disabled = true;
@@ -2884,7 +2924,6 @@
       }
     }, 1000);
   }
-
   function closeBigTimer() {
     if (bigTimerInterval) {
       clearInterval(bigTimerInterval);
