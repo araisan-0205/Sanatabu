@@ -27,7 +27,7 @@
     overflow: hidden;
   }
 
-  /* 起動画面（loading.png ＋ 太めの緑色プログレスバー） */
+  /* 起動画面 */
   .boot-screen {
     position: fixed;
     inset: 0;
@@ -125,17 +125,8 @@
     white-space: nowrap;
   }
 
-  .schedule-label {
-    font-size: 11px;
-    font-weight: normal;
-    color: #555555;
-  }
-
-  .schedule-val {
-    font-size: 14px;
-    font-weight: bold;
-    color: #111111;
-  }
+  .schedule-label { font-size: 11px; color: #555555; }
+  .schedule-val { font-size: 14px; font-weight: bold; color: #111111; }
 
   .timer-area {
     display: flex;
@@ -148,12 +139,7 @@
     white-space: nowrap;
   }
 
-  .timer-label {
-    font-size: 10px;
-    font-weight: bold;
-    color: #ffffff;
-  }
-
+  .timer-label { font-size: 10px; font-weight: bold; color: #ffffff; }
   .timer-box {
     color: #ffffff;
     font-family: "Courier New", Consolas, monospace;
@@ -208,7 +194,7 @@
   }
   .img-icon-btn:active { transform: scale(0.95); }
   .img-icon-btn img { width: 100%; height: 100%; object-fit: contain; display: block; }
-  /* メインエリア（左カラム：プロフィール＆設定変更ボタン & カレンダー） */
+  /* メインエリア */
   .main-grid {
     flex: 1;
     min-height: 0;
@@ -275,18 +261,13 @@
     padding: 2px;
   }
 
-  .stat-row {
-    width: 100%;
-    padding: 3px 0;
-  }
-
+  .stat-row { width: 100%; padding: 3px 0; }
   .stat-val {
     font-size: 14px;
     color: #e4f542;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
   }
 
-  /* カレンダー枠 */
   .calendar-card {
     position: relative;
     width: 100%;
@@ -391,7 +372,6 @@
   }
 
   .cal-table td.sat-col { background-color: #ffffff; }
-
   .cal-table td.today-cell { background-color: #2563eb !important; }
   .cal-table td.today-cell .day-circle {
     color: #ffffff !important;
@@ -407,10 +387,7 @@
     color: #334155;
   }
 
-  .other-month {
-    color: #cbd5e1;
-    font-weight: normal;
-  }
+  .other-month { color: #cbd5e1; font-weight: normal; }
 
   .studied-mark {
     background-image: url('maru.png');
@@ -419,7 +396,7 @@
     background-position: center;
   }
   .cal-table td:not(.today-cell) .studied-mark { color: #c53030; }
-  /* 右カラム（info_bg.png & 2ボタンエリア） */
+  /* 右カラム */
   .right-col {
     display: flex;
     flex-direction: column;
@@ -447,10 +424,26 @@
     top: 31%;
     width: 45%;
     height: 62%;
-    padding: 6px 10px;
-    font-size: 13px;
-    color: #333333;
+    padding: 4px 8px;
+    font-size: 12px;
+    color: #1e293b;
     overflow-y: auto;
+  }
+
+  .today-plan-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 4px;
+    border-bottom: 1px solid #e2e8f0;
+    font-weight: bold;
+  }
+
+  .plan-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    flex-shrink: 0;
   }
 
   .info-right-content {
@@ -508,7 +501,34 @@
     pointer-events: none;
   }
 
-  /* loading.gif オーバーレイ画面 */
+  .schedule-tile-card {
+    width: 100%;
+    height: 100%;
+    max-width: 245px;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 8px 12px;
+    color: #ffffff;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.35);
+  }
+
+  .schedule-tile-icon {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .schedule-tile-label {
+    font-size: 13px;
+    font-weight: bold;
+    text-align: left;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+  }
+
   .loading-overlay {
     position: fixed;
     inset: 0;
@@ -518,13 +538,441 @@
     justify-content: center;
     z-index: 9999;
   }
-  .loading-overlay img {
-    width: 150px;
-    height: 150px;
-    object-fit: contain;
+  .loading-overlay img { width: 150px; height: 150px; object-fit: contain; }
+  /* 内蔵スケジュール画面 */
+  .sched-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9500;
+    background-color: #e2e8f0;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
   }
 
-  /* 設定変更メニューモーダル */
+  .sched-topbar {
+    height: 54px;
+    background: linear-gradient(to bottom, #1e3a8a 0%, #0f256e 100%);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+    color: #ffffff;
+    flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+  }
+
+  .sched-nav-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .sched-tri-btn {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+  }
+  .sched-tri-prev {
+    border-width: 11px 16px 11px 0;
+    border-color: transparent #60a5fa transparent transparent;
+  }
+  .sched-tri-next {
+    border-width: 11px 0 11px 16px;
+    border-color: transparent transparent transparent #60a5fa;
+  }
+
+  .sched-ym-title {
+    font-size: 19px;
+    font-weight: bold;
+    min-width: 108px;
+    text-align: center;
+  }
+
+  .sched-view-toggle {
+    display: flex;
+    border: 1px solid #3b82f6;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-left: 4px;
+  }
+
+  .sched-view-btn {
+    padding: 5px 11px;
+    font-size: 13px;
+    font-weight: bold;
+    border: none;
+    background-color: #1e3a8a;
+    color: #93c5fd;
+    cursor: pointer;
+  }
+  .sched-view-btn.active {
+    background-color: #3b82f6;
+    color: #ffffff;
+  }
+
+  .sched-create-bar {
+    display: flex;
+    align-items: center;
+    background-color: #172554;
+    padding: 4px 6px;
+    border-radius: 4px;
+    gap: 5px;
+  }
+
+  .sched-create-label {
+    font-size: 11px;
+    line-height: 1.1;
+    color: #cbd5e1;
+    padding: 0 3px;
+    font-weight: bold;
+  }
+
+  .sched-cat-btn {
+    border: none;
+    padding: 6px 11px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #ffffff;
+    border-radius: 2px;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.35);
+  }
+  .sched-cat-btn:active { transform: translateY(1px); }
+  .cat-self { background-color: #558b2f; }
+  .cat-sanaru { background-color: #0288d1; }
+  .cat-school { background-color: #c0a020; }
+  .cat-home { background-color: #d86c88; }
+
+  .sched-top-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .sched-close-btn {
+    width: 38px;
+    height: 36px;
+    background: linear-gradient(to bottom, #f97316, #ea580c);
+    border: 1px solid #9a3412;
+    border-radius: 4px;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  .sched-grid-wrap {
+    flex: 1;
+    min-height: 0;
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sched-table {
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    background-color: #ffffff;
+  }
+
+  .sched-table th {
+    height: 26px;
+    background: linear-gradient(to bottom, #1e293b, #0f172a);
+    color: #ffffff;
+    font-size: 13px;
+    border: 1px solid #334155;
+  }
+  .sched-table th:first-child { color: #fca5a5; }
+  .sched-table th:last-child { color: #93c5fd; }
+
+  .sched-table td {
+    border: 1px solid #94a3b8;
+    vertical-align: top;
+    padding: 2px;
+    background: linear-gradient(to bottom, #f8fafc 0%, #e2e8f0 100%);
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .sched-table td.other-m {
+    background: #cbd5e1;
+    color: #64748b;
+  }
+
+  .sched-table td.today-highlight {
+    background: linear-gradient(to bottom, #bae6fd 0%, #7dd3fc 100%);
+  }
+
+  .sched-day-num {
+    font-size: 12px;
+    font-weight: bold;
+    color: #1e293b;
+    margin-bottom: 2px;
+    padding-left: 2px;
+  }
+
+  .sched-ev-bar {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    font-weight: bold;
+    color: #ffffff;
+    padding: 2px 4px;
+    margin-bottom: 2px;
+    border-radius: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+  }
+  /* 日付選択モーダル */
+  .datesel-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9600;
+    background-color: #cbd5e1;
+    display: none;
+    flex-direction: column;
+  }
+
+  .datesel-header {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 14px;
+    color: #ffffff;
+    font-weight: bold;
+  }
+
+  .datesel-nav {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 18px;
+  }
+
+  .datesel-body {
+    flex: 1;
+    min-height: 0;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .datesel-table {
+    width: 100%;
+    flex: 1;
+    border-collapse: collapse;
+    table-layout: fixed;
+    background-color: #e2e8f0;
+  }
+
+  .datesel-table th {
+    height: 26px;
+    background-color: #1e293b;
+    color: #ffffff;
+    font-size: 12px;
+    border: 1px solid #475569;
+  }
+
+  .datesel-table td {
+    border: 1px solid #94a3b8;
+    vertical-align: top;
+    padding: 4px;
+    font-size: 13px;
+    font-weight: bold;
+    background: linear-gradient(to bottom, #f8fafc, #cbd5e1);
+    cursor: pointer;
+  }
+
+  .datesel-table td.selected-day {
+    background: #fef08a !important;
+    outline: 3px solid #eab308;
+    outline-offset: -3px;
+  }
+
+  .datesel-footer {
+    height: 64px;
+    background-color: #475569;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .datesel-submit-btn {
+    padding: 10px 44px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #ffffff;
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 3px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+
+  /* 予定内容登録・修正モーダル */
+  .evform-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9700;
+    background-color: #e2e8f0;
+    display: none;
+    flex-direction: column;
+  }
+
+  .evform-header {
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 14px;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .evform-body {
+    flex: 1;
+    padding: 14px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow-y: auto;
+  }
+
+  .evform-row {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #cbd5e1;
+    padding: 10px 0;
+    gap: 16px;
+  }
+
+  .evform-label {
+    width: 72px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #334155;
+    flex-shrink: 0;
+  }
+
+  .evform-input {
+    width: 340px;
+    max-width: 100%;
+    padding: 7px 10px;
+    font-size: 15px;
+    border: 1px solid #94a3b8;
+    background-color: #ffffff;
+  }
+
+  .evform-checks {
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #334155;
+  }
+
+  .evform-checks label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+  }
+
+  .evform-checks input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+  }
+
+  .clock-drums-wrap {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .clock-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .drum-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .drum-arrow {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+  }
+  .drum-up {
+    border-width: 0 12px 16px 12px;
+    border-color: transparent transparent #475569 transparent;
+  }
+  .drum-down {
+    border-width: 16px 12px 0 12px;
+    border-color: #475569 transparent transparent transparent;
+  }
+
+  .drum-box {
+    width: 74px;
+    height: 78px;
+    background: linear-gradient(to bottom, #cbd5e1 0%, #f1f5f9 50%, #cbd5e1 100%);
+    border: 1px solid #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+    font-weight: bold;
+    color: #1e293b;
+    user-select: none;
+  }
+
+  .clock-colon {
+    font-size: 36px;
+    font-weight: bold;
+    color: #334155;
+  }
+
+  .evform-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 120px;
+    padding: 14px 0;
+  }
+
+  .evform-action-btn {
+    width: 130px;
+    padding: 10px 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: #ffffff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    letter-spacing: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+  }
+
+  /* 設定変更モーダル */
   .settings-overlay {
     position: fixed;
     inset: 0;
@@ -601,12 +1049,7 @@
     font-weight: bold;
   }
 
-  .time-label-fixed {
-    width: 90px;
-    font-size: 12px;
-    color: #334155;
-  }
-
+  .time-label-fixed { width: 90px; font-size: 12px; color: #334155; }
   .time-input {
     width: 64px;
     padding: 5px 6px;
@@ -627,7 +1070,6 @@
     color: #ffffff;
     background-color: #2563eb;
   }
-  .settings-btn:active { opacity: 0.85; }
   .settings-btn.green { background-color: #16a34a; }
   .settings-btn.gray { background-color: #64748b; }
   .settings-btn.red { background-color: #dc2626; }
@@ -643,12 +1085,6 @@
     resize: none;
     margin-bottom: 8px;
   }
-
-  .backup-btn-group {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
 </style>
 </head>
 <body>
@@ -662,7 +1098,7 @@
   </div>
 </div>
 
-<!-- 設定変更モーダル（今月/今週の個別時間調整・連続日数調整・バックアップ） -->
+<!-- 設定変更モーダル -->
 <div class="settings-overlay" id="settingsModal">
   <div class="settings-modal">
     <div class="settings-header">
@@ -670,7 +1106,6 @@
       <button class="settings-close-x" onclick="closeSettingsModal()">×</button>
     </div>
     <div class="settings-body">
-      <!-- 1. 今月・今週の学習時間の個別調整 -->
       <div class="settings-section">
         <div class="settings-section-title">学習時間の個別調整</div>
         <div class="time-edit-row">
@@ -690,7 +1125,6 @@
         <button class="settings-btn" onclick="saveAdjustedTimes()">今月・今週の時間を反映</button>
       </div>
 
-      <!-- 2. 連続学習日数の調整 -->
       <div class="settings-section">
         <div class="settings-section-title">連続学習日数の調整</div>
         <div class="time-edit-row">
@@ -700,14 +1134,12 @@
           <button class="settings-btn" onclick="saveAdjustedStreak()">日数を反映</button>
           <button class="settings-btn gray" onclick="resetStreakToAuto()">自動計算に戻す</button>
         </div>
-        <div style="font-size: 11px; color: #64748b;">※通常はカレンダーの丸印が今日まで連続した日数を自動計算し、1日でも空くと0にリセットされます。</div>
       </div>
 
-      <!-- 3. バックアップ・復元 -->
       <div class="settings-section">
         <div class="settings-section-title">バックアップ・データ復元</div>
         <textarea id="backupCodeBox" class="backup-textarea" placeholder="ここにバックアップ文字が表示されます。"></textarea>
-        <div class="backup-btn-group">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <button class="settings-btn green" onclick="copyBackupCode()">バックアップをコピー</button>
           <button class="settings-btn" onclick="restoreBackupCode()">貼り付けた内容で復元</button>
           <button class="settings-btn red" onclick="resetAllData()">全データ初期化</button>
@@ -717,6 +1149,131 @@
       <div style="text-align: right;">
         <button class="settings-btn gray" onclick="closeSettingsModal()">閉じる</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- 内蔵スケジュール画面 -->
+<div class="sched-overlay" id="scheduleScreen">
+  <div class="sched-topbar">
+    <div class="sched-nav-left">
+      <button class="sched-tri-btn sched-tri-prev" onclick="moveSchedPeriod(-1)"></button>
+      <div class="sched-ym-title" id="schedYmTitle">2026年11月</div>
+      <button class="sched-tri-btn sched-tri-next" onclick="moveSchedPeriod(1)"></button>
+      <div class="sched-view-toggle">
+        <button class="sched-view-btn active" id="btnViewMonth" onclick="setSchedView('month')">月</button>
+        <button class="sched-view-btn" id="btnViewWeek" onclick="setSchedView('week')">週</button>
+      </div>
+    </div>
+
+    <div class="sched-create-bar">
+      <div class="sched-create-label">作<br>成</div>
+      <button class="sched-cat-btn cat-self" onclick="openDateSelect('self')">自分</button>
+      <button class="sched-cat-btn cat-sanaru" onclick="openDateSelect('sanaru')">さなる</button>
+      <button class="sched-cat-btn cat-school" onclick="openDateSelect('school')">学校</button>
+      <button class="sched-cat-btn cat-home" onclick="openDateSelect('home')">家庭学習</button>
+    </div>
+
+    <div class="sched-top-right">
+      <button class="img-icon-btn" style="width:36px;height:36px;" onclick="refreshSchedule()">
+        <img src="update.png" alt="更新">
+      </button>
+      <button class="sched-close-btn" onclick="closeScheduleScreen()">×</button>
+    </div>
+  </div>
+
+  <div class="sched-grid-wrap">
+    <table class="sched-table">
+      <thead>
+        <tr><th>日</th><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th><th>土</th></tr>
+      </thead>
+      <tbody id="schedCalBody"></tbody>
+    </table>
+  </div>
+</div>
+<!-- 日付選択画面 -->
+<div class="datesel-overlay" id="dateSelectScreen">
+  <div class="datesel-header" id="dateSelHeader">
+    <div style="font-size:16px;">日付選択</div>
+    <div class="datesel-nav">
+      <button class="sched-tri-btn sched-tri-prev" style="border-right-color:#ffffff;" onclick="moveDateSelMonth(-1)"></button>
+      <span id="dateSelYmLabel">2026年11月</span>
+      <button class="sched-tri-btn sched-tri-next" style="border-left-color:#ffffff;" onclick="moveDateSelMonth(1)"></button>
+    </div>
+    <button class="sched-close-btn" onclick="closeDateSelect()">×</button>
+  </div>
+  <div class="datesel-body">
+    <table class="datesel-table">
+      <thead>
+        <tr><th>日</th><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th><th>土</th></tr>
+      </thead>
+      <tbody id="dateSelBody"></tbody>
+    </table>
+  </div>
+  <div class="datesel-footer">
+    <button class="datesel-submit-btn" id="dateSelSubmitBtn" onclick="proceedToEventForm()">内容登録</button>
+  </div>
+</div>
+
+<!-- 予定内容登録・修正画面 -->
+<div class="evform-overlay" id="eventFormScreen">
+  <div class="evform-header" id="evFormHeader">
+    <span id="evFormTitleBar">予定内容登録</span>
+    <button class="sched-close-btn" onclick="closeEventForm()">×</button>
+  </div>
+  <div class="evform-body">
+    <div>
+      <div class="evform-row">
+        <div class="evform-label">タイトル</div>
+        <input type="text" id="evTitleInput" class="evform-input" placeholder="予定タイトルを入力">
+      </div>
+      <div class="evform-row">
+        <div class="evform-label">メモ</div>
+        <input type="text" id="evMemoInput" class="evform-input" placeholder="メモ（任意）">
+      </div>
+      <div class="evform-row" style="border-bottom:none;align-items:flex-start;padding-top:16px;">
+        <div class="evform-label" style="padding-top:34px;">日時<br><br>時間</div>
+        <div>
+          <div class="evform-checks">
+            <label><input type="checkbox" id="evAllDayCheck" onchange="toggleAllDayCheck()"> 終日</label>
+            <label><input type="checkbox" id="evCountdownCheck"> カウントダウン設定</label>
+          </div>
+          <div class="clock-drums-wrap" id="clockDrumsWrap">
+            <div class="clock-group">
+              <div class="drum-col">
+                <button class="drum-arrow drum-up" onclick="stepDrum('sh',1)"></button>
+                <div class="drum-box" id="drumSh">10</div>
+                <button class="drum-arrow drum-down" onclick="stepDrum('sh',-1)"></button>
+              </div>
+              <div class="clock-colon">:</div>
+              <div class="drum-col">
+                <button class="drum-arrow drum-up" onclick="stepDrum('sm',1)"></button>
+                <div class="drum-box" id="drumSm">00</div>
+                <button class="drum-arrow drum-down" onclick="stepDrum('sm',-1)"></button>
+              </div>
+            </div>
+            <div style="font-size:24px;font-weight:bold;">~</div>
+            <div class="clock-group">
+              <div class="drum-col">
+                <button class="drum-arrow drum-up" onclick="stepDrum('eh',1)"></button>
+                <div class="drum-box" id="drumEh">11</div>
+                <button class="drum-arrow drum-down" onclick="stepDrum('eh',-1)"></button>
+              </div>
+              <div class="clock-colon">:</div>
+              <div class="drum-col">
+                <button class="drum-arrow drum-up" onclick="stepDrum('em',1)"></button>
+                <div class="drum-box" id="drumEm">00</div>
+                <button class="drum-arrow drum-down" onclick="stepDrum('em',-1)"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="evform-actions">
+      <button class="evform-action-btn" id="evSaveBtn" onclick="saveScheduleEvent()">登 録</button>
+      <button class="evform-action-btn" id="evDeleteBtn" onclick="deleteScheduleEvent()">削 除</button>
     </div>
   </div>
 </div>
@@ -731,7 +1288,7 @@
       <span class="date-badge" id="headerDateBadge">11月15日（日）</span>
       <span class="schedule-group">
         <span class="schedule-label">予定開始時刻</span>
-        <span class="schedule-val">予定なし</span>
+        <span class="schedule-val" id="headerNextSchedule">予定なし</span>
       </span>
       <div class="timer-area">
         <span class="timer-label" id="timerLabel">あと</span>
@@ -760,14 +1317,14 @@
         </div>
       </section>
 
-      <section class="calendar-card">
+      <section class="calendar-card" onclick="openScheduleScreen()" style="cursor:pointer;">
         <div class="cal-header-bar">
           <div class="cal-nav-group">
-            <button class="cal-arrow-btn" onclick="changeMonth(-1)" aria-label="先月">«</button>
+            <button class="cal-arrow-btn" onclick="event.stopPropagation();changeMonth(-1)">«</button>
             <span class="cal-month-label" id="calMonthLabel">11月</span>
-            <button class="cal-arrow-btn" onclick="changeMonth(1)" aria-label="来月">»</button>
+            <button class="cal-arrow-btn" onclick="event.stopPropagation();changeMonth(1)">»</button>
           </div>
-          <button class="cal-today-btn" onclick="resetToToday()" title="今月に戻る"></button>
+          <button class="cal-today-btn" onclick="event.stopPropagation();resetToToday()"></button>
         </div>
 
         <div class="cal-table-wrap">
@@ -783,11 +1340,30 @@
 
     <div class="right-col">
       <section class="info-panel-wrap">
-        <div class="info-left-content"></div>
+        <div class="info-left-content" id="todayPlansBox"></div>
         <div class="info-right-content"></div>
       </section>
 
       <section class="tiles-grid">
+        <button class="tile-btn" onclick="openScheduleScreen()">
+          <div class="schedule-tile-card">
+            <div class="schedule-tile-icon">
+              <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+                <circle cx="8" cy="14" r="1" fill="#fff"></circle>
+                <circle cx="12" cy="14" r="1" fill="#fff"></circle>
+                <circle cx="16" cy="14" r="1" fill="#fff"></circle>
+                <circle cx="8" cy="18" r="1" fill="#fff"></circle>
+                <circle cx="12" cy="18" r="1" fill="#fff"></circle>
+              </svg>
+            </div>
+            <div class="schedule-tile-label">スケジュール</div>
+          </div>
+        </button>
+
         <button class="tile-btn" onclick="openGradeEntry()">
           <img src="btn22_GradeEntry.png" alt="成績登録"
                onpointerdown="this.src='btn22_GradeEntryA.png'"
@@ -806,8 +1382,24 @@
   </main>
 </div>
 <script>
-  const FILEBOX_URL = "https://araisan-0205.github.io/Filebox/";
-  const GRADE_ENTRY_URL = "https://sanaru.atwill-net.com/tablet/seiseki/?sId=25010283&cId=cfe59ee790126b6f37298d1eacdcbe60";
+  const FILEBOX_URL = "https://github.io";
+  const GRADE_ENTRY_URL = "https://atwill-net.com";
+
+  const CAT_CONFIG = {
+    self:   { name: "自分",     color: "#558b2f", defaultTitle: "" },
+    sanaru: { name: "さなる",   color: "#0288d1", defaultTitle: "正規コース" },
+    school: { name: "学校",     color: "#c0a020", defaultTitle: "" },
+    home:   { name: "家庭学習", color: "#d86c88", defaultTitle: "家庭学習" }
+  };
+
+  function getScheduleEvents() {
+    return JSON.parse(localStorage.getItem('sanaru_schedule_events') || '[]');
+  }
+
+  function saveScheduleEventsList(list) {
+    localStorage.setItem('sanaru_schedule_events', JSON.stringify(list));
+    syncTodayPlansToMain();
+  }
 
   function runBootSequence() {
     const bootScreen = document.getElementById('bootScreen');
@@ -825,13 +1417,9 @@
         if (progress > 100) progress = 100;
         barFill.style.width = progress + "%";
 
-        if (progress < 40) {
-          statusText.textContent = "システム初期化中・・・" + progress + "%";
-        } else if (progress < 90) {
-          statusText.textContent = "時間合わせ処理中・・・" + progress + "%";
-        } else {
-          statusText.textContent = "起動準備完了・・・" + progress + "%";
-        }
+        if (progress < 40) statusText.textContent = "システム初期化中・・・" + progress + "%";
+        else if (progress < 90) statusText.textContent = "時間合わせ処理中・・・" + progress + "%";
+        else statusText.textContent = "起動準備完了・・・" + progress + "%";
 
         if (progress >= 100) {
           clearInterval(stepTimer);
@@ -841,29 +1429,21 @@
     }, 300);
   }
 
-  // 今日まで何日連続で丸印が続いているか計算（1日でも空くと0にリセット）
   function calculateStreak() {
     const manualStreak = localStorage.getItem('sanaru_manual_streak');
-    if (manualStreak !== null) {
-      return parseInt(manualStreak, 10);
-    }
+    if (manualStreak !== null) return parseInt(manualStreak, 10);
     const studiedKeys = JSON.parse(localStorage.getItem('sanaru_studied_keys') || '[]');
     if (studiedKeys.length === 0) return 0;
 
     const now = new Date();
     const todayKey = now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate();
-
     const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
     const yesterdayKey = yesterday.getFullYear() + "-" + (yesterday.getMonth() + 1) + "-" + yesterday.getDate();
 
     let checkDate = null;
-    if (studiedKeys.includes(todayKey)) {
-      checkDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    } else if (studiedKeys.includes(yesterdayKey)) {
-      checkDate = yesterday;
-    } else {
-      return 0;
-    }
+    if (studiedKeys.includes(todayKey)) checkDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    else if (studiedKeys.includes(yesterdayKey)) checkDate = yesterday;
+    else return 0;
 
     let count = 0;
     while (true) {
@@ -871,23 +1451,19 @@
       if (studiedKeys.includes(k)) {
         count++;
         checkDate = new Date(checkDate.getFullYear(), checkDate.getMonth(), checkDate.getDate() - 1);
-      } else {
-        break;
-      }
+      } else break;
     }
     return count;
   }
 
   function getMonthMins() {
     const val = localStorage.getItem('sanaru_month_mins');
-    if (val !== null) return parseInt(val, 10);
-    return parseInt(localStorage.getItem('sanaru_total_mins') || '0', 10);
+    return val !== null ? parseInt(val, 10) : parseInt(localStorage.getItem('sanaru_total_mins') || '0', 10);
   }
 
   function getWeekMins() {
     const val = localStorage.getItem('sanaru_week_mins');
-    if (val !== null) return parseInt(val, 10);
-    return parseInt(localStorage.getItem('sanaru_total_mins') || '0', 10);
+    return val !== null ? parseInt(val, 10) : parseInt(localStorage.getItem('sanaru_total_mins') || '0', 10);
   }
 
   function buildBackupString() {
@@ -895,7 +1471,8 @@
       month_mins: getMonthMins(),
       week_mins: getWeekMins(),
       studied_keys: JSON.parse(localStorage.getItem('sanaru_studied_keys') || '[]'),
-      manual_streak: localStorage.getItem('sanaru_manual_streak')
+      manual_streak: localStorage.getItem('sanaru_manual_streak'),
+      schedule_events: getScheduleEvents()
     });
   }
 
@@ -911,16 +1488,13 @@
     document.getElementById('settingsModal').style.display = 'flex';
   }
 
-  function closeSettingsModal() {
-    document.getElementById('settingsModal').style.display = 'none';
-  }
+  function closeSettingsModal() { document.getElementById('settingsModal').style.display = 'none'; }
 
   function saveAdjustedTimes() {
     const mh = Math.max(0, parseInt(document.getElementById('editMonthHours').value || '0', 10));
     const mm = Math.max(0, Math.min(59, parseInt(document.getElementById('editMonthMins').value || '0', 10)));
     const wh = Math.max(0, parseInt(document.getElementById('editWeekHours').value || '0', 10));
     const wm = Math.max(0, Math.min(59, parseInt(document.getElementById('editWeekMins').value || '0', 10)));
-
     localStorage.setItem('sanaru_month_mins', String(mh * 60 + mm));
     localStorage.setItem('sanaru_week_mins', String(wh * 60 + wm));
     renderProfileStats();
@@ -950,16 +1524,8 @@
     box.select();
     box.setSelectionRange(0, 99999);
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(box.value).then(() => {
-        alert("バックアップデータをコピーしました。");
-      }).catch(() => {
-        document.execCommand('copy');
-        alert("バックアップデータをコピーしました。");
-      });
-    } else {
-      document.execCommand('copy');
-      alert("バックアップデータをコピーしました。");
-    }
+      navigator.clipboard.writeText(box.value).then(() => alert("コピーしました。")).catch(() => { document.execCommand('copy'); alert("コピーしました。"); });
+    } else { document.execCommand('copy'); alert("コピーしました。"); }
   }
 
   function restoreBackupCode() {
@@ -968,39 +1534,236 @@
     try {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed.studied_keys)) {
-        const mVal = (typeof parsed.month_mins === 'number') ? parsed.month_mins : (parsed.total_mins || 0);
-        const wVal = (typeof parsed.week_mins === 'number') ? parsed.week_mins : (parsed.total_mins || 0);
-        localStorage.setItem('sanaru_month_mins', String(mVal));
-        localStorage.setItem('sanaru_week_mins', String(wVal));
+        localStorage.setItem('sanaru_month_mins', String(parsed.month_mins || 0));
+        localStorage.setItem('sanaru_week_mins', String(parsed.week_mins || 0));
         localStorage.setItem('sanaru_studied_keys', JSON.stringify(parsed.studied_keys));
-        if (parsed.manual_streak !== null && parsed.manual_streak !== undefined) {
-          localStorage.setItem('sanaru_manual_streak', String(parsed.manual_streak));
-        } else {
-          localStorage.removeItem('sanaru_manual_streak');
-        }
+        if (parsed.manual_streak !== null && parsed.manual_streak !== undefined) localStorage.setItem('sanaru_manual_streak', String(parsed.manual_streak));
+        else localStorage.removeItem('sanaru_manual_streak');
+        if (Array.isArray(parsed.schedule_events)) saveScheduleEventsList(parsed.schedule_events);
         renderProfileStats();
         renderCalendar();
-        alert("バックアップからデータを復元しました！");
+        alert("バックアップから復元しました！");
         closeSettingsModal();
-      } else {
-        alert("データの形式が正しくありません。");
-      }
-    } catch (e) {
-      alert("復元できませんでした。文字が途中で切れていないか確認してください。");
-    }
+      } else alert("形式が正しくありません。");
+    } catch (e) { alert("復元できませんでした。"); }
   }
 
   function resetAllData() {
-    if (confirm("学習時間・連続日数・カレンダーの記録をすべてリセットしますか？")) {
-      localStorage.removeItem('sanaru_total_mins');
-      localStorage.removeItem('sanaru_month_mins');
-      localStorage.removeItem('sanaru_week_mins');
-      localStorage.removeItem('sanaru_studied_keys');
-      localStorage.removeItem('sanaru_manual_streak');
-      localStorage.removeItem('sanaru_study_start');
-      localStorage.removeItem('sanaru_start_key');
+    if (confirm("学習時間・スケジュール・カレンダーをすべて初期化しますか？")) {
+      localStorage.clear();
       location.reload();
     }
+  }
+  // ============================================================================
+  // ★ 内蔵スケジュール機能
+  // ============================================================================
+  let schedYear = new Date().getFullYear();
+  let schedMonth = new Date().getMonth() + 1;
+  let schedWeekStart = null;
+  let schedViewMode = 'month';
+
+  let selCat = 'self';
+  let selYear = schedYear;
+  let selMonth = schedMonth;
+  let selectedDateKeys = [];
+
+  let editingEventId = null;
+  let editingTargetDates = [];
+  let drumState = { sh: 10, sm: 0, eh: 11, em: 0 };
+
+  function openScheduleScreen() {
+    const loader = document.getElementById('loadingOverlay');
+    loader.style.display = 'flex';
+    setTimeout(() => {
+      loader.style.display = 'none';
+      const now = new Date();
+      schedYear = now.getFullYear();
+      schedMonth = now.getMonth() + 1;
+      schedWeekStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay());
+      renderScheduleGrid();
+      document.getElementById('scheduleScreen').style.display = 'flex';
+    }, 500);
+  }
+
+  function closeScheduleScreen() {
+    document.getElementById('scheduleScreen').style.display = 'none';
+    syncTodayPlansToMain();
+  }
+
+  function refreshSchedule() {
+    const loader = document.getElementById('loadingOverlay');
+    loader.style.display = 'flex';
+    renderScheduleGrid();
+    setTimeout(() => { loader.style.display = 'none'; }, 500);
+  }
+
+  function setSchedView(mode) {
+    schedViewMode = mode;
+    document.getElementById('btnViewMonth').classList.toggle('active', mode === 'month');
+    document.getElementById('btnViewWeek').classList.toggle('active', mode === 'week');
+    renderScheduleGrid();
+  }
+
+  function moveSchedPeriod(dir) {
+    if (schedViewMode === 'month') {
+      schedMonth += dir;
+      if (schedMonth < 1) { schedMonth = 12; schedYear--; }
+      else if (schedMonth > 12) { schedMonth = 1; schedYear++; }
+    } else {
+      schedWeekStart = new Date(schedWeekStart.getFullYear(), schedWeekStart.getMonth(), schedWeekStart.getDate() + dir * 7);
+      schedYear = schedWeekStart.getFullYear();
+      schedMonth = schedWeekStart.getMonth() + 1;
+    }
+    renderScheduleGrid();
+  }
+
+  function renderScheduleGrid() {
+    const titleEl = document.getElementById('schedYmTitle');
+    const tbody = document.getElementById('schedCalBody');
+    tbody.innerHTML = '';
+    const events = getScheduleEvents();
+    const today = getTodayInfo();
+
+    if (schedViewMode === 'month') {
+      titleEl.textContent = schedYear + "年" + schedMonth + "月";
+      const firstDow = new Date(schedYear, schedMonth - 1, 1).getDay();
+      const daysInM = new Date(schedYear, schedMonth, 0).getDate();
+      const prevDays = new Date(schedYear, schedMonth - 1, 0).getDate();
+      let dCount = 1, nextD = 1;
+
+      for (let r = 0; r < 5; r++) {
+        const tr = document.createElement('tr');
+        for (let c = 0; c < 7; c++) {
+          const td = document.createElement('td');
+          const idx = r * 7 + c;
+          let cellY = schedYear, cellM = schedMonth, cellD = 1, isOther = false;
+          if (idx < firstDow) {
+            cellD = prevDays - (firstDow - 1 - idx);
+            cellM = schedMonth - 1;
+            if (cellM < 1) { cellM = 12; cellY--; }
+            isOther = true;
+          } else if (dCount <= daysInM) {
+            cellD = dCount++;
+          } else {
+            cellD = nextD++;
+            cellM = schedMonth + 1;
+            if (cellM > 12) { cellM = 1; cellY++; }
+            isOther = true;
+          }
+          const dKey = cellY + "-" + cellM + "-" + cellD;
+          if (isOther) td.classList.add('other-m');
+          if (dKey === today.key) td.classList.add('today-highlight');
+
+          td.innerHTML = '<div class="sched-day-num">' + cellD + '</div>';
+          const dayEvs = events.filter(ev => ev.date === dKey);
+          dayEvs.forEach(ev => {
+            const bar = document.createElement('div');
+            bar.className = 'sched-ev-bar';
+            bar.style.backgroundColor = (CAT_CONFIG[ev.cat] || CAT_CONFIG.self).color;
+            const timeStr = ev.allDay ? "" : (ev.start + "-" + ev.end + " ");
+            bar.textContent = timeStr + ev.title;
+            bar.onclick = (e) => { e.stopPropagation(); openEditEventForm(ev.id); };
+            td.appendChild(bar);
+          });
+          td.onclick = () => {
+            selCat = 'self';
+            editingEventId = null;
+            editingTargetDates = [dKey];
+            openEventFormUI();
+          };
+          tr.appendChild(td);
+        }
+        tbody.appendChild(tr);
+      }
+    } else {
+      titleEl.textContent = schedYear + "年" + schedMonth + "月（週）";
+      const tr = document.createElement('tr');
+      for (let c = 0; c < 7; c++) {
+        const dObj = new Date(schedWeekStart.getFullYear(), schedWeekStart.getMonth(), schedWeekStart.getDate() + c);
+        const dKey = dObj.getFullYear() + "-" + (dObj.getMonth() + 1) + "-" + dObj.getDate();
+        const td = document.createElement('td');
+        if (dKey === today.key) td.classList.add('today-highlight');
+        td.innerHTML = '<div class="sched-day-num">' + (dObj.getMonth() + 1) + '/' + dObj.getDate() + '</div>';
+        events.filter(ev => ev.date === dKey).forEach(ev => {
+          const bar = document.createElement('div');
+          bar.className = 'sched-ev-bar';
+          bar.style.backgroundColor = (CAT_CONFIG[ev.cat] || CAT_CONFIG.self).color;
+          bar.textContent = (ev.allDay ? "" : (ev.start + "-" + ev.end + " ")) + ev.title;
+          bar.onclick = (e) => { e.stopPropagation(); openEditEventForm(ev.id); };
+          td.appendChild(bar);
+        });
+        tr.appendChild(td);
+      }
+      tbody.appendChild(tr);
+    }
+  }
+
+  function openDateSelect(cat) {
+    selCat = cat;
+    selYear = schedYear;
+    selMonth = schedMonth;
+    selectedDateKeys = [];
+    const cfg = CAT_CONFIG[cat];
+    document.getElementById('dateSelHeader').style.backgroundColor = cfg.color;
+    document.getElementById('dateSelSubmitBtn').style.backgroundColor = cfg.color;
+    renderDateSelGrid();
+    document.getElementById('dateSelectScreen').style.display = 'flex';
+  }
+
+  function closeDateSelect() { document.getElementById('dateSelectScreen').style.display = 'none'; }
+
+  function moveDateSelMonth(dir) {
+    selMonth += dir;
+    if (selMonth < 1) { selMonth = 12; selYear--; }
+    else if (selMonth > 12) { selMonth = 1; selYear++; }
+    renderDateSelGrid();
+  }
+
+  function renderDateSelGrid() {
+    document.getElementById('dateSelYmLabel').textContent = selYear + "年" + selMonth + "月";
+    const tbody = document.getElementById('dateSelBody');
+    tbody.innerHTML = '';
+    const firstDow = new Date(selYear, selMonth - 1, 1).getDay();
+    const daysInM = new Date(selYear, selMonth, 0).getDate();
+    let dCount = 1;
+
+    for (let r = 0; r < 5; r++) {
+      const tr = document.createElement('tr');
+      for (let c = 0; c < 7; c++) {
+        const td = document.createElement('td');
+        const idx = r * 7 + c;
+        if (idx >= firstDow && dCount <= daysInM) {
+          const d = dCount++;
+          const dKey = selYear + "-" + selMonth + "-" + d;
+          td.textContent = d;
+          if (selectedDateKeys.includes(dKey)) td.classList.add('selected-day');
+          td.onclick = () => {
+            if (selectedDateKeys.includes(dKey)) selectedDateKeys = selectedDateKeys.filter(k => k !== dKey);
+            else selectedDateKeys.push(dKey);
+            renderDateSelGrid();
+          };
+        }
+        tr.appendChild(td);
+      }
+      tbody.appendChild(tr);
+    }
+  }
+
+  function proceedToEventForm() {
+    if (selectedDateKeys.length === 0) { alert("カレンダーから日付を選択してください。"); return; }
+    editingEventId = null;
+    editingTargetDates = [...selectedDateKeys];
+    closeDateSelect();
+    openEventFormUI();
+  }
+
+  function openEditEventForm(evId) {
+    const ev = getScheduleEvents().find(x => x.id === evId);
+    if (!ev) return;
+    editingEventId = ev.id;
+    selCat = ev.cat;
+    editingTargetDates = [ev.date];
+    openEventFormUI(ev);
   }
   function getTodayInfo() {
     const now = new Date();
@@ -1026,11 +1789,8 @@
     const newTab = window.open('about:blank', '_blank');
     setTimeout(() => {
       loader.style.display = 'none';
-      if (newTab) {
-        newTab.location.href = targetUrl;
-      } else {
-        window.open(targetUrl, '_blank');
-      }
+      if (newTab) newTab.location.href = targetUrl;
+      else window.open(targetUrl, '_blank');
     }, 1000);
   }
 
@@ -1043,6 +1803,7 @@
     updateHeaderDate();
     renderCalendar();
     renderProfileStats();
+    syncTodayPlansToMain();
     setTimeout(() => { loader.style.display = 'none'; }, 1000);
   }
 
@@ -1064,17 +1825,13 @@
     const today = getTodayInfo();
     const label = document.getElementById('calMonthLabel');
     label.textContent = (viewYear === today.year) ? (viewMonth + "月") : (viewYear + "年" + viewMonth + "月");
-
     const tbody = document.getElementById('calBody');
     tbody.innerHTML = '';
-
     const firstDayOfWeek = new Date(viewYear, viewMonth - 1, 1).getDay();
     const daysInMonth = new Date(viewYear, viewMonth, 0).getDate();
     const prevMonthDays = new Date(viewYear, viewMonth - 1, 0).getDate();
     const studiedKeys = JSON.parse(localStorage.getItem('sanaru_studied_keys') || '[]');
-
-    let dayCounter = 1;
-    let nextMonthDay = 1;
+    let dayCounter = 1, nextMonthDay = 1;
 
     for (let row = 0; row < 6; row++) {
       const tr = document.createElement('tr');
@@ -1118,18 +1875,11 @@
     viewMonth = today.month;
     renderCalendar();
   }
-
   let timerInterval = null;
-
-  function formatMinutesText(totalMins) {
-    return Math.floor(totalMins / 60) + "時間" + (totalMins % 60) + "分";
-  }
-
+  function formatMinutesText(totalMins) { return Math.floor(totalMins / 60) + "時間" + (totalMins % 60) + "分"; }
   function formatHourMin(elapsedSec) {
     const totalMins = Math.floor(elapsedSec / 60);
-    const h = Math.floor(totalMins / 60);
-    const m = totalMins % 60;
-    return h + ":" + String(m).padStart(2, '0');
+    return Math.floor(totalMins / 60) + ":" + String(totalMins % 60).padStart(2, '0');
   }
 
   function renderProfileStats() {
@@ -1138,7 +1888,6 @@
     const streak = calculateStreak();
     const studiedKeys = JSON.parse(localStorage.getItem('sanaru_studied_keys') || '[]');
     const slot = document.getElementById('profileSlot');
-
     if (mMins > 0 || wMins > 0 || streak > 0 || studiedKeys.length > 0) {
       slot.innerHTML = '<div class="stat-row"><div>今月の合計学習時間</div><div class="stat-val">' + formatMinutesText(mMins) + '</div></div>'
                      + '<div class="stat-row"><div>今週の累計学習時間</div><div class="stat-val">' + formatMinutesText(wMins) + '</div></div>'
@@ -1153,7 +1902,6 @@
     btn.textContent = '学習終了';
     btn.classList.add('active');
     label.textContent = '開始から';
-
     const updateDisplay = () => {
       const elapsedSec = Math.max(0, Math.floor((Date.now() - startTimeMs) / 1000));
       display.textContent = formatHourMin(elapsedSec);
@@ -1173,7 +1921,8 @@
       startTimerLoop(now);
     } else {
       const startMs = parseInt(savedStart, 10);
-      const elapsedSec = Math.max(0, Math.floor((Date.now() - startMs) / 1000));
+      const endMs = Date.now();
+      const elapsedSec = Math.max(0, Math.floor((endMs - startMs) / 1000));
       const addedMins = Math.max(1, Math.floor(elapsedSec / 60));
 
       localStorage.setItem('sanaru_month_mins', String(getMonthMins() + addedMins));
@@ -1185,9 +1934,15 @@
       if (!studiedKeys.includes(startKey)) studiedKeys.push(startKey);
       if (!studiedKeys.includes(endKey)) studiedKeys.push(endKey);
       localStorage.setItem('sanaru_studied_keys', JSON.stringify(studiedKeys));
-
-      // 新しく学習完了した時は手動上書きを解除し、今日の連続日数を自動反映
       localStorage.removeItem('sanaru_manual_streak');
+
+      const sDate = new Date(startMs);
+      const eDate = new Date(endMs);
+      const sTime = String(sDate.getHours()).padStart(2,'0') + ":" + String(sDate.getMinutes()).padStart(2,'0');
+      const eTime = String(eDate.getHours()).padStart(2,'0') + ":" + String(eDate.getMinutes()).padStart(2,'0');
+      const evList = getScheduleEvents();
+      evList.push({ id: "ev_home_" + endMs, date: endKey, cat: "home", title: "家庭学習", memo: "", allDay: false, countdown: false, start: sTime, end: eTime });
+      saveScheduleEventsList(evList);
 
       localStorage.removeItem('sanaru_study_start');
       localStorage.removeItem('sanaru_start_key');
@@ -1208,6 +1963,7 @@
     updateHeaderDate();
     renderProfileStats();
     renderCalendar();
+    syncTodayPlansToMain();
     const savedStart = localStorage.getItem('sanaru_study_start');
     if (savedStart) startTimerLoop(parseInt(savedStart, 10));
   });
