@@ -2023,13 +2023,14 @@
     return val !== null ? parseInt(val, 10) : parseInt(localStorage.getItem('sanaru_total_mins') || '0', 10);
   }
 
-  function buildBackupString() {
+    function buildBackupString() {
     return JSON.stringify({
       month_mins: getMonthMins(),
       week_mins: getWeekMins(),
       studied_keys: JSON.parse(localStorage.getItem('sanaru_studied_keys') || '[]'),
       manual_streak: localStorage.getItem('sanaru_manual_streak'),
-      schedule_events: getScheduleEvents()
+      schedule_events: getScheduleEvents(),
+      info_items: getInfoItems()
     });
   }
 
@@ -2092,6 +2093,7 @@
     try {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed.studied_keys)) {
+      if (Array.isArray(parsed.info_items)) saveInfoItems(parsed.info_items);
         localStorage.setItem('sanaru_month_mins', String(parsed.month_mins || 0));
         localStorage.setItem('sanaru_week_mins', String(parsed.week_mins || 0));
         localStorage.setItem('sanaru_studied_keys', JSON.stringify(parsed.studied_keys));
