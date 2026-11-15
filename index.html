@@ -1365,17 +1365,52 @@
     align-self: flex-end;
   }
 
-  .bigtimer-scrollbar {
-    height: 14px;
+    .bigtimer-scrollbar {
+    height: 18px;
+    width: 44%;
     background-color: #f1f1f1;
     border-top: 1px solid #dcdcdc;
+    border-right: 1px solid #dcdcdc;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0 4px;
-    font-size: 9px;
-    color: #666666;
+    padding: 0;
     flex-shrink: 0;
+    touch-action: none;
+  }
+
+  .bigtimer-scroll-arrow {
+    width: 20px;
+    height: 100%;
+    background-color: #e6e6e6;
+    border: none;
+    font-size: 10px;
+    color: #555555;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    flex-shrink: 0;
+  }
+
+  .bigtimer-scroll-track {
+    position: relative;
+    flex: 1;
+    height: 100%;
+    background-color: #f1f1f1;
+    cursor: pointer;
+    touch-action: none;
+  }
+
+  .bigtimer-scroll-thumb {
+    position: absolute;
+    top: 2px;
+    left: 0px;
+    width: 34px;
+    height: 14px;
+    background-color: #c1c1c1;
+    border: 1px solid #a8a8a8;
+    cursor: grab;
   }
 </style>
 </head>
@@ -1623,9 +1658,12 @@
     <button class="bigtimer-ver-btn" onclick="alert('BIGタイマー Version 1.0')">Version</button>
   </div>
 
-  <div class="bigtimer-scrollbar">
-    <span>◀</span>
-    <span>▶</span>
+    <div class="bigtimer-scrollbar">
+    <button type="button" class="bigtimer-scroll-arrow" onclick="adjustBigTimerMins(-1)">◀</button>
+    <div class="bigtimer-scroll-track" id="bigTimerScrollTrack">
+      <div class="bigtimer-scroll-thumb" id="bigTimerScrollThumb"></div>
+    </div>
+    <button type="button" class="bigtimer-scroll-arrow" onclick="adjustBigTimerMins(1)">▶</button>
   </div>
 </div>
  <div class="loading-overlay" id="loadingOverlay">
@@ -2688,11 +2726,35 @@
       String(m).padStart(2, '0') + " : " + String(s).padStart(2, '0');
   }
 
+    function updateBigTimerThumbPosition(mins) {
+    const track = document.getElementById('bigTimerScrollTrack');
+    const thumb = document.getElementById('bigTimerScrollThumb');
+    if (!track || !thumb) return;
+    const maxTravel = Math.max(0, track.clientWidth - thumb.offsetWidth);
+    const ratio = Math.max(0, Math.min(99, mins)) / 99;
+    thumb.style.left = Math.round(maxTravel * ratio) + 'px';
+  }
+
+  function setBigTimerMinutes(mins) {
+    if (bigTimerInterval) return;
+    const clamped = Math.max(0, Math.min(99, mins));
+    const inputEl = document.getElementById('bigTimerMinInput');
+    inputEl.value = clamped > 0 ? clamped : '';
+    bigTimerSec = clamped * 60;
+    renderBigTimerDisplay();
+    updateBigTimerThumbPosition(clamped);
+  }
+
   function onBigTimerInputChange() {
     if (bigTimerInterval) return;
-    const val = Math.max(0, parseInt(document.getElementById('bigTimerMinInput').value || '0', 10));
-    bigTimerSec = val * 60;
-    renderBigTimerDisplay();
+    const val = Math.max(0, Math.min(99, parseInt(document.getElementById('bigTimerMinInput').value || '0', 10)));
+    setBigTimerMinutes(val);
+  }
+
+  function adjustBigTimerMins(delta) {
+    if (bigTimerInterval) return;
+    const current = parseInt(document.getElementById('bigTimerMinInput').value || '0', 10);
+    setBigTimerMinutes(current + delta);
   }
 
   function openBigTimer() {
@@ -2773,29 +2835,60 @@
     document.getElementById('bigTimerWindow').style.display = 'none';
   }
 
-  // タイトルバーのドラッグ移動（タッチ＆マウス対応）
+  (function enableBigTimerScrollbarSlider() {
+    const track = document.getElementById('bigTimerScrollTrack');
+    const thumb = document.getElementById('bigTimerScrollThumb');
+    if (!track || !thumb) return;
+
+    let isSliding = false;
+
+    function calcMinutesFromClientX(clientX) {
+      const rect = track.getBoundingClientRect();
+      const thumbW = thumb.offsetWidth || 34;
+      const maxTravel = Math.max(1, rect.width - thumbW);
+      const pos = Math.max(0, Math.min(maxTravel, clientX - rect.left - thumbW / 2));
+      return Math.round((pos / maxTravel) * 99);
+    }
+
+    track.addEventListener('pointerdown', (e) => {
+      e.stopPropagation();
+      if (bigTimerInterval) return;
+      isSliding = true;
+      track.setPointerCapture(e.pointerId);
+      setBigTimerMinutes(calcMinutesFromClientX(e.clientX));
+    });
+
+    track.addEventListener('pointermove', (e) => {
+      if (!isSliding) return;
+      e.stopPropagation();
+      setBigTimerMinutes(calcMinutesFromClientX(e.clientX));
+    });
+
+    const stopSlide = () => { isSliding = false; };
+    track.addEventListener('pointerup', stopSlide);
+    track.addEventListener('pointercancel', stopSlide);
+  })();
+
   (function enableBigTimerDrag() {
     const win = document.getElementById('bigTimerWindow');
     if (!win) return;
-    const bar = win.querySelector('.bigtimer-titlebar');
-    if (!bar) return;
 
     let isDragging = false;
     let startX = 0, startY = 0;
     let origLeft = 0, origTop = 0;
 
-    bar.addEventListener('pointerdown', (e) => {
-      if (e.target.closest('button')) return;
+    win.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('button') || e.target.closest('input') || e.target.closest('.bigtimer-scrollbar')) return;
       isDragging = true;
       const rect = win.getBoundingClientRect();
       origLeft = rect.left;
       origTop = rect.top;
       startX = e.clientX;
       startY = e.clientY;
-      bar.setPointerCapture(e.pointerId);
+      win.setPointerCapture(e.pointerId);
     });
 
-    bar.addEventListener('pointermove', (e) => {
+    win.addEventListener('pointermove', (e) => {
       if (!isDragging) return;
       const dx = e.clientX - startX;
       const dy = e.clientY - startY;
@@ -2806,8 +2899,8 @@
     });
 
     const stopDrag = () => { isDragging = false; };
-    bar.addEventListener('pointerup', stopDrag);
-    bar.addEventListener('pointercancel', stopDrag);
+    win.addEventListener('pointerup', stopDrag);
+    win.addEventListener('pointercancel', stopDrag);
   })();
 </script>
 </body>
