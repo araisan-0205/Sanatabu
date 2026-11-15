@@ -457,27 +457,80 @@
     overflow-y: auto;
   }
 
-  .tiles-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    grid-template-rows: repeat(3, minmax(0, 1fr));
-    gap: 8px;
-    padding: 12px;
+    /* 左右の三角矢印＋9ボタンエリアを包む外枠 */
+  .tiles-wrapper {
+    position: relative;
+    flex: 1;
+    min-height: 0;
     border-radius: 6px;
     background-color: #001f5c;
     background-image: url('btn00.png');
     background-size: cover;
     background-position: center;
     box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 6px;
+    overflow: hidden;
+  }
+
+  /* 左右のページ切り替え三角形ボタン */
+  .page-arrow-btn {
+    width: 28px;
+    height: 100%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 0;
+  }
+
+  .tri-shape-left {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 14px 14px 14px 0;
+    border-color: transparent #3b82f6 transparent transparent;
+    transition: border-color 0.15s;
+  }
+  .page-arrow-btn.active .tri-shape-left {
+    border-color: transparent #e2e8f0 transparent transparent;
+  }
+
+  .tri-shape-right {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 14px 0 14px 14px;
+    border-color: transparent transparent transparent #3b82f6;
+    transition: border-color 0.15s;
+  }
+  .page-arrow-btn.active .tri-shape-right {
+    border-color: transparent transparent transparent #e2e8f0;
+  }
+
+  /* 隙間を本物と同じ狭さに詰めた3×3グリッド */
+  .tiles-grid {
     flex: 1;
+    height: 100%;
+    min-width: 0;
     min-height: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+    gap: 8px 10px;
+    padding: 2px 6px;
     overflow: hidden;
   }
 
   .tile-btn {
     border: none;
     background-color: transparent;
-    border-radius: 6px;
+    border-radius: 3px;
     overflow: hidden;
     cursor: pointer;
     padding: 0;
@@ -492,11 +545,9 @@
   .tile-btn:active { transform: scale(0.98); }
 
   .tile-btn img {
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
-    height: auto;
-    object-fit: contain;
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
     display: block;
     pointer-events: none;
   }
@@ -1473,84 +1524,149 @@
     </div>
 
     <div class="right-col">
-      <section class="info-panel-wrap">
-        <div class="info-left-content" id="todayPlansBox"></div>
-        <div class="info-right-content"></div>
-      </section>
-
-                              <section class="tiles-grid">
-        <!-- 1段目 左：スケジュール -->
-        <button class="tile-btn" onclick="openScheduleScreen()">
-          <img src="btn01_Schedule.png" alt="スケジュール"
-               onpointerdown="this.src='btn01_ScheduleA.png'"
-               onpointerup="this.src='btn01_Schedule.png'"
-               onpointerleave="this.src='btn01_Schedule.png'">
+            <div class="tiles-wrapper">
+        <!-- 左向き三角矢印（2ページ目の時に白く光って押せる） -->
+        <button class="page-arrow-btn" id="btnPrevTilePage" onclick="switchTilePage(1)" aria-label="前のページ">
+          <span class="tri-shape-left"></span>
         </button>
 
-        <!-- 1段目 中央：解説カメラ -->
-        <button class="tile-btn" onclick="openExplainCamera()">
-          <img src="btn04_QRCReader.png" alt="解説カメラ"
-               onpointerdown="this.src='btn04_QRCReaderA.png'"
-               onpointerup="this.src='btn04_QRCReader.png'"
-               onpointerleave="this.src='btn04_QRCReader.png'">
-        </button>
+        <!-- 1ページ目（9ボタン） -->
+        <section class="tiles-grid" id="tilePage1">
+          <!-- 1段目 -->
+          <button class="tile-btn" onclick="openScheduleScreen()">
+            <img src="btn01_Schedule.png" alt="スケジュール"
+                 onpointerdown="this.src='btn01_ScheduleA.png'"
+                 onpointerup="this.src='btn01_Schedule.png'"
+                 onpointerleave="this.src='btn01_Schedule.png'">
+          </button>
 
-        <!-- 1段目 右：成績登録 -->
-        <button class="tile-btn" onclick="openGradeEntry()">
-          <img src="btn22_GradeEntry.png" alt="成績登録"
-               onpointerdown="this.src='btn22_GradeEntryA.png'"
-               onpointerup="this.src='btn22_GradeEntry.png'"
-               onpointerleave="this.src='btn22_GradeEntry.png'">
-        </button>
+          <button class="tile-btn" onclick="openExplainCamera()">
+            <img src="btn04_QRCReader.png" alt="解説カメラ"
+                 onpointerdown="this.src='btn04_QRCReaderA.png'"
+                 onpointerup="this.src='btn04_QRCReader.png'"
+                 onpointerleave="this.src='btn04_QRCReader.png'">
+          </button>
 
-        <!-- 2段目 左：学習支援ツール -->
-        <button class="tile-btn" onclick="alert('学習支援ツール')">
-          <img src="btn03_StudySupport.png" alt="学習支援ツール"
-               onpointerdown="this.src='btn03_StudySupportA.png'"
-               onpointerup="this.src='btn03_StudySupport.png'"
-               onpointerleave="this.src='btn03_StudySupport.png'">
-        </button>
+          <button class="tile-btn" onclick="openGradeEntry()">
+            <img src="btn22_GradeEntry.png" alt="成績登録"
+                 onpointerdown="this.src='btn22_GradeEntryA.png'"
+                 onpointerup="this.src='btn22_GradeEntry.png'"
+                 onpointerleave="this.src='btn22_GradeEntry.png'">
+          </button>
 
-        <!-- 2段目 中央：英検対策映像授業 -->
-        <button class="tile-btn" onclick="alert('英検対策映像授業')">
-          <img src="btn49_Eiken.png" alt="英検対策映像授業"
-               onpointerdown="this.src='btn49_EikenA.png'"
-               onpointerup="this.src='btn49_Eiken.png'"
-               onpointerleave="this.src='btn49_Eiken.png'">
-        </button>
+          <!-- 2段目 -->
+          <button class="tile-btn" onclick="alert('学習支援ツール')">
+            <img src="btn03_StudySupport.png" alt="学習支援ツール"
+                 onpointerdown="this.src='btn03_StudySupportA.png'"
+                 onpointerup="this.src='btn03_StudySupport.png'"
+                 onpointerleave="this.src='btn03_StudySupport.png'">
+          </button>
 
-        <!-- 2段目 右：ファイルBOX -->
-        <button class="tile-btn" onclick="openFilebox()">
-          <img src="btn05_FileBox.png" alt="ファイルBOX"
-               onpointerdown="this.src='btn05_FileBoxA.png'"
-               onpointerup="this.src='btn05_FileBox.png'"
-               onpointerleave="this.src='btn05_FileBox.png'">
-        </button>
+          <button class="tile-btn" onclick="alert('英検対策映像授業')">
+            <img src="btn49_Eiken.png" alt="英検対策映像授業"
+                 onpointerdown="this.src='btn49_EikenA.png'"
+                 onpointerup="this.src='btn49_Eiken.png'"
+                 onpointerleave="this.src='btn49_Eiken.png'">
+          </button>
 
-        <!-- 3段目 左：要点解説動画 -->
-        <button class="tile-btn" onclick="alert('要点解説動画')">
-          <img src="btn08_Youkaidouga.png" alt="要点解説動画"
-               onpointerdown="this.src='btn08_YoukaidougaA.png'"
-               onpointerup="this.src='btn08_Youkaidouga.png'"
-               onpointerleave="this.src='btn08_Youkaidouga.png'">
-        </button>
+          <button class="tile-btn" onclick="openFilebox()">
+            <img src="btn05_FileBox.png" alt="ファイルBOX"
+                 onpointerdown="this.src='btn05_FileBoxA.png'"
+                 onpointerup="this.src='btn05_FileBox.png'"
+                 onpointerleave="this.src='btn05_FileBox.png'">
+          </button>
 
-        <!-- 3段目 中央：さなトレ -->
-        <button class="tile-btn" onclick="alert('さなトレ')">
-          <img src="btn10_SanaTore.png" alt="さなトレ"
-               onpointerdown="this.src='btn10_SanaToreA.png'"
-               onpointerup="this.src='btn10_SanaTore.png'"
-               onpointerleave="this.src='btn10_SanaTore.png'">
-        </button>
+          <!-- 3段目 -->
+          <button class="tile-btn" onclick="alert('要点解説動画')">
+            <img src="btn08_Youkaidouga.png" alt="要点解説動画"
+                 onpointerdown="this.src='btn08_YoukaidougaA.png'"
+                 onpointerup="this.src='btn08_Youkaidouga.png'"
+                 onpointerleave="this.src='btn08_Youkaidouga.png'">
+          </button>
 
-        <!-- 3段目 右：学習ゲーム -->
-        <button class="tile-btn" onclick="alert('学習ゲーム')">
-          <img src="btn06_LearningGame.png" alt="学習ゲーム"
-               onpointerdown="this.src='btn06_LearningGameA.png'"
-               onpointerup="this.src='btn06_LearningGame.png'"
-               onpointerleave="this.src='btn06_LearningGame.png'">
+          <button class="tile-btn" onclick="alert('さなトレ')">
+            <img src="btn10_SanaTore.png" alt="さなトレ"
+                 onpointerdown="this.src='btn10_SanaToreA.png'"
+                 onpointerup="this.src='btn10_SanaTore.png'"
+                 onpointerleave="this.src='btn10_SanaTore.png'">
+          </button>
+
+          <button class="tile-btn" onclick="alert('学習ゲーム')">
+            <img src="btn06_LearningGame.png" alt="学習ゲーム"
+                 onpointerdown="this.src='btn06_LearningGameA.png'"
+                 onpointerup="this.src='btn06_LearningGame.png'"
+                 onpointerleave="this.src='btn06_LearningGame.png'">
+          </button>
+        </section>
+        <!-- 2ページ目（8ボタン＋空きマス） -->
+        <section class="tiles-grid" id="tilePage2" style="display:none;">
+          <!-- 1段目 -->
+          <button class="tile-btn" onclick="alert('ショップ')">
+            <img src="btn11_Shop.png" alt="ショップ"
+                 onpointerdown="this.src='btn11_ShopA.png'"
+                 onpointerup="this.src='btn11_Shop.png'"
+                 onpointerleave="this.src='btn11_Shop.png'">
+          </button>
+
+          <button class="tile-btn" onclick="alert('得点入力')">
+            <img src="btn19_TokutenToroku.png" alt="得点入力"
+                 onpointerdown="this.src='btn19_TokutenTorokuA.png'"
+                 onpointerup="this.src='btn19_TokutenToroku.png'"
+                 onpointerleave="this.src='btn19_TokutenToroku.png'">
+          </button>
+
+          <button class="tile-btn" onclick="alert('マイルーム')">
+            <img src="btn12_MyRoom.png" alt="マイルーム"
+                 onpointerdown="this.src='btn12_MyRoomA.png'"
+                 onpointerup="this.src='btn12_MyRoom.png'"
+                 onpointerleave="this.src='btn12_MyRoom.png'">
+          </button>
+
+          <!-- 2段目 -->
+          <button class="tile-btn" onclick="alert('宿題')">
+            <img src="btn02_SanaruStudentHomework.png" alt="宿題"
+                 onpointerdown="this.src='btn02_SanaruStudentHomeworkA.png'"
+                 onpointerup="this.src='btn02_SanaruStudentHomework.png'"
+                 onpointerleave="this.src='btn02_SanaruStudentHomework.png'">
+          </button>
+
+          <button class="tile-btn" onclick="alert('デジタル問題')">
+            <img src="btn13_SanaruStudentHomeworkPrint.png" alt="デジタル問題"
+                 onpointerdown="this.src='btn13_SanaruStudentHomeworkPrintA.png'"
+                 onpointerup="this.src='btn13_SanaruStudentHomeworkPrint.png'"
+                 onpointerleave="this.src='btn13_SanaruStudentHomeworkPrint.png'">
+          </button>
+
+          <button class="tile-btn" onclick="alert('メモリーマーカー')">
+            <img src="btn14_MemoryMarker.png" alt="メモリーマーカー"
+                 onpointerdown="this.src='btn14_MemoryMarkerA.png'"
+                 onpointerup="this.src='btn14_MemoryMarker.png'"
+                 onpointerleave="this.src='btn14_MemoryMarker.png'">
+          </button>
+
+          <!-- 3段目 -->
+          <button class="tile-btn" onclick="alert('アンケート')">
+            <img src="btn23_Questionnaire.png" alt="アンケート"
+                 onpointerdown="this.src='btn23_QuestionnaireA.png'"
+                 onpointerup="this.src='btn23_Questionnaire.png'"
+                 onpointerleave="this.src='btn23_Questionnaire.png'">
+          </button>
+
+          <button class="tile-btn" onclick="alert('タイマー')">
+            <img src="btn24_Timer.png" alt="タイマー"
+                 onpointerdown="this.src='btn24_TimerA.png'"
+                 onpointerup="this.src='btn24_Timer.png'"
+                 onpointerleave="this.src='btn24_Timer.png'">
+          </button>
+
+          <div></div>
+        </section>
+
+        <!-- 右向き三角矢印（1ページ目の時に白く光って押せる） -->
+        <button class="page-arrow-btn active" id="btnNextTilePage" onclick="switchTilePage(2)" aria-label="次のページ">
+          <span class="tri-shape-right"></span>
         </button>
-      </section>
+      </div>
     </div>
   </main>
 </div>
@@ -2369,6 +2485,27 @@
     const videoEl = document.getElementById('explainCamVideo');
     if (videoEl) videoEl.srcObject = null;
     document.getElementById('explainCamWindow').style.display = 'none';
+  }
+   // ============================================================================
+  // ★ タイルボタンの1ページ目・2ページ目切り替え
+  // ============================================================================
+  function switchTilePage(pageNum) {
+    const p1 = document.getElementById('tilePage1');
+    const p2 = document.getElementById('tilePage2');
+    const prevBtn = document.getElementById('btnPrevTilePage');
+    const nextBtn = document.getElementById('btnNextTilePage');
+
+    if (pageNum === 1) {
+      p1.style.display = 'grid';
+      p2.style.display = 'none';
+      prevBtn.classList.remove('active');
+      nextBtn.classList.add('active');
+    } else {
+      p1.style.display = 'none';
+      p2.style.display = 'grid';
+      prevBtn.classList.add('active');
+      nextBtn.classList.remove('active');
+    }
   }
 </script>
 </body>
