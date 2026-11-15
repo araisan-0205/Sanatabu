@@ -418,43 +418,75 @@
     flex-shrink: 0;
   }
 
+    /* 本日の予定（左上揃え・時刻＋タイトル） */
   .info-left-content {
     position: absolute;
-    left: 2%;
-    top: 31%;
-    width: 45%;
-    height: 62%;
-    padding: 4px 8px;
-    font-size: 12px;
-    color: #1e293b;
+    left: 0.8%;
+    top: 25.5%;
+    width: 47.4%;
+    height: 71.5%;
+    padding: 0;
+    font-size: 13px;
+    color: #222222;
     overflow-y: auto;
+    background-color: #ffffff;
   }
 
   .today-plan-item {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 3px 4px;
-    border-bottom: 1px solid #e2e8f0;
-    font-weight: bold;
+    padding: 3px 8px;
+    border-bottom: 1px solid #cbd5e1;
+    font-size: 13px;
+    color: #222222;
+    line-height: 1.3;
+    text-align: left;
   }
 
-  .plan-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 2px;
+  .today-plan-time {
+    width: 96px;
     flex-shrink: 0;
+    font-weight: normal;
   }
 
+  .today-plan-title {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* インフォメーション（本物と同じ薄紫グラデーション帯＋青リンク） */
   .info-right-content {
     position: absolute;
-    left: 50.2%;
-    top: 29%;
-    width: 48.2%;
-    height: 66%;
-    padding: 4px 10px;
-    font-size: 13px;
+    left: 49.0%;
+    top: 25.5%;
+    width: 50.2%;
+    height: 71.5%;
+    padding: 0;
     overflow-y: auto;
+    background-color: #ffffff;
+  }
+
+  .info-link-row {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 2px 6px;
+    font-size: 12.5px;
+    line-height: 1.35;
+    color: #1d4ed8;
+    text-decoration: underline;
+    background: linear-gradient(to bottom, #f8f7fc 0%, #dcd9f0 100%);
+    border: none;
+    border-bottom: 1px solid #94a3b8;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .info-link-row:active {
+    background: #c7d2fe;
   }
 
     /* 左右の三角矢印＋9ボタンエリアを包む外枠 */
@@ -1478,7 +1510,18 @@
           <button class="settings-btn gray" onclick="resetStreakToAuto()">自動計算に戻す</button>
         </div>
       </div>
-
+　　　　      <div class="settings-section">
+        <div class="settings-section-title">インフォメーションの追加・リンク設定</div>
+        <div id="infoEditList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px;"></div>
+        <div style="display:flex;flex-direction:column;gap:4px;border-top:1px dashed #cbd5e1;padding-top:8px;">
+          <input type="text" id="newInfoTitle" class="time-input" style="width:100%;text-align:left;font-size:12px;" placeholder="新しいタイトル（例：定期テスト範囲表）">
+          <input type="text" id="newInfoUrl" class="time-input" style="width:100%;text-align:left;font-size:12px;" placeholder="リンク先URL（任意・https://...）">
+          <div style="display:flex;gap:6px;margin-top:2px;">
+            <button class="settings-btn" onclick="addInfoItem()">項目を追加</button>
+            <button class="settings-btn gray" onclick="resetInfoItems()">初期5項目に戻す</button>
+          </div>
+        </div>
+      </div>
       <div class="settings-section">
         <div class="settings-section-title">バックアップ・データ復元</div>
         <textarea id="backupCodeBox" class="backup-textarea" placeholder="ここにバックアップ文字が表示されます。"></textarea>
@@ -1745,7 +1788,7 @@
     <div class="right-col">
            <section class="info-panel-wrap">
         <div class="info-left-content" id="todayPlansBox"></div>
-        <div class="info-right-content"></div>
+        <div class="info-right-content" id="infoLinksBox"></div>
       </section>
             <div class="tiles-wrapper">
         <!-- 左向き三角矢印（2ページ目の時に白く光って押せる） -->
@@ -1999,6 +2042,7 @@
     document.getElementById('editWeekMins').value = wMins % 60;
     document.getElementById('editStreakDays').value = calculateStreak();
     document.getElementById('backupCodeBox').value = buildBackupString();
+    renderInfoEditList();
     document.getElementById('settingsModal').style.display = 'flex';
   }
 
@@ -2430,7 +2474,7 @@
     }
   }
 
-  function syncTodayPlansToMain() {
+    function syncTodayPlansToMain() {
     const today = getTodayInfo();
     const todayEvs = getScheduleEvents().filter(ev => ev.date === today.key);
     const box = document.getElementById('todayPlansBox');
@@ -2441,9 +2485,8 @@
       todayEvs.forEach(ev => {
         const div = document.createElement('div');
         div.className = 'today-plan-item';
-        const dotColor = (CAT_CONFIG[ev.cat] || CAT_CONFIG.self).color;
-        const timeText = ev.allDay ? "終日" : (ev.start + "-" + ev.end);
-        div.innerHTML = '<span class="plan-dot" style="background:' + dotColor + ';"></span><span>' + timeText + ' ' + ev.title + '</span>';
+        const timeText = ev.allDay ? "終日" : ev.start;
+        div.innerHTML = '<span class="today-plan-time">' + timeText + '</span><span class="today-plan-title">' + ev.title + '</span>';
         box.appendChild(div);
       });
     }
@@ -2648,6 +2691,7 @@
   }
 
   window.addEventListener('DOMContentLoaded', () => {
+    renderInfoPanel();
     runBootSequence();
     updateHeaderDate();
     renderProfileStats();
@@ -2919,6 +2963,109 @@
     win.addEventListener('pointerup', stopDrag);
     win.addEventListener('pointercancel', stopDrag);
   })();
+   // ============================================================================
+  // ★ インフォメーション（本物初期5項目 ＋ 設定からの追加・編集・リンク設定）
+  // ============================================================================
+  const DEFAULT_INFO_ITEMS = [
+    { title: "第3回全国実力考査　結果閲覧サイト（カメラマーカー）", url: "" },
+    { title: "定期テスト模擬　範囲閲覧サイト", url: "" },
+    { title: "さなる生の心得・生徒規則について", url: "" },
+    { title: "第1回・第2回全国実力考査　結果閲覧サイト（まるレポ）", url: "" },
+    { title: "長久手中1宿題", url: "" }
+  ];
+
+  function getInfoItems() {
+    const raw = localStorage.getItem('sanaru_info_items');
+    if (!raw) return DEFAULT_INFO_ITEMS.slice();
+    try {
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : DEFAULT_INFO_ITEMS.slice();
+    } catch (e) {
+      return DEFAULT_INFO_ITEMS.slice();
+    }
+  }
+
+  function saveInfoItems(list) {
+    localStorage.setItem('sanaru_info_items', JSON.stringify(list));
+    renderInfoPanel();
+    renderInfoEditList();
+  }
+
+  function renderInfoPanel() {
+    const box = document.getElementById('infoLinksBox');
+    if (!box) return;
+    const list = getInfoItems();
+    box.innerHTML = '';
+    list.forEach(item => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'info-link-row';
+      btn.textContent = item.title;
+      btn.onclick = () => {
+        if (item.url && item.url.trim() !== "") {
+          moveWithLoading(item.url.trim());
+        } else {
+          alert(item.title + "\n（設定変更からリンク先URLを設定できます）");
+        }
+      };
+      box.appendChild(btn);
+    });
+  }
+
+  function renderInfoEditList() {
+    const container = document.getElementById('infoEditList');
+    if (!container) return;
+    const list = getInfoItems();
+    container.innerHTML = '';
+    list.forEach((item, idx) => {
+      const row = document.createElement('div');
+      row.style.cssText = "display:flex;flex-direction:column;gap:3px;background:#fff;padding:6px;border:1px solid #cbd5e1;border-radius:4px;";
+      row.innerHTML =
+        '<div style="display:flex;gap:4px;align-items:center;">' +
+          '<input type="text" value="' + item.title.replace(/"/g, '&quot;') + '" onchange="updateInfoItem(' + idx + ', \'title\', this.value)" style="flex:1;font-size:12px;padding:3px 5px;border:1px solid #cbd5e1;border-radius:3px;">' +
+          '<button type="button" onclick="deleteInfoItem(' + idx + ')" style="background:#dc2626;color:#fff;border:none;border-radius:3px;padding:3px 7px;font-size:11px;font-weight:bold;cursor:pointer;">削除</button>' +
+        '</div>' +
+        '<input type="text" value="' + (item.url || '').replace(/"/g, '&quot;') + '" placeholder="リンクURL（https://...）" onchange="updateInfoItem(' + idx + ', \'url\', this.value)" style="width:100%;font-size:11px;padding:3px 5px;border:1px solid #e2e8f0;border-radius:3px;color:#2563eb;">';
+      container.appendChild(row);
+    });
+  }
+
+  function updateInfoItem(idx, key, val) {
+    const list = getInfoItems();
+    if (!list[idx]) return;
+    list[idx][key] = val;
+    localStorage.setItem('sanaru_info_items', JSON.stringify(list));
+    renderInfoPanel();
+  }
+
+  function addInfoItem() {
+    const titleEl = document.getElementById('newInfoTitle');
+    const urlEl = document.getElementById('newInfoUrl');
+    const title = titleEl.value.trim();
+    if (!title) {
+      alert("追加するタイトルを入力してください。");
+      return;
+    }
+    const list = getInfoItems();
+    list.push({ title: title, url: urlEl.value.trim() });
+    titleEl.value = '';
+    urlEl.value = '';
+    saveInfoItems(list);
+  }
+
+  function deleteInfoItem(idx) {
+    const list = getInfoItems();
+    list.splice(idx, 1);
+    saveInfoItems(list);
+  }
+
+  function resetInfoItems() {
+    if (confirm("インフォメーションを初期の5項目に戻しますか？")) {
+      localStorage.removeItem('sanaru_info_items');
+      renderInfoPanel();
+      renderInfoEditList();
+    }
+  }
 </script>
 </body>
 </html>
