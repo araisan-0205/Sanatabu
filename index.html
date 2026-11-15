@@ -27,6 +27,60 @@
     overflow: hidden;
   }
 
+  /* ==========================================================================
+     0. 起動画面（loading.png ＋ 緑色太めプログレスバー）
+     ========================================================================== */
+  .boot-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background-color: #ffffff;
+    background-image: url('loading.png');
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.25s ease;
+  }
+
+  /* 左のSanaruロゴの右横に配置されるプログレスバー枠 */
+  .boot-progress-box {
+    position: absolute;
+    left: 43%;
+    top: 47.5%;
+    width: 31%;
+    max-width: 380px;
+    min-width: 240px;
+  }
+
+  .boot-bar-track {
+    width: 100%;
+    height: 22px;
+    background-color: rgba(255, 255, 255, 0.75);
+    border: 1px solid #94a3b8;
+    border-radius: 1px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12);
+  }
+
+  .boot-bar-fill {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(to bottom, #92d050 0%, #76b900 50%, #65a30d 100%);
+    transition: width 0.12s linear;
+  }
+
+  .boot-status-text {
+    margin-top: 5px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #334155;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+  }
+
   .app-container {
     width: 100%;
     height: 100dvh;
@@ -478,6 +532,16 @@
 </head>
 <body>
 
+<!-- 起動画面（loading.png ＋ 緑色太めプログレスバー） -->
+<div class="boot-screen" id="bootScreen">
+  <div class="boot-progress-box">
+    <div class="boot-bar-track">
+      <div class="boot-bar-fill" id="bootBarFill"></div>
+    </div>
+    <div class="boot-status-text" id="bootStatusText">起動準備中・・・0%</div>
+  </div>
+</div>
+
 <div class="loading-overlay" id="loadingOverlay">
   <img src="loading.gif" alt="">
 </div>
@@ -564,8 +628,44 @@
   </main>
 </div>
 <script>
-  const FILEBOX_URL = "https://araisan-0205.github.io/Filebox/";
-  const GRADE_ENTRY_URL = "https://sanaru.atwill-net.com/tablet/seiseki/?sId=25010283&cId=cfe59ee790126b6f37298d1eacdcbe60";
+  const FILEBOX_URL = "https://atwill-net.com";
+  const GRADE_ENTRY_URL = "https://" + "araisan-0205.github.io/Grade/";
+
+  // ============================================================================
+  // ★ 起動画面（loading.png ＋ 緑色太めプログレスバー）アニメーション
+  // ============================================================================
+  function runBootSequence() {
+    const bootScreen = document.getElementById('bootScreen');
+    const barFill = document.getElementById('bootBarFill');
+    const statusText = document.getElementById('bootStatusText');
+    if (!bootScreen) return;
+
+    let progress = 0;
+    const stepTimer = setInterval(() => {
+      progress += 10;
+      if (progress > 100) progress = 100;
+
+      barFill.style.width = progress + "%";
+
+      if (progress < 40) {
+        statusText.textContent = `システム初期化中・・・${progress}%`;
+      } else if (progress < 90) {
+        statusText.textContent = `時間合わせ処理中・・・${progress}%`;
+      } else {
+        statusText.textContent = `起動準備完了・・・${progress}%`;
+      }
+
+      if (progress >= 100) {
+        clearInterval(stepTimer);
+        setTimeout(() => {
+          bootScreen.style.opacity = "0";
+          setTimeout(() => {
+            bootScreen.style.display = "none";
+          }, 260);
+        }, 200);
+      }
+    }, 150);
+  }
 
   function getTodayInfo() {
     const now = new Date();
@@ -685,7 +785,7 @@
     renderCalendar();
   }
 
-  // 学習タイマー＆ブラウザ内自動保存（タブを閉じても継続）
+  // 学習タイマー＆ブラウザ内自動保存
   let timerInterval = null;
 
   function formatMinutesText(totalMins) {
@@ -778,6 +878,7 @@
   }
 
   window.addEventListener('DOMContentLoaded', () => {
+    runBootSequence();
     updateHeaderDate();
     renderProfileStats();
     renderCalendar();
