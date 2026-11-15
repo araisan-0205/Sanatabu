@@ -538,7 +538,7 @@
 
   .settings-modal {
     width: 100%;
-    max-width: 420px;
+    max-width: 440px;
     background-color: #ffffff;
     border-radius: 8px;
     overflow: hidden;
@@ -568,11 +568,11 @@
   }
 
   .settings-body {
-    padding: 16px;
+    padding: 14px 16px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    max-height: 75dvh;
+    gap: 12px;
+    max-height: 82dvh;
     overflow-y: auto;
   }
 
@@ -580,14 +580,14 @@
     background-color: #f8fafc;
     border: 1px solid #e2e8f0;
     border-radius: 6px;
-    padding: 12px;
+    padding: 10px 12px;
   }
 
   .settings-section-title {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: bold;
     color: #0b3184;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     border-left: 4px solid #2563eb;
     padding-left: 8px;
   }
@@ -595,14 +595,22 @@
   .time-edit-row {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 10px;
+    gap: 6px;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: bold;
+  }
+
+  .time-label-fixed {
+    width: 90px;
+    font-size: 12px;
+    color: #334155;
   }
 
   .time-input {
-    width: 72px;
-    padding: 6px 8px;
-    font-size: 15px;
+    width: 64px;
+    padding: 5px 6px;
+    font-size: 14px;
     font-weight: bold;
     border: 1px solid #cbd5e1;
     border-radius: 4px;
@@ -610,8 +618,8 @@
   }
 
   .settings-btn {
-    padding: 8px 14px;
-    font-size: 13px;
+    padding: 7px 12px;
+    font-size: 12px;
     font-weight: bold;
     border: none;
     border-radius: 4px;
@@ -626,7 +634,7 @@
 
   .backup-textarea {
     width: 100%;
-    height: 76px;
+    height: 68px;
     padding: 8px;
     font-size: 11px;
     font-family: monospace;
@@ -654,7 +662,7 @@
   </div>
 </div>
 
-<!-- 設定変更モーダル（時間調整＆バックアップ） -->
+<!-- 設定変更モーダル（今月/今週の個別時間調整・連続日数調整・バックアップ） -->
 <div class="settings-overlay" id="settingsModal">
   <div class="settings-modal">
     <div class="settings-header">
@@ -662,18 +670,40 @@
       <button class="settings-close-x" onclick="closeSettingsModal()">×</button>
     </div>
     <div class="settings-body">
+      <!-- 1. 今月・今週の学習時間の個別調整 -->
       <div class="settings-section">
-        <div class="settings-section-title">学習時間の調整</div>
+        <div class="settings-section-title">学習時間の個別調整</div>
         <div class="time-edit-row">
-          <input type="number" id="editHoursInput" class="time-input" min="0" max="999" value="0">
+          <span class="time-label-fixed">今月の合計：</span>
+          <input type="number" id="editMonthHours" class="time-input" min="0" max="999" value="0">
           <span>時間</span>
-          <input type="number" id="editMinsInput" class="time-input" min="0" max="59" value="0">
+          <input type="number" id="editMonthMins" class="time-input" min="0" max="59" value="0">
           <span>分</span>
-          <button class="settings-btn" onclick="saveAdjustedTime()">時間を反映</button>
         </div>
-        <div style="font-size: 11px; color: #64748b;">※現在の合計学習時間を好きな時間・分に変更できます。</div>
+        <div class="time-edit-row">
+          <span class="time-label-fixed">今週の累計：</span>
+          <input type="number" id="editWeekHours" class="time-input" min="0" max="999" value="0">
+          <span>時間</span>
+          <input type="number" id="editWeekMins" class="time-input" min="0" max="59" value="0">
+          <span>分</span>
+        </div>
+        <button class="settings-btn" onclick="saveAdjustedTimes()">今月・今週の時間を反映</button>
       </div>
 
+      <!-- 2. 連続学習日数の調整 -->
+      <div class="settings-section">
+        <div class="settings-section-title">連続学習日数の調整</div>
+        <div class="time-edit-row">
+          <span class="time-label-fixed">連続日数：</span>
+          <input type="number" id="editStreakDays" class="time-input" min="0" max="999" value="0">
+          <span>日</span>
+          <button class="settings-btn" onclick="saveAdjustedStreak()">日数を反映</button>
+          <button class="settings-btn gray" onclick="resetStreakToAuto()">自動計算に戻す</button>
+        </div>
+        <div style="font-size: 11px; color: #64748b;">※通常はカレンダーの丸印が今日まで連続した日数を自動計算し、1日でも空くと0にリセットされます。</div>
+      </div>
+
+      <!-- 3. バックアップ・復元 -->
       <div class="settings-section">
         <div class="settings-section-title">バックアップ・データ復元</div>
         <textarea id="backupCodeBox" class="backup-textarea" placeholder="ここにバックアップ文字が表示されます。"></textarea>
@@ -811,15 +841,73 @@
     }, 300);
   }
 
+  // 今日まで何日連続で丸印が続いているか計算（1日でも空くと0にリセット）
+  function calculateStreak() {
+    const manualStreak = localStorage.getItem('sanaru_manual_streak');
+    if (manualStreak !== null) {
+      return parseInt(manualStreak, 10);
+    }
+    const studiedKeys = JSON.parse(localStorage.getItem('sanaru_studied_keys') || '[]');
+    if (studiedKeys.length === 0) return 0;
+
+    const now = new Date();
+    const todayKey = now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate();
+
+    const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+    const yesterdayKey = yesterday.getFullYear() + "-" + (yesterday.getMonth() + 1) + "-" + yesterday.getDate();
+
+    let checkDate = null;
+    if (studiedKeys.includes(todayKey)) {
+      checkDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    } else if (studiedKeys.includes(yesterdayKey)) {
+      checkDate = yesterday;
+    } else {
+      return 0;
+    }
+
+    let count = 0;
+    while (true) {
+      const k = checkDate.getFullYear() + "-" + (checkDate.getMonth() + 1) + "-" + checkDate.getDate();
+      if (studiedKeys.includes(k)) {
+        count++;
+        checkDate = new Date(checkDate.getFullYear(), checkDate.getMonth(), checkDate.getDate() - 1);
+      } else {
+        break;
+      }
+    }
+    return count;
+  }
+
+  function getMonthMins() {
+    const val = localStorage.getItem('sanaru_month_mins');
+    if (val !== null) return parseInt(val, 10);
+    return parseInt(localStorage.getItem('sanaru_total_mins') || '0', 10);
+  }
+
+  function getWeekMins() {
+    const val = localStorage.getItem('sanaru_week_mins');
+    if (val !== null) return parseInt(val, 10);
+    return parseInt(localStorage.getItem('sanaru_total_mins') || '0', 10);
+  }
+
+  function buildBackupString() {
+    return JSON.stringify({
+      month_mins: getMonthMins(),
+      week_mins: getWeekMins(),
+      studied_keys: JSON.parse(localStorage.getItem('sanaru_studied_keys') || '[]'),
+      manual_streak: localStorage.getItem('sanaru_manual_streak')
+    });
+  }
+
   function openSettingsModal() {
-    const savedTotalMins = parseInt(localStorage.getItem('sanaru_total_mins') || '0', 10);
-    document.getElementById('editHoursInput').value = Math.floor(savedTotalMins / 60);
-    document.getElementById('editMinsInput').value = savedTotalMins % 60;
-    const backupObj = {
-      total_mins: savedTotalMins,
-      studied_keys: JSON.parse(localStorage.getItem('sanaru_studied_keys') || '[]')
-    };
-    document.getElementById('backupCodeBox').value = JSON.stringify(backupObj);
+    const mMins = getMonthMins();
+    const wMins = getWeekMins();
+    document.getElementById('editMonthHours').value = Math.floor(mMins / 60);
+    document.getElementById('editMonthMins').value = mMins % 60;
+    document.getElementById('editWeekHours').value = Math.floor(wMins / 60);
+    document.getElementById('editWeekMins').value = wMins % 60;
+    document.getElementById('editStreakDays').value = calculateStreak();
+    document.getElementById('backupCodeBox').value = buildBackupString();
     document.getElementById('settingsModal').style.display = 'flex';
   }
 
@@ -827,18 +915,34 @@
     document.getElementById('settingsModal').style.display = 'none';
   }
 
-  function saveAdjustedTime() {
-    const h = Math.max(0, parseInt(document.getElementById('editHoursInput').value || '0', 10));
-    const m = Math.max(0, Math.min(59, parseInt(document.getElementById('editMinsInput').value || '0', 10)));
-    const newTotal = h * 60 + m;
-    localStorage.setItem('sanaru_total_mins', String(newTotal));
+  function saveAdjustedTimes() {
+    const mh = Math.max(0, parseInt(document.getElementById('editMonthHours').value || '0', 10));
+    const mm = Math.max(0, Math.min(59, parseInt(document.getElementById('editMonthMins').value || '0', 10)));
+    const wh = Math.max(0, parseInt(document.getElementById('editWeekHours').value || '0', 10));
+    const wm = Math.max(0, Math.min(59, parseInt(document.getElementById('editWeekMins').value || '0', 10)));
+
+    localStorage.setItem('sanaru_month_mins', String(mh * 60 + mm));
+    localStorage.setItem('sanaru_week_mins', String(wh * 60 + wm));
     renderProfileStats();
-    const backupObj = {
-      total_mins: newTotal,
-      studied_keys: JSON.parse(localStorage.getItem('sanaru_studied_keys') || '[]')
-    };
-    document.getElementById('backupCodeBox').value = JSON.stringify(backupObj);
-    alert("学習時間を「" + h + "時間" + m + "分」に変更しました。");
+    document.getElementById('backupCodeBox').value = buildBackupString();
+    alert("今月・今週の学習時間をそれぞれ反映しました。");
+  }
+
+  function saveAdjustedStreak() {
+    const days = Math.max(0, parseInt(document.getElementById('editStreakDays').value || '0', 10));
+    localStorage.setItem('sanaru_manual_streak', String(days));
+    renderProfileStats();
+    document.getElementById('backupCodeBox').value = buildBackupString();
+    alert("連続学習日数を「" + days + "日」に設定しました。");
+  }
+
+  function resetStreakToAuto() {
+    localStorage.removeItem('sanaru_manual_streak');
+    const autoVal = calculateStreak();
+    document.getElementById('editStreakDays').value = autoVal;
+    renderProfileStats();
+    document.getElementById('backupCodeBox').value = buildBackupString();
+    alert("自動計算（現在 " + autoVal + "日）に戻しました。");
   }
 
   function copyBackupCode() {
@@ -863,9 +967,17 @@
     if (!raw) { alert("復元するバックアップデータを貼り付けてください。"); return; }
     try {
       const parsed = JSON.parse(raw);
-      if (typeof parsed.total_mins === 'number' && Array.isArray(parsed.studied_keys)) {
-        localStorage.setItem('sanaru_total_mins', String(parsed.total_mins));
+      if (Array.isArray(parsed.studied_keys)) {
+        const mVal = (typeof parsed.month_mins === 'number') ? parsed.month_mins : (parsed.total_mins || 0);
+        const wVal = (typeof parsed.week_mins === 'number') ? parsed.week_mins : (parsed.total_mins || 0);
+        localStorage.setItem('sanaru_month_mins', String(mVal));
+        localStorage.setItem('sanaru_week_mins', String(wVal));
         localStorage.setItem('sanaru_studied_keys', JSON.stringify(parsed.studied_keys));
+        if (parsed.manual_streak !== null && parsed.manual_streak !== undefined) {
+          localStorage.setItem('sanaru_manual_streak', String(parsed.manual_streak));
+        } else {
+          localStorage.removeItem('sanaru_manual_streak');
+        }
         renderProfileStats();
         renderCalendar();
         alert("バックアップからデータを復元しました！");
@@ -879,9 +991,12 @@
   }
 
   function resetAllData() {
-    if (confirm("学習時間とカレンダーの記録をすべて0にリセットしますか？")) {
+    if (confirm("学習時間・連続日数・カレンダーの記録をすべてリセットしますか？")) {
       localStorage.removeItem('sanaru_total_mins');
+      localStorage.removeItem('sanaru_month_mins');
+      localStorage.removeItem('sanaru_week_mins');
       localStorage.removeItem('sanaru_studied_keys');
+      localStorage.removeItem('sanaru_manual_streak');
       localStorage.removeItem('sanaru_study_start');
       localStorage.removeItem('sanaru_start_key');
       location.reload();
@@ -1018,14 +1133,16 @@
   }
 
   function renderProfileStats() {
-    const savedTotalMins = parseInt(localStorage.getItem('sanaru_total_mins') || '0', 10);
+    const mMins = getMonthMins();
+    const wMins = getWeekMins();
+    const streak = calculateStreak();
     const studiedKeys = JSON.parse(localStorage.getItem('sanaru_studied_keys') || '[]');
     const slot = document.getElementById('profileSlot');
-    if (savedTotalMins > 0 || studiedKeys.length > 0) {
-      const timeText = formatMinutesText(savedTotalMins);
-      slot.innerHTML = '<div class="stat-row"><div>今月の合計学習時間</div><div class="stat-val">' + timeText + '</div></div>'
-                     + '<div class="stat-row"><div>今週の累計学習時間</div><div class="stat-val">' + timeText + '</div></div>'
-                     + '<div class="stat-row"><div>連続学習日数</div><div class="stat-val">' + studiedKeys.length + '</div></div>';
+
+    if (mMins > 0 || wMins > 0 || streak > 0 || studiedKeys.length > 0) {
+      slot.innerHTML = '<div class="stat-row"><div>今月の合計学習時間</div><div class="stat-val">' + formatMinutesText(mMins) + '</div></div>'
+                     + '<div class="stat-row"><div>今週の累計学習時間</div><div class="stat-val">' + formatMinutesText(wMins) + '</div></div>'
+                     + '<div class="stat-row"><div>連続学習日数</div><div class="stat-val">' + streak + '</div></div>';
     }
   }
 
@@ -1058,8 +1175,9 @@
       const startMs = parseInt(savedStart, 10);
       const elapsedSec = Math.max(0, Math.floor((Date.now() - startMs) / 1000));
       const addedMins = Math.max(1, Math.floor(elapsedSec / 60));
-      const prevTotal = parseInt(localStorage.getItem('sanaru_total_mins') || '0', 10);
-      localStorage.setItem('sanaru_total_mins', String(prevTotal + addedMins));
+
+      localStorage.setItem('sanaru_month_mins', String(getMonthMins() + addedMins));
+      localStorage.setItem('sanaru_week_mins', String(getWeekMins() + addedMins));
 
       const startKey = localStorage.getItem('sanaru_start_key') || today.key;
       const endKey = today.key;
@@ -1067,6 +1185,9 @@
       if (!studiedKeys.includes(startKey)) studiedKeys.push(startKey);
       if (!studiedKeys.includes(endKey)) studiedKeys.push(endKey);
       localStorage.setItem('sanaru_studied_keys', JSON.stringify(studiedKeys));
+
+      // 新しく学習完了した時は手動上書きを解除し、今日の連続日数を自動反映
+      localStorage.removeItem('sanaru_manual_streak');
 
       localStorage.removeItem('sanaru_study_start');
       localStorage.removeItem('sanaru_start_key');
