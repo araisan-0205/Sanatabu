@@ -30,7 +30,7 @@
   /* ==========================================================================
      0. 起動画面（loading.png ＋ 緑色太めプログレスバー）
      ========================================================================== */
-  .boot-screen {
+    .boot-screen {
     position: fixed;
     inset: 0;
     z-index: 10000;
@@ -42,7 +42,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: opacity 0.25s ease;
   }
 
   /* 左のSanaruロゴの右横に配置されるプログレスバー枠 */
@@ -655,17 +654,13 @@
         statusText.textContent = `起動準備完了・・・${progress}%`;
       }
 
-      if (progress >= 100) {
+            if (progress >= 100) {
         clearInterval(stepTimer);
         setTimeout(() => {
-          bootScreen.style.opacity = "0";
-          setTimeout(() => {
-            bootScreen.style.display = "none";
-          }, 260);
+          bootScreen.style.display = "none";
         }, 200);
       }
-    }, 150);
-  }
+    }, 180);
 
   function getTodayInfo() {
     const now = new Date();
