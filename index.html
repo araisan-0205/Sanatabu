@@ -1608,7 +1608,7 @@
         <!-- 2ページ目（8ボタン＋空きマス） -->
         <section class="tiles-grid" id="tilePage2" style="display:none;">
           <!-- 1段目 -->
-          <button class="tile-btn" onclick="alert('ショップ')">
+          <button class="tile-btn" onclick="moveWithLoading(SHOP_URL)">
             <img src="btn11_Shop.png" alt="ショップ"
                  onpointerdown="this.src='btn11_ShopA.png'"
                  onpointerup="this.src='btn11_Shop.png'"
@@ -1622,7 +1622,7 @@
                  onpointerleave="this.src='btn19_TokutenToroku.png'">
           </button>
 
-          <button class="tile-btn" onclick="alert('マイルーム')">
+          <button class="tile-btn" onclick="moveWithLoading(MY_ROOM_URL)">
             <img src="btn12_MyRoom.png" alt="マイルーム"
                  onpointerdown="this.src='btn12_MyRoomA.png'"
                  onpointerup="this.src='btn12_MyRoom.png'"
@@ -1680,6 +1680,8 @@
 <script>
   const FILEBOX_URL = "https://araisan-0205.github.io/Filebox/";
   const GRADE_ENTRY_URL = "https://sanaru.atwill-net.com/tablet/seiseki/?sId=25010283&cId=cfe59ee790126b6f37298d1eacdcbe60";
+  const SHOP_URL = "tablet.atwill-net.com/sntr/shop2/shop_top.jsp?pl=T00&UK=949942902.1794748278464";
+  const MY_ROOM_URL = "http://tablet.atwill-net.com/sntr/shop2/myroom_top.jsp?pl=T00&page=mr&UK=810002893.1794748428011";
 
   const CAT_CONFIG = {
     self:   { name: "自分",     color: "#558b2f", defaultTitle: "" },
