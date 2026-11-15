@@ -690,12 +690,17 @@
     }
   }
 
-  function moveWithLoading(targetUrl) {
+    function moveWithLoading(targetUrl) {
     const loader = document.getElementById('loadingOverlay');
     loader.style.display = 'flex';
+    const newTab = window.open('about:blank', '_blank');
     setTimeout(() => {
       loader.style.display = 'none';
-      window.location.href = targetUrl;
+      if (newTab) {
+        newTab.location.href = targetUrl;
+      } else {
+        window.open(targetUrl, '_blank');
+      }
     }, 1000);
   }
 
