@@ -27,9 +27,7 @@
     overflow: hidden;
   }
 
-  /* ==========================================================================
-     0. 起動画面（loading.png ＋ 太めの緑色プログレスバー・フェードなし）
-     ========================================================================== */
+  /* 起動画面（loading.png ＋ 太めの緑色プログレスバー） */
   .boot-screen {
     position: fixed;
     inset: 0;
@@ -86,9 +84,7 @@
     overflow: hidden;
   }
 
-  /* ==========================================================================
-     1. 上部ヘッダーバー
-     ========================================================================== */
+  /* 上部ヘッダーバー */
   .top-bar {
     position: relative;
     width: 100%;
@@ -183,9 +179,7 @@
     text-align: center;
     white-space: nowrap;
   }
-  .btn-start:active {
-    transform: translateY(1px);
-  }
+  .btn-start:active { transform: translateY(1px); }
   .btn-start.active {
     background: linear-gradient(to bottom, #2563eb, #1d4ed8);
     border-color: #1e3a8a;
@@ -214,9 +208,7 @@
   }
   .img-icon-btn:active { transform: scale(0.95); }
   .img-icon-btn img { width: 100%; height: 100%; object-fit: contain; display: block; }
-  /* ==========================================================================
-     2. メインエリア（左カラム：プロフィール＆設定変更ボタン & カレンダー）
-     ========================================================================== */
+  /* メインエリア（左カラム：プロフィール＆設定変更ボタン & カレンダー） */
   .main-grid {
     flex: 1;
     min-height: 0;
@@ -249,7 +241,6 @@
     flex-shrink: 0;
   }
 
-  /* profile_bg.png 右上の「設定変更」ボタンの上に重ねる透明ボタン */
   .settings-hotspot-btn {
     position: absolute;
     right: 3.5%;
@@ -399,13 +390,9 @@
     vertical-align: middle;
   }
 
-  .cal-table td.sat-col {
-    background-color: #ffffff;
-  }
+  .cal-table td.sat-col { background-color: #ffffff; }
 
-  .cal-table td.today-cell {
-    background-color: #2563eb !important;
-  }
+  .cal-table td.today-cell { background-color: #2563eb !important; }
   .cal-table td.today-cell .day-circle {
     color: #ffffff !important;
     font-weight: 900;
@@ -431,12 +418,8 @@
     background-repeat: no-repeat;
     background-position: center;
   }
-  .cal-table td:not(.today-cell) .studied-mark {
-    color: #c53030;
-  }
-  /* ==========================================================================
-     3. 右カラム（info_bg.png & 2ボタンエリア）
-     ========================================================================== */
+  .cal-table td:not(.today-cell) .studied-mark { color: #c53030; }
+  /* 右カラム（info_bg.png & 2ボタンエリア） */
   .right-col {
     display: flex;
     flex-direction: column;
@@ -513,7 +496,6 @@
     align-items: center;
     justify-content: center;
   }
-
   .tile-btn:active { transform: scale(0.98); }
 
   .tile-btn img {
@@ -526,7 +508,7 @@
     pointer-events: none;
   }
 
-  /* 4. 大きめサイズの loading.gif オーバーレイ画面 */
+  /* loading.gif オーバーレイ画面 */
   .loading-overlay {
     position: fixed;
     inset: 0;
@@ -536,14 +518,13 @@
     justify-content: center;
     z-index: 9999;
   }
-
   .loading-overlay img {
     width: 150px;
     height: 150px;
     object-fit: contain;
   }
 
-  /* 5. 設定変更メニュー（時間調整・バックアップ）モーダル */
+  /* 設定変更メニューモーダル */
   .settings-overlay {
     position: fixed;
     inset: 0;
@@ -663,7 +644,6 @@
 </style>
 </head>
 <body>
-
 <!-- 起動画面 -->
 <div class="boot-screen" id="bootScreen">
   <div class="boot-progress-box">
@@ -682,7 +662,6 @@
       <button class="settings-close-x" onclick="closeSettingsModal()">×</button>
     </div>
     <div class="settings-body">
-      <!-- 1. 勉強時間の調整 -->
       <div class="settings-section">
         <div class="settings-section-title">学習時間の調整</div>
         <div class="time-edit-row">
@@ -695,10 +674,9 @@
         <div style="font-size: 11px; color: #64748b;">※現在の合計学習時間を好きな時間・分に変更できます。</div>
       </div>
 
-      <!-- 2. バックアップ・復元 -->
       <div class="settings-section">
         <div class="settings-section-title">バックアップ・データ復元</div>
-        <textarea id="backupCodeBox" class="backup-textarea" placeholder="ここにバックアップ文字が表示されます。別の端末から復元する場合は貼り付けてください。"></textarea>
+        <textarea id="backupCodeBox" class="backup-textarea" placeholder="ここにバックアップ文字が表示されます。"></textarea>
         <div class="backup-btn-group">
           <button class="settings-btn green" onclick="copyBackupCode()">バックアップをコピー</button>
           <button class="settings-btn" onclick="restoreBackupCode()">貼り付けた内容で復元</button>
@@ -716,8 +694,8 @@
 <div class="loading-overlay" id="loadingOverlay">
   <img src="loading.gif" alt="">
 </div>
+
 <div class="app-container">
-  <!-- 上部ヘッダー（日付・曜日も自動取得） -->
   <header class="top-bar">
     <div class="header-white-slot">
       <span class="date-badge" id="headerDateBadge">11月15日（日）</span>
@@ -743,12 +721,9 @@
   </header>
 
   <main class="main-grid">
-    <!-- 左カラム -->
     <div class="left-col">
       <section class="profile-card">
-        <!-- 右上の「設定変更」ボタン -->
         <button class="settings-hotspot-btn" onclick="openSettingsModal()" title="設定変更"></button>
-
         <div class="profile-dark-slot" id="profileSlot">
           <div>長久手本部校</div>
           <div style="font-size: 12px; opacity: 0.9; margin-top: 2px;">中学1年生</div>
@@ -776,7 +751,6 @@
       </section>
     </div>
 
-    <!-- 右カラム -->
     <div class="right-col">
       <section class="info-panel-wrap">
         <div class="info-left-content"></div>
@@ -802,13 +776,9 @@
   </main>
 </div>
 <script>
- <script>
-  const FILEBOX_URL = "https://github.io";
-  const GRADE_ENTRY_URL = "https://atwill-net.com";
+  const FILEBOX_URL = "https://araisan-0205.github.io/Filebox/";
+  const GRADE_ENTRY_URL = "https://sanaru.atwill-net.com/tablet/seiseki/?sId=25010283&cId=cfe59ee790126b6f37298d1eacdcbe60";
 
-  // ============================================================================
-  // ★ 起動画面アニメーション（最初0.3秒間を置いて小刻みに進む）
-  // ============================================================================
   function runBootSequence() {
     const bootScreen = document.getElementById('bootScreen');
     const barFill = document.getElementById('bootBarFill');
@@ -821,44 +791,35 @@
     setTimeout(() => {
       let progress = 0;
       const stepTimer = setInterval(() => {
-        const jump = Math.floor(Math.random() * 4) + 3;
-        progress += jump;
+        progress += Math.floor(Math.random() * 4) + 3;
         if (progress > 100) progress = 100;
-
         barFill.style.width = progress + "%";
 
         if (progress < 40) {
-          statusText.textContent = `システム初期化中・・・${progress}%`;
+          statusText.textContent = "システム初期化中・・・" + progress + "%";
         } else if (progress < 90) {
-          statusText.textContent = `時間合わせ処理中・・・${progress}%`;
+          statusText.textContent = "時間合わせ処理中・・・" + progress + "%";
         } else {
-          statusText.textContent = `起動準備完了・・・${progress}%`;
+          statusText.textContent = "起動準備完了・・・" + progress + "%";
         }
 
         if (progress >= 100) {
           clearInterval(stepTimer);
-          setTimeout(() => {
-            bootScreen.style.display = "none";
-          }, 180);
+          setTimeout(() => { bootScreen.style.display = "none"; }, 180);
         }
       }, 45);
     }, 300);
   }
 
-  // ============================================================================
-  // ★ 設定変更メニュー（時間調整＆バックアップ機能）
-  // ============================================================================
   function openSettingsModal() {
     const savedTotalMins = parseInt(localStorage.getItem('sanaru_total_mins') || '0', 10);
     document.getElementById('editHoursInput').value = Math.floor(savedTotalMins / 60);
     document.getElementById('editMinsInput').value = savedTotalMins % 60;
-
     const backupObj = {
       total_mins: savedTotalMins,
       studied_keys: JSON.parse(localStorage.getItem('sanaru_studied_keys') || '[]')
     };
     document.getElementById('backupCodeBox').value = JSON.stringify(backupObj);
-
     document.getElementById('settingsModal').style.display = 'flex';
   }
 
@@ -870,17 +831,14 @@
     const h = Math.max(0, parseInt(document.getElementById('editHoursInput').value || '0', 10));
     const m = Math.max(0, Math.min(59, parseInt(document.getElementById('editMinsInput').value || '0', 10)));
     const newTotal = h * 60 + m;
-
     localStorage.setItem('sanaru_total_mins', String(newTotal));
     renderProfileStats();
-
     const backupObj = {
       total_mins: newTotal,
       studied_keys: JSON.parse(localStorage.getItem('sanaru_studied_keys') || '[]')
     };
     document.getElementById('backupCodeBox').value = JSON.stringify(backupObj);
-
-    alert(`学習時間を「${h}時間${m}分」に変更しました。`);
+    alert("学習時間を「" + h + "時間" + m + "分」に変更しました。");
   }
 
   function copyBackupCode() {
@@ -889,7 +847,7 @@
     box.setSelectionRange(0, 99999);
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(box.value).then(() => {
-        alert("バックアップデータをコピーしました。メモ帳などに貼り付けて保管してください。");
+        alert("バックアップデータをコピーしました。");
       }).catch(() => {
         document.execCommand('copy');
         alert("バックアップデータをコピーしました。");
@@ -902,10 +860,7 @@
 
   function restoreBackupCode() {
     const raw = document.getElementById('backupCodeBox').value.trim();
-    if (!raw) {
-      alert("復元するバックアップデータを貼り付けてください。");
-      return;
-    }
+    if (!raw) { alert("復元するバックアップデータを貼り付けてください。"); return; }
     try {
       const parsed = JSON.parse(raw);
       if (typeof parsed.total_mins === 'number' && Array.isArray(parsed.studied_keys)) {
@@ -919,7 +874,7 @@
         alert("データの形式が正しくありません。");
       }
     } catch (e) {
-      alert("復元できませんでした。コピーした文字が途中で切れていないか確認してください。");
+      alert("復元できませんでした。文字が途中で切れていないか確認してください。");
     }
   }
 
@@ -932,9 +887,6 @@
       location.reload();
     }
   }
-  // ============================================================================
-  // ★ 日付・ボタン遷移・iOS終了ダイアログ
-  // ============================================================================
   function getTodayInfo() {
     const now = new Date();
     const weekNames = ["日", "月", "火", "水", "木", "金", "土"];
@@ -943,16 +895,14 @@
       month: now.getMonth() + 1,
       day: now.getDate(),
       week: weekNames[now.getDay()],
-      key: `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`
+      key: now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate()
     };
   }
 
   function updateHeaderDate() {
     const t = getTodayInfo();
     const badge = document.getElementById('headerDateBadge');
-    if (badge) {
-      badge.textContent = `${t.month}月${t.day}日（${t.week}）`;
-    }
+    if (badge) badge.textContent = t.month + "月" + t.day + "日（" + t.week + "）";
   }
 
   function moveWithLoading(targetUrl) {
@@ -991,7 +941,6 @@
     }
   }
 
-  // カレンダー月切り替え（« 先月 / » 来月 / 今日）
   const initToday = getTodayInfo();
   let viewYear = initToday.year;
   let viewMonth = initToday.month;
@@ -999,7 +948,7 @@
   function renderCalendar() {
     const today = getTodayInfo();
     const label = document.getElementById('calMonthLabel');
-    label.textContent = (viewYear === today.year) ? `${viewMonth}月` : `${viewYear}年${viewMonth}月`;
+    label.textContent = (viewYear === today.year) ? (viewMonth + "月") : (viewYear + "年" + viewMonth + "月");
 
     const tbody = document.getElementById('calBody');
     tbody.innerHTML = '';
@@ -1007,7 +956,6 @@
     const firstDayOfWeek = new Date(viewYear, viewMonth - 1, 1).getDay();
     const daysInMonth = new Date(viewYear, viewMonth, 0).getDate();
     const prevMonthDays = new Date(viewYear, viewMonth - 1, 0).getDate();
-
     const studiedKeys = JSON.parse(localStorage.getItem('sanaru_studied_keys') || '[]');
 
     let dayCounter = 1;
@@ -1018,26 +966,22 @@
       for (let col = 0; col < 7; col++) {
         const td = document.createElement('td');
         if (col === 6) td.classList.add('sat-col');
-
         const cellIndex = row * 7 + col;
         if (cellIndex < firstDayOfWeek) {
           const prevDay = prevMonthDays - (firstDayOfWeek - 1 - cellIndex);
-          td.innerHTML = `<span class="day-circle other-month">${prevDay}</span>`;
+          td.innerHTML = '<span class="day-circle other-month">' + prevDay + '</span>';
         } else if (dayCounter <= daysInMonth) {
           const d = dayCounter;
           const isToday = (viewYear === today.year && viewMonth === today.month && d === today.day);
-          const dateKey = `${viewYear}-${viewMonth}-${d}`;
+          const dateKey = viewYear + "-" + viewMonth + "-" + d;
           const isStudied = studiedKeys.includes(dateKey);
-
           if (isToday) td.classList.add('today-cell');
-
           const classes = ['day-circle'];
           if (isStudied) classes.push('studied-mark');
-
-          td.innerHTML = `<span class="${classes.join(' ')}">${d}</span>`;
+          td.innerHTML = '<span class="' + classes.join(' ') + '">' + d + '</span>';
           dayCounter++;
         } else {
-          td.innerHTML = `<span class="day-circle other-month">${nextMonthDay}</span>`;
+          td.innerHTML = '<span class="day-circle other-month">' + nextMonthDay + '</span>';
           nextMonthDay++;
         }
         tr.appendChild(td);
@@ -1060,34 +1004,28 @@
     renderCalendar();
   }
 
-  // 学習タイマー＆ブラウザ内自動保存
   let timerInterval = null;
 
   function formatMinutesText(totalMins) {
-    const h = Math.floor(totalMins / 60);
-    const m = totalMins % 60;
-    return `${h}時間${m}分`;
+    return Math.floor(totalMins / 60) + "時間" + (totalMins % 60) + "分";
   }
 
   function formatHourMin(elapsedSec) {
     const totalMins = Math.floor(elapsedSec / 60);
     const h = Math.floor(totalMins / 60);
     const m = totalMins % 60;
-    return `${h}:${String(m).padStart(2, '0')}`;
+    return h + ":" + String(m).padStart(2, '0');
   }
 
   function renderProfileStats() {
     const savedTotalMins = parseInt(localStorage.getItem('sanaru_total_mins') || '0', 10);
     const studiedKeys = JSON.parse(localStorage.getItem('sanaru_studied_keys') || '[]');
     const slot = document.getElementById('profileSlot');
-
     if (savedTotalMins > 0 || studiedKeys.length > 0) {
       const timeText = formatMinutesText(savedTotalMins);
-      slot.innerHTML = `
-        <div class="stat-row"><div>今月の合計学習時間</div><div class="stat-val">${timeText}</div></div>
-        <div class="stat-row"><div>今週の累計学習時間</div><div class="stat-val">${timeText}</div></div>
-        <div class="stat-row"><div>連続学習日数</div><div class="stat-val">${studiedKeys.length}</div></div>
-      `;
+      slot.innerHTML = '<div class="stat-row"><div>今月の合計学習時間</div><div class="stat-val">' + timeText + '</div></div>'
+                     + '<div class="stat-row"><div>今週の累計学習時間</div><div class="stat-val">' + timeText + '</div></div>'
+                     + '<div class="stat-row"><div>連続学習日数</div><div class="stat-val">' + studiedKeys.length + '</div></div>';
     }
   }
 
@@ -1095,7 +1033,6 @@
     const btn = document.getElementById('studyStartBtn');
     const display = document.getElementById('timerDisplay');
     const label = document.getElementById('timerLabel');
-
     btn.textContent = '学習終了';
     btn.classList.add('active');
     label.textContent = '開始から';
@@ -1104,7 +1041,6 @@
       const elapsedSec = Math.max(0, Math.floor((Date.now() - startTimeMs) / 1000));
       display.textContent = formatHourMin(elapsedSec);
     };
-
     updateDisplay();
     if (timerInterval) clearInterval(timerInterval);
     timerInterval = setInterval(updateDisplay, 5000);
@@ -1113,7 +1049,6 @@
   function toggleStudy() {
     const today = getTodayInfo();
     const savedStart = localStorage.getItem('sanaru_study_start');
-
     if (!savedStart) {
       const now = Date.now();
       localStorage.setItem('sanaru_study_start', String(now));
@@ -1123,7 +1058,6 @@
       const startMs = parseInt(savedStart, 10);
       const elapsedSec = Math.max(0, Math.floor((Date.now() - startMs) / 1000));
       const addedMins = Math.max(1, Math.floor(elapsedSec / 60));
-
       const prevTotal = parseInt(localStorage.getItem('sanaru_total_mins') || '0', 10);
       localStorage.setItem('sanaru_total_mins', String(prevTotal + addedMins));
 
@@ -1136,17 +1070,13 @@
 
       localStorage.removeItem('sanaru_study_start');
       localStorage.removeItem('sanaru_start_key');
-      if (timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-      }
+      if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
 
       const btn = document.getElementById('studyStartBtn');
       btn.textContent = '学習開始';
       btn.classList.remove('active');
       document.getElementById('timerLabel').textContent = 'あと';
       document.getElementById('timerDisplay').textContent = '-:-';
-
       renderProfileStats();
       renderCalendar();
     }
@@ -1158,9 +1088,7 @@
     renderProfileStats();
     renderCalendar();
     const savedStart = localStorage.getItem('sanaru_study_start');
-    if (savedStart) {
-      startTimerLoop(parseInt(savedStart, 10));
-    }
+    if (savedStart) startTimerLoop(parseInt(savedStart, 10));
   });
 </script>
 </body>
