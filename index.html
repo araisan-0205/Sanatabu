@@ -651,6 +651,10 @@
     box-shadow: 0 1px 2px rgba(0,0,0,0.3);
   }
   .sched-cat-btn:active { transform: translateY(1px); }
+  .cat-self { background-color: #558b2f; }
+  .cat-sanaru { background-color: #0288d1; }
+  .cat-school { background-color: #c0a020; }
+  .cat-home { background-color: #d86c88; }
 
     .sched-close-btn {
     width: 38px;
@@ -1351,22 +1355,10 @@
 
       <section class="tiles-grid">
         <button class="tile-btn" onclick="openScheduleScreen()">
-          <div class="schedule-tile-card">
-            <div class="schedule-tile-icon">
-              <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
-                <rect x="3" y="4" width="18" height="18" rx="2"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-                <circle cx="8" cy="14" r="1" fill="#fff"></circle>
-                <circle cx="12" cy="14" r="1" fill="#fff"></circle>
-                <circle cx="16" cy="14" r="1" fill="#fff"></circle>
-                <circle cx="8" cy="18" r="1" fill="#fff"></circle>
-                <circle cx="12" cy="18" r="1" fill="#fff"></circle>
-              </svg>
-            </div>
-            <div class="schedule-tile-label">スケジュール</div>
-          </div>
+                    <img src="btn01_Schedule.png" alt="スケジュール"
+               onpointerdown="this.src='btn01_ScheduleA.png'"
+               onpointerup="this.src='btn01_Schedule.png'"
+               onpointerleave="this.src='btn01_Schedule.png'">
         </button>
 
         <button class="tile-btn" onclick="openGradeEntry()">
@@ -1770,6 +1762,136 @@
     editingTargetDates = [ev.date];
     openEventFormUI(ev);
   }
+   function openEventFormUI(existingEv) {
+    const cfg = CAT_CONFIG[selCat] || CAT_CONFIG.self;
+    document.getElementById('evFormHeader').style.backgroundColor = cfg.color;
+    document.getElementById('evSaveBtn').style.backgroundColor = cfg.color;
+    document.getElementById('evDeleteBtn').style.backgroundColor = cfg.color;
+    document.getElementById('evDeleteBtn').style.display = existingEv ? 'inline-block' : 'none';
+
+    if (existingEv) {
+      const parts = existingEv.date.split('-');
+      const dispDate = parts + "/" + String(parts).padStart(2,'0') + "/" + String(parts).padStart(2,'0');
+      document.getElementById('evFormTitleBar').textContent = "予定内容修正 (" + dispDate + ")";
+      document.getElementById('evTitleInput').value = existingEv.title;
+      document.getElementById('evMemoInput').value = existingEv.memo || "";
+      document.getElementById('evAllDayCheck').checked = !!existingEv.allDay;
+      document.getElementById('evCountdownCheck').checked = !!existingEv.countdown;
+      const sp = (existingEv.start || "10:00").split(':');
+      const ep = (existingEv.end || "11:00").split(':');
+      drumState = {
+        sh: parseInt(sp, 10) || 10,
+        sm: parseInt(sp, 10) || 0,
+        eh: parseInt(ep, 10) || 11,
+        em: parseInt(ep, 10) || 0
+      };
+    } else {
+      document.getElementById('evFormTitleBar').textContent = "予定内容登録（" + cfg.name + "）";
+      document.getElementById('evTitleInput').value = cfg.defaultTitle;
+      document.getElementById('evMemoInput').value = "";
+      document.getElementById('evAllDayCheck').checked = false;
+      document.getElementById('evCountdownCheck').checked = true;
+      const now = new Date();
+      drumState = {
+        sh: now.getHours(),
+        sm: now.getMinutes(),
+        eh: (now.getHours() + 1) % 24,
+        em: now.getMinutes()
+      };
+    }
+    updateDrumDisplay();
+    toggleAllDayCheck();
+    document.getElementById('eventFormScreen').style.display = 'flex';
+  }
+
+  function closeEventForm() {
+    document.getElementById('eventFormScreen').style.display = 'none';
+  }
+
+  function toggleAllDayCheck() {
+    const isAll = document.getElementById('evAllDayCheck').checked;
+    document.getElementById('clockDrumsWrap').style.opacity = isAll ? "0.35" : "1";
+    document.getElementById('clockDrumsWrap').style.pointerEvents = isAll ? "none" : "auto";
+  }
+
+  function stepDrum(key, delta) {
+    if (key === 'sh' || key === 'eh') drumState[key] = (drumState[key] + delta + 24) % 24;
+    else drumState[key] = (drumState[key] + delta + 60) % 60;
+    updateDrumDisplay();
+  }
+
+  function updateDrumDisplay() {
+    document.getElementById('drumSh').textContent = String(drumState.sh).padStart(2, '0');
+    document.getElementById('drumSm').textContent = String(drumState.sm).padStart(2, '0');
+    document.getElementById('drumEh').textContent = String(drumState.eh).padStart(2, '0');
+    document.getElementById('drumEm').textContent = String(drumState.em).padStart(2, '0');
+  }
+
+  function saveScheduleEvent() {
+    const title = document.getElementById('evTitleInput').value.trim() || (CAT_CONFIG[selCat].name + "の予定");
+    const memo = document.getElementById('evMemoInput').value.trim();
+    const allDay = document.getElementById('evAllDayCheck').checked;
+    const countdown = document.getElementById('evCountdownCheck').checked;
+    const startStr = String(drumState.sh).padStart(2,'0') + ":" + String(drumState.sm).padStart(2,'0');
+    const endStr = String(drumState.eh).padStart(2,'0') + ":" + String(drumState.em).padStart(2,'0');
+
+    let list = getScheduleEvents();
+    if (editingEventId) {
+      list = list.map(ev => ev.id === editingEventId ? Object.assign({}, ev, { title, memo, allDay, countdown, start: startStr, end: endStr }) : ev);
+    } else {
+      editingTargetDates.forEach((dKey, i) => {
+        list.push({
+          id: "ev_" + Date.now() + "_" + i,
+          date: dKey,
+          cat: selCat,
+          title: title,
+          memo: memo,
+          allDay: allDay,
+          countdown: countdown,
+          start: startStr,
+          end: endStr
+        });
+      });
+    }
+    saveScheduleEventsList(list);
+    closeEventForm();
+    renderScheduleGrid();
+  }
+
+  function deleteScheduleEvent() {
+    if (!editingEventId) return;
+    if (confirm("この予定を削除しますか？")) {
+      const list = getScheduleEvents().filter(ev => ev.id !== editingEventId);
+      saveScheduleEventsList(list);
+      closeEventForm();
+      renderScheduleGrid();
+    }
+  }
+
+  function syncTodayPlansToMain() {
+    const today = getTodayInfo();
+    const todayEvs = getScheduleEvents().filter(ev => ev.date === today.key);
+    const box = document.getElementById('todayPlansBox');
+    const headerNext = document.getElementById('headerNextSchedule');
+
+    if (box) {
+      box.innerHTML = '';
+      todayEvs.forEach(ev => {
+        const div = document.createElement('div');
+        div.className = 'today-plan-item';
+        const dotColor = (CAT_CONFIG[ev.cat] || CAT_CONFIG.self).color;
+        const timeText = ev.allDay ? "終日" : (ev.start + "-" + ev.end);
+        div.innerHTML = '<span class="plan-dot" style="background:' + dotColor + ';"></span><span>' + timeText + ' ' + ev.title + '</span>';
+        box.appendChild(div);
+      });
+    }
+
+    const countdownEvs = todayEvs.filter(ev => ev.countdown && !ev.allDay).sort((a,b) => a.start.localeCompare(b.start));
+    if (headerNext) {
+      headerNext.textContent = countdownEvs.length > 0 ? countdownEvs.start : "予定なし";
+    }
+  }
+
   function getTodayInfo() {
     const now = new Date();
     const weekNames = ["日", "月", "火", "水", "木", "金", "土"];
